@@ -12,12 +12,24 @@ module:
 
 datamodule:
   _target_: torchgeo.datamodules.L7IrishDataModule
-  root: "data/l7irish"
+  root: "/projects/dali/data/l7irish"
   batch_size: 64
   patch_size: 224
-  num_workers: 16
+  num_workers: 10
+  crs: epsg:3857
+  length: 25000
 
 trainer:
   _target_: lightning.pytorch.Trainer
+  accelerator: gpu
+  devices:
+    - 0
   min_epochs: 20
   max_epochs: 100
+
+program:
+  seed: 0
+  output_dir: "/scratch.local/yichia3/output/l7irish"
+  log_dir: "/scratch.local/yichia3/logs/l7irish"
+  overwrite: True
+  experiment_name: l7irish

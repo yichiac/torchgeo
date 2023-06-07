@@ -12,14 +12,25 @@ module:
 
 datamodule:
   _target_: torchgeo.datamodules.SSL4EOLBenchmarkDataModule
-  root: "data/ssl4eo_benchmark"
+  root: "/scratch.local/yichia3/ssl4eo_benchmark_landsat"
   sensor: "etm_sr"
   product: "cdl"
   classes: [0, 1, 5, 24, 36, 37, 61, 111, 121, 122, 131, 141, 142, 143, 152, 176, 190, 195]
-  batch_size: 64
-  num_workers: 16
+  batch_size: 256
+  num_workers: 10
+  download: True
 
 trainer:
   _target_: lightning.pytorch.Trainer
+  accelerator: gpu
+  devices:
+    - 0
   min_epochs: 20
   max_epochs: 100
+
+program:
+  seed: 0
+  output_dir: "/scratch.local/yichia3/output/etm_sr_cdl"
+  log_dir: "/scratch.local/yichia3/logs/etm_sr_cdl"
+  overwrite: True
+  experiment_name: test_downstream_etm_sr_cdl

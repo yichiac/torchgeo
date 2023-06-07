@@ -10,7 +10,7 @@ import torch
 from kornia.constants import DataKey, Resample
 
 from ..datasets import L7Irish, random_bbox_assignment
-from ..samplers import GridGeoSampler, RandomBatchGeoSampler
+from ..samplers import GridGeoSampler, RandomBatchGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
@@ -79,8 +79,8 @@ class L7IrishDataModule(GeoDataModule):
                 self.train_dataset, self.patch_size, self.batch_size, self.length
             )
         if stage in ["fit", "validate"]:
-            self.val_sampler = GridGeoSampler(
-                self.val_dataset, self.patch_size, self.patch_size
+            self.val_sampler = RandomGeoSampler(
+                self.val_dataset, self.patch_size, self.length//10
             )
         if stage in ["test"]:
             self.test_sampler = GridGeoSampler(
