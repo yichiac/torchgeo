@@ -1,0 +1,156 @@
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 40, in config_task
+    self.model = smp.Unet(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/decoders/unet/model.py", line 71, in __init__
+    self.encoder = get_encoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/__init__.py", line 55, in get_encoder
+    encoder = TimmUniversalEncoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/timm_universal.py", line 20, in __init__
+    self.model = timm.create_model(name, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/factory.py", line 71, in create_model
+    model = create_fn(pretrained=pretrained, pretrained_cfg=pretrained_cfg, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 837, in vit_small_patch16_224
+    model = _create_vision_transformer('vit_small_patch16_224', pretrained=pretrained, **model_kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 783, in _create_vision_transformer
+    raise RuntimeError('features_only not implemented for Vision Transformer models.')
+RuntimeError: features_only not implemented for Vision Transformer models.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('features_only not implemented for Vision Transformer models.')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 40, in config_task
+    self.model = smp.Unet(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/decoders/unet/model.py", line 71, in __init__
+    self.encoder = get_encoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/__init__.py", line 55, in get_encoder
+    encoder = TimmUniversalEncoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/timm_universal.py", line 20, in __init__
+    self.model = timm.create_model(name, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/factory.py", line 71, in create_model
+    model = create_fn(pretrained=pretrained, pretrained_cfg=pretrained_cfg, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 837, in vit_small_patch16_224
+    model = _create_vision_transformer('vit_small_patch16_224', pretrained=pretrained, **model_kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 783, in _create_vision_transformer
+    raise RuntimeError('features_only not implemented for Vision Transformer models.')
+RuntimeError: features_only not implemented for Vision Transformer models.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('features_only not implemented for Vision Transformer models.')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 40, in config_task
+    self.model = smp.Unet(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/decoders/unet/model.py", line 71, in __init__
+    self.encoder = get_encoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/__init__.py", line 55, in get_encoder
+    encoder = TimmUniversalEncoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/timm_universal.py", line 20, in __init__
+    self.model = timm.create_model(name, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/factory.py", line 71, in create_model
+    model = create_fn(pretrained=pretrained, pretrained_cfg=pretrained_cfg, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 837, in vit_small_patch16_224
+    model = _create_vision_transformer('vit_small_patch16_224', pretrained=pretrained, **model_kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 783, in _create_vision_transformer
+    raise RuntimeError('features_only not implemented for Vision Transformer models.')
+RuntimeError: features_only not implemented for Vision Transformer models.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('features_only not implemented for Vision Transformer models.')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 40, in config_task
+    self.model = smp.Unet(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/decoders/unet/model.py", line 71, in __init__
+    self.encoder = get_encoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/__init__.py", line 55, in get_encoder
+    encoder = TimmUniversalEncoder(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/timm_universal.py", line 20, in __init__
+    self.model = timm.create_model(name, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/factory.py", line 71, in create_model
+    model = create_fn(pretrained=pretrained, pretrained_cfg=pretrained_cfg, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 837, in vit_small_patch16_224
+    model = _create_vision_transformer('vit_small_patch16_224', pretrained=pretrained, **model_kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/timm/models/vision_transformer.py", line 783, in _create_vision_transformer
+    raise RuntimeError('features_only not implemented for Vision Transformer models.')
+RuntimeError: features_only not implemented for Vision Transformer models.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('features_only not implemented for Vision Transformer models.')
+full_key: module
+python train.py config_file=conf/l7irish.yaml module.model=unet module.backbone=tu-vit_small_patch16_224 module.learning_rate=0.001 module.loss=ce module.weights=False program.experiment_name=l7irish_unet_tu-vit_small_patch16_224_0.001_ce_False trainer.devices=[0]
+python train.py config_file=conf/l7irish.yaml module.model=unet module.backbone=tu-vit_small_patch16_224 module.learning_rate=0.0003 module.loss=ce module.weights=False program.experiment_name=l7irish_unet_tu-vit_small_patch16_224_0.0003_ce_False trainer.devices=[0]
+python train.py config_file=conf/l7irish.yaml module.model=unet module.backbone=tu-vit_small_patch16_224 module.learning_rate=0.0001 module.loss=ce module.weights=False program.experiment_name=l7irish_unet_tu-vit_small_patch16_224_0.0001_ce_False trainer.devices=[0]
+python train.py config_file=conf/l7irish.yaml module.model=unet module.backbone=tu-vit_small_patch16_224 module.learning_rate=3e-05 module.loss=ce module.weights=False program.experiment_name=l7irish_unet_tu-vit_small_patch16_224_3e-05_ce_False trainer.devices=[0]

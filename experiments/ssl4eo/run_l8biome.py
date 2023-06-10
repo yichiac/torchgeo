@@ -15,11 +15,10 @@ conf_file_name = "l8biome.yaml"
 
 # Hyperparameter options
 model_options = ["unet"]
-backbone_options = ["resnet18"]
-lr_options = [0.001, 0.0001]
+backbone_options = ["resnet18", "resnet50"]
+lr_options = [0.001, 0.0003, 0.0001, 0.00003]
 loss_options = ["ce"]
-wd_options = [0, 0.1]
-weight_options = [True]
+weight_options = [False]
 
 
 def do_work(work: "Queue[str]", gpu_idx: int) -> bool:
@@ -36,18 +35,17 @@ def do_work(work: "Queue[str]", gpu_idx: int) -> bool:
 if __name__ == "__main__":
     work: "Queue[str]" = Queue()
 
-    for model, backbone, lr, loss, wd, weights in itertools.product(
+    for model, backbone, lr, loss, weights in itertools.product(
         model_options,
         backbone_options,
         lr_options,
         loss_options,
-        wd_options,
         weight_options,
     ):
         if model == "fcn" and not weights:
             continue
 
-        experiment_name = f"{conf_file_name.split('.')[0]}_{model}_{backbone}_{lr}_{loss}_{wd}_{weights}"
+        experiment_name = f"{conf_file_name.split('.')[0]}_{model}_{backbone}_{lr}_{loss}_{weights}"
 
         config_file = os.path.join("conf", conf_file_name)
 
@@ -58,7 +56,6 @@ if __name__ == "__main__":
             + f" module.backbone={backbone}"
             + f" module.learning_rate={lr}"
             + f" module.loss={loss}"
-            + f" module.weight_decay={wd}"
             + f" module.weights={weights}"
             + f" program.experiment_name={experiment_name}"
             + " trainer.devices=[GPU]"

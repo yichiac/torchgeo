@@ -13,9 +13,9 @@ module:
 datamodule:
   _target_: torchgeo.datamodules.L8BiomeDataModule
   root: "/projects/dali/data/l8biome"
-  batch_size: 64
+  batch_size: 32
   patch_size: 224
-  num_workers: 10
+  num_workers: 6
   crs: epsg:3857
   length: 25000
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --time=3-00:00:00
-#SBATCH --job-name=l7-res18-imagenet
+#SBATCH --job-name=l7-18-50-random-imagenet
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=128G
 #SBATCH --gres=gpu:A100:1

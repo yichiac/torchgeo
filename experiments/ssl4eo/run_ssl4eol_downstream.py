@@ -19,6 +19,7 @@ backbone_options = ["resnet50"]
 lr_options = [0.01, 0.001, 0.0001]
 loss_options = ["ce"]
 wd_options = [0, 0.1, 0.01]
+weight_options = [True]
 weight_options = ["/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt"]
 
 

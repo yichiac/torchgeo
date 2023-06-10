@@ -1,0 +1,288 @@
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+[rank: 0] Global seed set to 0
+Traceback (most recent call last):
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 171, in __init__
+    self.config_task()
+  File "/home/yichia3/torchgeo/torchgeo/trainers/segmentation.py", line 96, in config_task
+    self.model.encoder.load_state_dict(state_dict)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/segmentation_models_pytorch/encoders/resnet.py", line 70, in load_state_dict
+    super().load_state_dict(state_dict, **kwargs)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/torch/nn/modules/module.py", line 2041, in load_state_dict
+    raise RuntimeError('Error(s) in loading state_dict for {}:\n\t{}'.format(
+RuntimeError: Error(s) in loading state_dict for ResNetEncoder:
+	size mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yichia3/torchgeo/train.py", line 156, in <module>
+    main(conf)
+  File "/home/yichia3/torchgeo/train.py", line 92, in main
+    task: LightningModule = instantiate(conf.module)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+  File "/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'torchgeo.trainers.segmentation.SemanticSegmentationTask':
+RuntimeError('Error(s) in loading state_dict for ResNetEncoder:\n\tsize mismatch for conv1.weight: copying a param with shape torch.Size([64, 6, 7, 7]) from checkpoint, the shape in current model is torch.Size([64, 7, 7, 7]).')
+full_key: module
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.01 module.loss=ce module.weight_decay=0 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.01_ce_0_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.01 module.loss=ce module.weight_decay=0.1 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.01_ce_0.1_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.01 module.loss=ce module.weight_decay=0.01 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.01_ce_0.01_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.001 module.loss=ce module.weight_decay=0 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.001_ce_0_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.001 module.loss=ce module.weight_decay=0.1 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.001_ce_0.1_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.001 module.loss=ce module.weight_decay=0.01 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.001_ce_0.01_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.0001 module.loss=ce module.weight_decay=0 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.0001_ce_0_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.0001 module.loss=ce module.weight_decay=0.1 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.0001_ce_0.1_moco trainer.devices=[0]
+python train.py config_file=conf/ssl4eo_benchmark_tm_toa_cdl.yaml module.model=unet module.backbone=resnet50 module.learning_rate=0.0001 module.loss=ce module.weight_decay=0.01 module.weights=/projects/dali/data/pretrained_weights/ssl4eo-l-etm-sr-mocov2-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.mocotask/ssl4eo-l-etm-sr-mocov2-resnet50_backbone.ckpt program.experiment_name=ssl4eo_benchmark_tm_toa_cdl_unet_resnet50_0.0001_ce_0.01_moco trainer.devices=[0]

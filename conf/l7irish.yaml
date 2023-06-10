@@ -13,7 +13,7 @@ module:
 datamodule:
   _target_: torchgeo.datamodules.L7IrishDataModule
   root: "/projects/dali/data/l7irish"
-  batch_size: 64
+  batch_size: 32
   patch_size: 224
   num_workers: 10
   crs: epsg:3857
@@ -28,7 +28,7 @@ trainer:
   max_epochs: 100
 
 program:
-  seed: 0
+  seed: 1
   output_dir: "/scratch.local/yichia3/output/l7irish"
   log_dir: "/scratch.local/yichia3/logs/l7irish"
   overwrite: True
