@@ -1,0 +1,30 @@
+[rank: 0] Global seed set to 1
+/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python train.py config_file=conf/l8biome.yaml module.model= ...
+  rank_zero_warn(
+GPU available: True (cuda), used: True
+TPU available: False, using: 0 TPU cores
+IPU available: False, using: 0 IPUs
+HPU available: False, using: 0 HPUs
+/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/fabric/plugins/environments/slurm.py:165: PossibleUserWarning: The `srun` command is available on your system but is not used. HINT: If your intention is to run Lightning on SLURM, prepend your python command with `srun` like so: srun python train.py config_file=conf/l8biome.yaml module.model= ...
+  rank_zero_warn(
+You are using a CUDA device ('NVIDIA A100 80GB PCIe') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/pytorch/callbacks/model_checkpoint.py:612: UserWarning: Checkpoint directory /scratch.local/yichia3/output/l8biome/l8biome_unet_resnet18_0.001_ce_moco exists and is not empty.
+  rank_zero_warn(f"Checkpoint directory {dirpath} exists and is not empty.")
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+
+  | Name          | Type             | Params
+---------------------------------------------------
+0 | model         | Unet             | 14.4 M
+1 | loss          | CrossEntropyLoss | 0     
+2 | train_metrics | MetricCollection | 0     
+3 | val_metrics   | MetricCollection | 0     
+4 | test_metrics  | MetricCollection | 0     
+---------------------------------------------------
+14.4 M    Trainable params
+0         Non-trainable params
+14.4 M    Total params
+57.416    Total estimated model params size (MB)
+WARNING! The experiment directory, /scratch.local/yichia3/output/l8biome/l8biome_unet_resnet18_0.001_ce_moco, already exists, we might overwrite data in it!
+Sanity Checking: 0it [00:00, ?it/s]Sanity Checking:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/matplotlib/cm.py:478: RuntimeWarning: invalid value encountered in cast
+  xx = (xx * 255).astype(np.uint8)
+Sanity Checking DataLoader 0:  50%|█████     | 1/2 [00:01<00:01,  1.71s/it]Sanity Checking DataLoader 0: 100%|██████████| 2/2 [00:01<00:00,  1.04it/s]                                                                           Training: 0it [00:00, ?it/s]Training:   0%|          | 0/781 [00:00<?, ?it/s]Epoch 0:   0%|          | 0/781 [00:00<?, ?it/s] Epoch 0:   0%|          | 1/781 [00:02<35:28,  2.73s/it]Epoch 0:   0%|          | 1/781 [00:02<35:29,  2.73s/it, v_num=2_3]Epoch 0:   0%|          | 2/781 [00:02<18:13,  1.40s/it, v_num=2_3]Epoch 0:   0%|          | 2/781 [00:02<18:13,  1.40s/it, v_num=2_3]Epoch 0:   0%|          | 3/781 [00:03<13:29,  1.04s/it, v_num=2_3]Epoch 0:   0%|          | 3/781 [00:03<13:29,  1.04s/it, v_num=2_3]Epoch 0:   1%|          | 4/781 [00:03<10:25,  1.24it/s, v_num=2_3]Epoch 0:   1%|          | 4/781 [00:03<10:25,  1.24it/s, v_num=2_3]Epoch 0:   1%|          | 5/781 [00:03<08:35,  1.50it/s, v_num=2_3]Epoch 0:   1%|          | 5/781 [00:03<08:35,  1.50it/s, v_num=2_3]Epoch 0:   1%|          | 6/781 [00:03<07:22,  1.75it/s, v_num=2_3]

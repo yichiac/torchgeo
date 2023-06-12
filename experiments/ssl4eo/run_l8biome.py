@@ -18,7 +18,7 @@ model_options = ["unet"]
 backbone_options = ["resnet18", "resnet50"]
 lr_options = [0.001, 0.0003, 0.0001, 0.00003]
 loss_options = ["ce"]
-weight_options = [False]
+weight_options = [False, True]
 
 
 def do_work(work: "Queue[str]", gpu_idx: int) -> bool:

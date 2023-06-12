@@ -28,7 +28,7 @@ trainer:
   max_epochs: 100
 
 program:
-  seed: 0
+  seed: 1
   output_dir: "/scratch.local/yichia3/output/l8biome"
   log_dir: "/scratch.local/yichia3/logs/l8biome"
   overwrite: True
