@@ -1,0 +1,35 @@
+module:
+  _target_: torchgeo.trainers.SemanticSegmentationTask
+  loss: "ce"
+  model: "unet"
+  backbone: "resnet18"
+  weights: true
+  learning_rate: 1e-4
+  learning_rate_schedule_patience: 6
+  in_channels: 13
+  num_classes: 2
+  num_filters: 64
+  ignore_index: 0
+  weight_decay: 0
+  freeze_backbone: True
+
+datamodule:
+  _target_: torchgeo.datamodules.IndiaFieldsDataModule
+  root: "/Users/yc/projects/dali/data/s2_india_fields"
+  batch_size: 32
+  num_workers: 0
+
+trainer:
+  _target_: lightning.pytorch.Trainer
+  accelerator: gpu
+  devices:
+    - 0
+  min_epochs: 1
+  max_epochs: 5
+
+program:
+  seed: 0
+  output_dir: "/Users/yc/projects/dali/output"
+  log_dir: "/Users/yc/projects/dali/logs"
+  overwrite: True
+  experiment_name: india_fields
