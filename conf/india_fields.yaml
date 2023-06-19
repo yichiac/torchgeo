@@ -15,9 +15,10 @@ module:
 
 datamodule:
   _target_: torchgeo.datamodules.IndiaFieldsDataModule
-  root: "/Users/yc/projects/dali/data/s2_india_fields"
+  root: "/projects/dali/data/india_fields"
   batch_size: 32
-  num_workers: 0
+  patch_size: 264
+  num_workers: 6
 
 trainer:
   _target_: lightning.pytorch.Trainer
@@ -29,7 +30,7 @@ trainer:
 
 program:
   seed: 0
-  output_dir: "/Users/yc/projects/dali/output"
-  log_dir: "/Users/yc/projects/dali/logs"
+  output_dir: "/scratch.local/yichia3/india_fields/output"
+  log_dir: "/scratch.local/yichia3/india_fields/logs"
   overwrite: True
   experiment_name: india_fields
