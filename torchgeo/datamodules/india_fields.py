@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""L7 Irish datamodule."""
+"""India Fields 10k datamodule."""
 
 from typing import Any, Optional, Union
 
@@ -38,7 +38,7 @@ class IndiaFieldsDataModule(GeoDataModule):
             length: Length of each training epoch.
             num_workers: Number of workers for parallel data loading.
             **kwargs: Additional keyword arguments passed to
-                :class:`~torchgeo.datasets.L7Irish`.
+                :class:`~torchgeo.datasets.IndiaFields`.
         """
         super().__init__(
             IndiaFields,

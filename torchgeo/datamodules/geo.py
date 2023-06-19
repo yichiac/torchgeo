@@ -263,6 +263,11 @@ class GeoDataModule(BaseDataModule):
         dataset = self.val_dataset or self.dataset
         sampler = self.val_sampler or self.sampler
         batch_sampler = self.val_batch_sampler or self.batch_sampler
+
+        print("dataset", dataset)
+        print("sampler", sampler)
+        print("batch_sampler", batch_sampler)
+
         if dataset is not None and (sampler or batch_sampler) is not None:
             batch_size = self.val_batch_size or self.batch_size
             if batch_sampler is not None:

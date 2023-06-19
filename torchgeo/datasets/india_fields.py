@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""L7 Irish dataset."""
+"""India Fields 10k dataset."""
 
 import glob
 import os
