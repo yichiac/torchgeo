@@ -18,13 +18,13 @@ conf_file_name = "agrifieldnet.yaml"
 
 # Hyperparameter options
 model_options = ["unet"]
-backbone_options = ["resnet18"]
+backbone_options = ["resnet50"]
 lr_options = [0.001, 0.0003, 0.0001, 0.00003]
 loss_options = ["ce"]
-# weight_options = [False, True]
-weight_options = [ResNet18_Weights.SENTINEL2_ALL_MOCO]
-seed_options = [0, 1]
-weight_decay_options = [0, 1e-3]
+weight_options = [False]
+# weight_options = [ResNet18_Weights.SENTINEL2_ALL_MOCO]
+seed_options = [0, 1, 2]
+weight_decay_options = [1e-3]
 
 
 def do_work(work: "Queue[str]", gpu_idx: int) -> bool:

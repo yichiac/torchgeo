@@ -50,8 +50,6 @@ class SemanticSegmentationTask(LightningModule):
                 encoder_weights="imagenet" if weights is True else None,
                 in_channels=self.hyperparams["in_channels"],
                 classes=self.hyperparams["num_classes"],
-                encoder_depth=encoder_depth,
-                decoder_channels=decoder_channels,
             )
         elif self.hyperparams["model"] == "deeplabv3+":
             self.model = smp.DeepLabV3Plus(
@@ -59,8 +57,6 @@ class SemanticSegmentationTask(LightningModule):
                 encoder_weights="imagenet" if weights is True else None,
                 in_channels=self.hyperparams["in_channels"],
                 classes=self.hyperparams["num_classes"],
-                encoder_depth=encoder_depth,
-                decoder_channels=decoder_channels,
             )
         elif self.hyperparams["model"] == "fcn":
             self.model = FCN(
@@ -108,8 +104,7 @@ class SemanticSegmentationTask(LightningModule):
                     _, state_dict = utils.extract_backbone(weights)
                 else:
                     state_dict = get_weight(weights).get_state_dict(progress=True)
-                state_dict["conv1.weight"] = state_dict["conv1.weight"][:,:12,:,:]
-                self.model.encoder.load_state_dict(state_dict, strict=False)
+                self.model.encoder.load_state_dict(state_dict)
 
         # Freeze backbone
         if self.hyperparams.get("freeze_backbone", False) and self.hyperparams[
