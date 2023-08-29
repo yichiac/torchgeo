@@ -12,8 +12,8 @@ from ..datasets import AgriFieldNet
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import NonGeoDataModule
-from .utils import dataset_split
-
+# from .utils import dataset_split
+from .utils import dataset_split_train # this is for increasing training data exp
 
 class AgriFieldNetDataModule(NonGeoDataModule):
     """LightningDataModule implementation for the AgriFieldNet dataset.
@@ -28,6 +28,7 @@ class AgriFieldNetDataModule(NonGeoDataModule):
         batch_size: int = 64,
         patch_size: int = 256,
         num_workers: int = 0,
+        train_split_pct: float = 0.8,
         val_split_pct: float = 0.1,
         test_split_pct: float = 0.1,
         **kwargs: Any,
@@ -46,6 +47,7 @@ class AgriFieldNetDataModule(NonGeoDataModule):
         """
         super().__init__(AgriFieldNet, batch_size, num_workers, **kwargs)
         self.patch_size = _to_tuple(patch_size)
+        self.train_split_pct = train_split_pct
         self.val_split_pct = val_split_pct
         self.test_split_pct = test_split_pct
 
@@ -63,10 +65,13 @@ class AgriFieldNetDataModule(NonGeoDataModule):
         """
         if stage in ["fit", "validate", "test"]:
             self.dataset = AgriFieldNet(split="train", **self.kwargs)
-            self.train_dataset, self.val_dataset, self.test_dataset = dataset_split(
+            self.train_dataset, self.val_dataset, self.test_dataset = dataset_split_train(
                 dataset=self.dataset,
+                train_pct=self.train_split_pct,
                 val_pct=self.val_split_pct,
                 test_pct=self.test_split_pct,
             )
+            print("======== test train length ============")
+            print(len(self.train_dataset), len(self.val_dataset), len(self.test_dataset))
         if stage in ["predict"]:
             self.predict_dataset = AgriFieldNet(split="predict", **self.kwargs)

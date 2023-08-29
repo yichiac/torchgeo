@@ -18,6 +18,7 @@ datamodule:
   batch_size: 32
   patch_size: 256
   num_workers: 10
+  train_split_pct: 0.8
 
 trainer:
   _target_: lightning.pytorch.Trainer
@@ -25,8 +26,8 @@ trainer:
   max_epochs: 100
 
 program:
-  seed: 2
+  seed: 0
   output_dir: "/home/yichia3/scratch/agrifieldnet/output"
   log_dir: "/home/yichia3/scratch/agrifieldnet/logs"
   overwrite: True
-  experiment_name: agrifieldnet
+  experiment_name: agrifieldnet_train

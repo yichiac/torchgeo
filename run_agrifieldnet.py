@@ -8,7 +8,7 @@ import os
 import subprocess
 from multiprocessing import Process, Queue
 
-from torchgeo.models import ResNet18_Weights
+# from torchgeo.models import ResNet18_Weights
 # from torchgeo.models import ResNet50_Weights
 
 # list of GPU IDs that we want to use, one job will be started for every ID in the list
@@ -19,11 +19,12 @@ conf_file_name = "agrifieldnet.yaml"
 # Hyperparameter options
 model_options = ["unet"]
 backbone_options = ["resnet50"]
-lr_options = [0.001, 0.0003, 0.0001, 0.00003]
+lr_options = [1e-4]
 loss_options = ["ce"]
 weight_options = [False]
 # weight_options = [ResNet18_Weights.SENTINEL2_ALL_MOCO]
-seed_options = [0, 1, 2]
+seed_options = [0]
+train_split_pcts = [0.1] # 0.2, 0.5, 0.7, 0.8
 weight_decay_options = [1e-3]
 
 
@@ -41,26 +42,28 @@ def do_work(work: "Queue[str]", gpu_idx: int) -> bool:
 if __name__ == "__main__":
     work: "Queue[str]" = Queue()
 
-    for model, backbone, lr, loss, weights, weight_decay, seed in itertools.product(
+    for model, backbone, lr, loss, weights, weight_decay, train_split_pct, seed in itertools.product(
         model_options,
         backbone_options,
         lr_options,
         loss_options,
         weight_options,
         weight_decay_options,
+        train_split_pcts,
         seed_options,
     ):
         if model == "fcn" and not weights:
             continue
 
         experiment_name = (
-            f"{conf_file_name.split('.')[0]}_"
+            f"train_{conf_file_name.split('.')[0]}_"
             f"{model}_"
             f"{backbone}_"
             f"{lr}_"
             f"{loss}_"
             f"{weights}_"
             f"{weight_decay}_"
+            f"{train_split_pct}_"
             f"{seed}"
         )
 
@@ -74,6 +77,7 @@ if __name__ == "__main__":
             + f" module.learning_rate={lr}"
             + f" module.loss={loss}"
             + f" module.weights={weights}"
+            + f" module.train_split_pct={train_split_pct}"
             + f" program.experiment_name={experiment_name}"
             + f" program.seed={seed}"
             + " trainer.devices=[GPU]"

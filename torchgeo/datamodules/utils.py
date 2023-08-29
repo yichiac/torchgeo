@@ -19,6 +19,46 @@ class MisconfigurationException(Exception):
     """Exception used to inform users of misuse with Lightning."""
 
 
+def dataset_split_train(
+    dataset: Union[TensorDataset, NonGeoDataset],
+    train_pct: float,
+    val_pct: float,
+    test_pct: Optional[float] = None,
+) -> list[Subset[Any]]:
+    """Split a torch Dataset into train/val/test sets.
+
+    If ``test_pct`` is not set then only train and validation splits are returned.
+
+    .. deprecated:: 0.4
+       Use :func:`torch.utils.data.random_split` instead, ``random_split``
+       now supports percentages as of PyTorch 1.13.
+
+    Args:
+        dataset: dataset to be split into train/val or train/val/test subsets
+        train_pct: percentage of samples to be in train set
+        val_pct: percentage of samples to be in validation set
+        test_pct: (Optional) percentage of samples to be in test set
+
+    Returns:
+        a list of the subset datasets. Either [train, val] or [train, val, test]
+    """
+    if test_pct is None:
+        val_length = round(len(dataset) * val_pct)
+        train_length = len(dataset) - val_length
+        return random_split(
+            dataset, [train_length, val_length], generator=Generator().manual_seed(0)
+        )
+    else:
+        print(train_pct)
+        train_length = round(len(dataset) * train_pct)
+        val_length = round(len(dataset) * val_pct)
+        test_length = round(len(dataset) * test_pct)
+        train_dataset = Subset(dataset, range(train_length))
+        val_dataset = Subset(dataset, range(round(len(dataset)*0.8), round(len(dataset)*0.9)))
+        test_dataset = Subset(dataset, range(round(len(dataset)*0.9), len(dataset)))
+        list_subsets = [train_dataset, val_dataset, test_dataset]
+        return list_subsets
+
 def dataset_split(
     dataset: Union[TensorDataset, NonGeoDataset],
     val_pct: float,
