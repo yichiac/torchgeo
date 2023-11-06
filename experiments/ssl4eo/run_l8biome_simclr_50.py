@@ -16,10 +16,10 @@ conf_file_name = "l8biome.yaml"
 # Hyperparameter options
 model_options = ["unet"]
 backbone_options = ["resnet50"]
-lr_options = [0.001, 0.0003, 0.0001, 0.00003]
+lr_options = [0.001]
 loss_options = ["ce"]
 weight_options = ["/projects/dali/data/pretrained_weights/ssl4eo-l-oli-tirs-toa-simclr-resnet50/torchgeo.datamodules.ssl4eollmdbdatamodule_torchgeo.trainers.simclrtask/ssl4eo-l-oli-tirs-toa-simclr-resnet50_backbone.ckpt"]
-
+seed_options = [0, 1, 2]
 
 def do_work(work: "Queue[str]", gpu_idx: int) -> bool:
     """Process for each ID in GPUS."""
@@ -35,17 +35,18 @@ def do_work(work: "Queue[str]", gpu_idx: int) -> bool:
 if __name__ == "__main__":
     work: "Queue[str]" = Queue()
 
-    for model, backbone, lr, loss, weights in itertools.product(
+    for model, backbone, lr, loss, weights, seed in itertools.product(
         model_options,
         backbone_options,
         lr_options,
         loss_options,
         weight_options,
+        seed_options,
     ):
         if model == "fcn" and not weights:
             continue
 
-        experiment_name = f"{conf_file_name.split('.')[0]}_{model}_{backbone}_{lr}_{loss}_moco"
+        experiment_name = f"{conf_file_name.split('.')[0]}_{model}_{backbone}_{lr}_{loss}_{seed}_simclr_default"
 
         config_file = os.path.join("conf", conf_file_name)
 
@@ -58,6 +59,7 @@ if __name__ == "__main__":
             + f" module.loss={loss}"
             + f" module.weights={weights}"
             + f" program.experiment_name={experiment_name}"
+            + f" program.seed={seed}"
             + " trainer.devices=[GPU]"
         )
         command = command.strip()

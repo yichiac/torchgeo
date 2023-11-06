@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --time=3-00:00:00
-#SBATCH --job-name=simclr-l7-50
+#SBATCH --job-name=l750simclr-new
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=128G
 #SBATCH --gres=gpu:A100:1

@@ -1,0 +1,4 @@
+  File "/home/yichia3/torchgeo/experiments/ssl4eo/run_l7irish.py", line 38
+    for model, backbone, lr, loss, weights seed in itertools.product(
+                                           ^^^^
+SyntaxError: invalid syntax

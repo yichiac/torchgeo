@@ -9,13 +9,14 @@ module:
   ignore_index: 0
   learning_rate: 1e-3
   learning_rate_schedule_patience: 6
+  freeze_backbone: True
 
 datamodule:
   _target_: torchgeo.datamodules.L7IrishDataModule
   root: "/projects/dali/data/l7irish"
   batch_size: 32
   patch_size: 224
-  num_workers: 10
+  num_workers: 6
   crs: epsg:3857
   length: 25000
 
@@ -28,7 +29,7 @@ trainer:
   max_epochs: 100
 
 program:
-  seed: 1
+  seed: 2
   output_dir: "/scratch.local/yichia3/output/l7irish"
   log_dir: "/scratch.local/yichia3/logs/l7irish"
   overwrite: True

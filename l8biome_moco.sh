@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #SBATCH --time=3-00:00:00
-#SBATCH --job-name=moco-l8-18
+#SBATCH --job-name=l818moco-new
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=128G
 #SBATCH --gres=gpu:A100:1
