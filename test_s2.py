@@ -1,3 +1,4 @@
 from torchgeo.datasets import Sentinel2
 
-Sentinel2(paths=".data/sentinel2/")
+Sentinel2(paths="/projects/dali/data/sentinel2/")
+print('done')
