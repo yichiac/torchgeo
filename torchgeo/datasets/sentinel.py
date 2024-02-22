@@ -265,14 +265,35 @@ class Sentinel2(Sentinel):
 
     # https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/naming-convention
     # https://sentinel.esa.int/documents/247904/685211/Sentinel-2-MSI-L2A-Product-Format-Specifications.pdf
-    filename_glob = "T*_*_{}*.*"
+    filename_glob = "*"
+    "crop_type_mapping_sentinel2%2F-24_-19_2020%2FT00AAA_20200701T000000_B01.tif"
     filename_regex = r"""
-        ^T(?P<tile>\d{{2}}[A-Z]{{3}})
-        _(?P<date>\d{{8}}T\d{{6}})
-        _(?P<band>B[018][\dA])
-        (?:_(?P<resolution>{}m))?
+        ^crop_type_mapping_sentinel2%2F-
+        (?P<latitude>\d+)_-(?P<longitude>\d+)_
+        (?P<year>\d{4})
+        %2FT00AAA_
+        (?P<date>\d{8}T\d{6})_
+        (?P<band>B[0-9A-Z]{2})
         \..*$
     """
+    # filename_regex = r"""
+    #     ^crop_type_mapping_sentinel22F
+    #     _(?P<latitude>\d+)__(?P<longitude>\d+)
+    #     _(?P<year>\d{4})
+    #     2FT00AAA
+    #     _(?P<date>\d{8}T\d{6})
+    #     _(?P<band>B[0-9A-Z]{2})
+    #     \..*$
+    # """
+
+    # filename_glob = "T*_*_{}*.*"
+    # filename_regex = r"""
+    #     ^T(?P<tile>\d{{2}}[A-Z]{{3}})
+    #     _(?P<date>\d{{8}}T\d{{6}})
+    #     _(?P<band>B[018][\dA])
+    #     (?:_(?P<resolution>{}m))?
+    #     \..*$
+    # """
     date_format = "%Y%m%dT%H%M%S"
 
     # https://gisgeography.com/sentinel-2-bands-combinations/
@@ -325,7 +346,7 @@ class Sentinel2(Sentinel):
         """
         bands = bands or self.all_bands
         self.filename_glob = self.filename_glob.format(bands[0])
-        self.filename_regex = self.filename_regex.format(res)
+        # self.filename_regex = self.filename_regex.format(res)
 
         super().__init__(paths, crs, res, bands, transforms, cache)
 
