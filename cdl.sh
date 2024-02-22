@@ -2,7 +2,7 @@
 
 #SBATCH --time=03:00:00
 #SBATCH --mem=80G
-#SBATCH --job-name=cdl_test_s2
+#SBATCH --job-name=cdlsentinel2
 #SBATCH --partition=dali
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=32
@@ -16,4 +16,4 @@
 spack env activate dali
 
 cd ~/torchgeo
-python3 test_s2.py
+python3 test_cdlsentinel2.py
