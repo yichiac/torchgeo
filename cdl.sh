@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-#SBATCH --time=03:00:00
-#SBATCH --mem=80G
+#SBATCH --time=24:00:00
+#SBATCH --mem=128G
 #SBATCH --job-name=cdlsentinel2
 #SBATCH --partition=dali
 #SBATCH --nodes=1
@@ -16,4 +16,4 @@
 spack env activate dali
 
 cd ~/torchgeo
-python3 test_cdlsentinel2.py
+python3 -m torchgeo fit --config experiments/torchgeo/conf/cdlsentinel2.yaml
