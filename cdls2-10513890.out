@@ -13,14 +13,14 @@ LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
 1 | train_metrics | MetricCollection | 0     
 2 | val_metrics   | MetricCollection | 0     
 3 | test_metrics  | MetricCollection | 0     
-4 | model         | Unet             | 32.6 M
+4 | model         | Unet             | 14.4 M
 ---------------------------------------------------
-32.6 M    Trainable params
+14.4 M    Trainable params
 0         Non-trainable params
-32.6 M    Total params
-130.287   Total estimated model params size (MB)
+14.4 M    Total params
+57.515    Total estimated model params size (MB)
 SLURM auto-requeueing enabled. Setting signal handlers.
 Converting CDL CRS from EPSG:5070 to EPSG:3857
 Converting CDL res from 30.0 to 10
-Sanity Checking: |          | 0/? [00:00<?, ?it/s]/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:441: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=31` in the `DataLoader` to improve performance.
-Sanity Checking:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]/var/spool/slurmd/job10498341/slurm_script: line 19: 57955 Segmentation fault      (core dumped) python3 -m torchgeo fit --config experiments/torchgeo/conf/cdlsentinel2.yaml
+Sanity Checking: |          | 0/? [00:00<?, ?it/s]/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:441: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=63` in the `DataLoader` to improve performance.
+Sanity Checking:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]/var/spool/slurmd/job10513890/slurm_script: line 19: 104841 Segmentation fault      (core dumped) python3 -m torchgeo fit --config experiments/torchgeo/conf/cdlsentinel2.yaml

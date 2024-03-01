@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 #SBATCH --time=24:00:00
-#SBATCH --mem=128G
-#SBATCH --job-name=cdlsentinel2
+#SBATCH --mem=256G
+#SBATCH --job-name=cdls2
 #SBATCH --partition=dali
 #SBATCH --nodes=1
-#SBATCH --ntasks-per-node=32
+#SBATCH --ntasks-per-node=64
 #SBATCH --gres=gpu:A100:1
 #SBATCH --mail-type=END
 #SBATCH --mail-user=yichia3@illinois.edu
