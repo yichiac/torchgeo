@@ -1,3 +1,0 @@
-usage: __main__.py [-h] [-c CONFIG] [--print_config [=flags]]
-                   {fit,validate,test,predict} ...
-error: Validation failed: No action for key "trainer.num_workers" to check its value.

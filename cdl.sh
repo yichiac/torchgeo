@@ -1,18 +1,19 @@
 #!/usr/bin/env bash
 
 #SBATCH --time=24:00:00
-#SBATCH --mem=256G
-#SBATCH --job-name=cdls2
-#SBATCH --partition=dali
+#SBATCH --mem=200G
+#SBATCH --job-name=cdl-A100-single
+#SBATCH --partition=gpuA100x4
+#SBATCH --gpus=1
+#SBATCH --account=bcnh-delta-gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=64
-#SBATCH --gres=gpu:A100:1
 #SBATCH --mail-type=END
 #SBATCH --mail-user=yichia3@illinois.edu
 #SBATCH --mail-type=FAIL
 #SBATCH --output=%x-%j.out
 
-. /projects/dali/spack/share/spack/setup-env.sh
+. /projects/bcnh/spack/share/spack/setup-env.sh
 spack env activate dali
 
 cd ~/torchgeo

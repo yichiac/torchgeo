@@ -1,26 +1,0 @@
-[rank: 0] Seed set to 0
-GPU available: True (cuda), used: True
-TPU available: False, using: 0 TPU cores
-IPU available: False, using: 0 IPUs
-HPU available: False, using: 0 HPUs
-/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/pytorch/trainer/connectors/logger_connector/logger_connector.py:75: Starting from v1.9.0, `tensorboardX` has been removed as a dependency of the `lightning.pytorch` package, due to potential conflicts with other packages in the ML ecosystem. For this reason, `logger=True` will use `CSVLogger` as the default logger, unless the `tensorboard` or `tensorboardX` packages are found. Please `pip install lightning[extra]` or one of them to enable TensorBoard support by default
-You are using a CUDA device ('NVIDIA A100 80GB PCIe') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-
-  | Name          | Type             | Params
----------------------------------------------------
-0 | criterion     | CrossEntropyLoss | 0     
-1 | train_metrics | MetricCollection | 0     
-2 | val_metrics   | MetricCollection | 0     
-3 | test_metrics  | MetricCollection | 0     
-4 | model         | Unet             | 14.4 M
----------------------------------------------------
-14.4 M    Trainable params
-0         Non-trainable params
-14.4 M    Total params
-57.515    Total estimated model params size (MB)
-SLURM auto-requeueing enabled. Setting signal handlers.
-Converting CDL CRS from EPSG:5070 to EPSG:3857
-Converting CDL res from 30.0 to 10
-Sanity Checking: |          | 0/? [00:00<?, ?it/s]/projects/dali/spack/var/spack/environments/dali/.spack-env/view/lib/python3.10/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:441: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=31` in the `DataLoader` to improve performance.
-Sanity Checking:   0%|          | 0/2 [00:00<?, ?it/s]Sanity Checking DataLoader 0:   0%|          | 0/2 [00:00<?, ?it/s]/var/spool/slurmd/job10513884/slurm_script: line 19: 103927 Segmentation fault      (core dumped) python3 -m torchgeo fit --config experiments/torchgeo/conf/cdlsentinel2.yaml
