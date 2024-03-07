@@ -18,7 +18,7 @@ data:
   init_args:
     batch_size: 32
     patch_size: 32
-    num_workers: 8
+    num_workers: 32
   dict_kwargs:
     cdl_paths: "/scratch/bcnh/ychang3/data/cdl"
     cdl_download: True

@@ -2,12 +2,13 @@
 
 #SBATCH --time=24:00:00
 #SBATCH --mem=200G
-#SBATCH --job-name=cdl-A100-single-work32
+#SBATCH --job-name=cdl-A100-multi-work32
 #SBATCH --partition=gpuA100x4
-#SBATCH --gpus=1
+#SBATCH --gpus-per-node=4
 #SBATCH --account=bcnh-delta-gpu
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=64
+#SBATCH --mail-type=BEGIN
 #SBATCH --mail-type=END
 #SBATCH --mail-user=yichia3@illinois.edu
 #SBATCH --mail-type=FAIL
