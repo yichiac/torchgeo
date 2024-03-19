@@ -1,7 +1,9 @@
 trainer:
-  max_epochs: 10
+  max_epochs: 1
   accelerator: "gpu"
   devices: "auto"
+  profiler: "advanced"
+  limit_train_batches: 0.001
 model:
   class_path: SemanticSegmentationTask
   init_args:

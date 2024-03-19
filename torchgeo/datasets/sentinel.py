@@ -265,9 +265,9 @@ class Sentinel2(Sentinel):
 
     # https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/naming-convention
     # https://sentinel.esa.int/documents/247904/685211/Sentinel-2-MSI-L2A-Product-Format-Specifications.pdf
-    filename_glob = "T*_*_{}*.*"
+    # filename_glob = "T*_*_{}*.*"
+    filename_glob = "*"
     filename_regex = r"""
-        (?P<directory>-\d+_-?\d+_\d{4})\/
         T00AAA_
         (?P<date>\d{8}T\d{6})_
         (?P<band>B[0-9A-Z]{2})
@@ -325,7 +325,7 @@ class Sentinel2(Sentinel):
         """
         bands = bands or self.all_bands
         self.filename_glob = self.filename_glob.format(bands[0])
-        self.filename_regex = self.filename_regex.format(res)
+        # self.filename_regex = self.filename_regex.format(res)
 
         super().__init__(paths, crs, res, bands, transforms, cache)
 
