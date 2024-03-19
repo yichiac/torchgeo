@@ -267,10 +267,10 @@ class Sentinel2(Sentinel):
     # https://sentinel.esa.int/documents/247904/685211/Sentinel-2-MSI-L2A-Product-Format-Specifications.pdf
     filename_glob = "T*_*_{}*.*"
     filename_regex = r"""
-        ^T(?P<tile>\d{{2}}[A-Z]{{3}})
-        _(?P<date>\d{{8}}T\d{{6}})
-        _(?P<band>B[018][\dA])
-        (?:_(?P<resolution>{}m))?
+        (?P<directory>-\d+_-?\d+_\d{4})\/
+        T00AAA_
+        (?P<date>\d{8}T\d{6})_
+        (?P<band>B[0-9A-Z]{2})
         \..*$
     """
     date_format = "%Y%m%dT%H%M%S"
