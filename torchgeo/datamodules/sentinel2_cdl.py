@@ -64,7 +64,8 @@ class Sentinel2CDLDataModule(GeoDataModule):
         )
 
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std),
+            # For SSL4EO-S12
+            K.Normalize(mean=torch.tensor(0), std=torch.tensor(10000)),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -75,7 +76,8 @@ class Sentinel2CDLDataModule(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std), data_keys=["image", "mask"]
+            K.Normalize(mean=torch.tensor(0), std=torch.tensor(10000)),
+            data_keys=["image", "mask"],
         )
 
     def setup(self, stage: str) -> None:
