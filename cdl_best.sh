@@ -2,7 +2,7 @@
 
 #SBATCH --time=48:00:00
 #SBATCH --mem=128G
-#SBATCH --job-name=cdl-profile-tap
+#SBATCH --job-name=cdl-profile-everything
 #SBATCH --partition=gpuA100x4
 #SBATCH --gpus-per-node=1
 #SBATCH --account=bcnh-delta-gpu
@@ -19,5 +19,4 @@
 spack env activate dali
 
 cd ~/torchgeo
-python3 -m torchgeo fit --config experiments/torchgeo/conf/sentinel2_cdl.yaml
-
+python3 -m torchgeo fit --config experiments/torchgeo/conf/sentinel2_cdl_tap_COG.yaml
