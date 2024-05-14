@@ -73,11 +73,8 @@ class AgriFieldNet(RasterDataset):
     .. versionadded:: 0.6
     """
 
-    filename_regex = r"""
-        ^ref_agrifieldnet_competition_v1_source_
-        (?P<unique_folder_id>[a-z0-9]{5})
-        _(?P<band>B[0-9A-Z]{2})_10m
-    """
+    filename_glob = "T00AAA_20210701T000000_B01_B02_B03_B04_B05_B06_B07_B08_B09_B10_B11_B12_B8A.tif"
+    filename_regex = "T00AAA_20210701T000000_B01_B02_B03_B04_B05_B06_B07_B08_B09_B10_B11_B12_B8A.tif"
 
     rgb_bands = ['B04', 'B03', 'B02']
     all_bands = [
@@ -89,28 +86,23 @@ class AgriFieldNet(RasterDataset):
         'B06',
         'B07',
         'B08',
-        'B8A',
         'B09',
+        'B10',
         'B11',
         'B12',
+        'B8A',
     ]
 
     cmap = {
         0: (0, 0, 0, 255),
         1: (255, 211, 0, 255),
-        2: (255, 37, 37, 255),
+        2: (37, 111, 0, 255),
         3: (0, 168, 226, 255),
-        4: (255, 158, 9, 255),
-        5: (37, 111, 0, 255),
-        6: (255, 255, 0, 255),
-        8: (111, 166, 0, 255),
-        9: (0, 175, 73, 255),
-        13: (222, 166, 9, 255),
-        14: (222, 166, 9, 255),
-        15: (124, 211, 255, 255),
-        16: (226, 0, 124, 255),
-        36: (137, 96, 83, 255),
+        4: (137, 96, 83, 255),
+        5: (128, 128, 128, 255),
     }
+
+    separate_files = False
 
     def __init__(
         self,
@@ -175,23 +167,25 @@ class AgriFieldNet(RasterDataset):
                 f'query: {query} not found in index with bounds: {self.bounds}'
             )
 
-        data_list: list[Tensor] = []
-        filename_regex = re.compile(self.filename_regex, re.VERBOSE)
-        for band in self.bands:
-            band_filepaths = []
-            for filepath in filepaths:
-                filename = os.path.basename(filepath)
-                directory = os.path.dirname(filepath)
-                match = re.match(filename_regex, filename)
-                if match:
-                    if 'band' in match.groupdict():
-                        start = match.start('band')
-                        end = match.end('band')
-                        filename = filename[:start] + band + filename[end:]
-                filepath = os.path.join(directory, filename)
-                band_filepaths.append(filepath)
-            data_list.append(self._merge_files(band_filepaths, query))
-        image = torch.cat(data_list)
+        image = self._merge_files(filepaths, query, self.band_indexes)
+
+        # data_list: list[Tensor] = []
+        # filename_regex = re.compile(self.filename_regex, re.VERBOSE)
+        # for band in self.bands:
+        #     band_filepaths = []
+        #     for filepath in filepaths:
+        #         filename = os.path.basename(filepath)
+        #         directory = os.path.dirname(filepath)
+        #         match = re.match(filename_regex, filename)
+        #         if match:
+        #             if 'band' in match.groupdict():
+        #                 start = match.start('band')
+        #                 end = match.end('band')
+        #                 filename = filename[:start] + band + filename[end:]
+        #         filepath = os.path.join(directory, filename)
+        #         band_filepaths.append(filepath)
+        #     data_list.append(self._merge_files(band_filepaths, query))
+        # image = torch.cat(data_list)
 
         mask_filepaths = []
         for root, dirs, files in os.walk(os.path.join(self.paths, 'train_labels')):

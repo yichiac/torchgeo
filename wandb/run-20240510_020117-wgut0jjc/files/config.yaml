@@ -1,0 +1,108 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.13
+    cli_version: 0.16.6
+    framework: torch
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1715331677.0
+    t:
+      1:
+      - 1
+      - 41
+      - 49
+      - 55
+      - 63
+      - 74
+      - 79
+      2:
+      - 1
+      - 41
+      - 49
+      - 55
+      - 63
+      - 74
+      - 79
+      3:
+      - 7
+      - 13
+      - 23
+      4: 3.10.13
+      5: 0.16.6
+      8:
+      - 5
+      13: linux-x86_64
+    m:
+    - 1: trainer/global_step
+      6:
+      - 3
+    - 1: val_loss
+      5: 1
+      6:
+      - 1
+    - 1: val_MulticlassAccuracy
+      5: 1
+      6:
+      - 1
+    - 1: val_MulticlassJaccardIndex
+      5: 1
+      6:
+      - 1
+    - 1: epoch
+      5: 1
+      6:
+      - 1
+    - 1: train_loss
+      5: 1
+      6:
+      - 1
+    - 1: train_MulticlassAccuracy
+      5: 1
+      6:
+      - 1
+    - 1: train_MulticlassJaccardIndex
+      5: 1
+      6:
+      - 1
+ignore:
+  desc: null
+  value: weights
+model:
+  desc: null
+  value: unet
+backbone:
+  desc: null
+  value: resnet50
+in_channels:
+  desc: null
+  value: 13
+num_classes:
+  desc: null
+  value: 6
+num_filters:
+  desc: null
+  value: 1
+loss:
+  desc: null
+  value: ce
+class_weights:
+  desc: null
+  value: null
+ignore_index:
+  desc: null
+  value: 0
+lr:
+  desc: null
+  value: 0.001
+patience:
+  desc: null
+  value: 10
+freeze_backbone:
+  desc: null
+  value: true
+freeze_decoder:
+  desc: null
+  value: false
