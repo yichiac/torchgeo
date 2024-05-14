@@ -62,20 +62,22 @@ class SouthAfricaCropType(RasterDataset):
     .. versionadded:: 0.6
     """
 
-    s1_regex = r"""
-        ^(?P<field_id>\d+)
-        _(?P<date>\d{4}_07_\d{2})
-        _(?P<band>[VH]{2})
-        _10m"""
-    s2_regex = r"""
-        ^(?P<field_id>\d+)
-        _(?P<date>\d{4}_07_\d{2})
-        _(?P<band>(B[0-9A-Z]{2}))
-        _10m"""
+    # s1_regex = r"""
+    #     ^(?P<field_id>\d+)
+    #     _(?P<date>\d{4}_07_\d{2})
+    #     _(?P<band>[VH]{2})
+    #     _10m"""
+    # s2_regex = r"""
+    #     ^(?P<field_id>\d+)
+    #     _(?P<date>\d{4}_07_\d{2})
+    #     _(?P<band>(B[0-9A-Z]{2}))
+    #     _10m"""
+    filename_glob = "T00AAA_20170701T000000_combined.tif"
+    s2_regex = "T00AAA_20170701T000000_combined.tif"
     filename_regex = s2_regex
     date_format = '%Y_%m_%d'
     rgb_bands = ['B04', 'B03', 'B02']
-    s1_bands = ['VH', 'VV']
+    # s1_bands = ['VH', 'VV']
     s2_bands = [
         'B01',
         'B02',
@@ -85,24 +87,23 @@ class SouthAfricaCropType(RasterDataset):
         'B06',
         'B07',
         'B08',
-        'B8A',
         'B09',
         'B11',
         'B12',
+        'B8A',
     ]
-    all_bands: list[str] = s1_bands + s2_bands
+    # all_bands: list[str] = s1_bands + s2_bands
+    all_bands = s2_bands
     cmap = {
         0: (0, 0, 0, 255),
         1: (255, 211, 0, 255),
-        2: (255, 37, 37, 255),
+        2: (37, 111, 0, 255),
         3: (0, 168, 226, 255),
-        4: (255, 158, 9, 255),
-        5: (37, 111, 0, 255),
-        6: (255, 255, 0, 255),
-        7: (222, 166, 9, 255),
-        8: (111, 166, 0, 255),
-        9: (0, 175, 73, 255),
+        4: (137, 96, 83, 255),
+        5: (128, 128, 128, 255),
     }
+
+    separate_files = False
 
     def __init__(
         self,
@@ -164,57 +165,63 @@ class SouthAfricaCropType(RasterDataset):
                 f'query: {query} not found in index with bounds: {self.bounds}'
             )
 
-        data_list: list[Tensor] = []
-        filename_regex = re.compile(self.filename_regex, re.VERBOSE)
+        # data_list: list[Tensor] = []
+        # filename_regex = re.compile(self.filename_regex, re.VERBOSE)
 
         # Loop through matched filepaths and find all unique field ids
-        field_ids: list[str] = []
+        # field_ids: list[str] = []
         # Store date in July for s1 and s2 we want to use for each sample
-        imagery_dates: dict[str, dict[str, str]] = {}
+        # imagery_dates: dict[str, dict[str, str]] = {}
 
-        for filepath in filepaths:
-            filename = os.path.basename(filepath)
-            match = re.match(filename_regex, filename)
-            if match:
-                field_id = match.group('field_id')
-                date = match.group('date')
-                band = match.group('band')
-                band_type = 's1' if band in self.s1_bands else 's2'
-                if field_id not in field_ids:
-                    field_ids.append(field_id)
-                    imagery_dates[field_id] = {'s1': '', 's2': ''}
-                if (
-                    date.split('_')[1] == '07'
-                    and not imagery_dates[field_id][band_type]
-                ):
-                    imagery_dates[field_id][band_type] = date
+        # for filepath in filepaths:
+        #     filename = os.path.basename(filepath)
+        #     match = re.match(filename_regex, filename)
+        #     if match:
+        #         field_id = match.group('field_id')
+        #         date = match.group('date')
+        #         band = match.group('band')
+        #         band_type = 's1' if band in self.s1_bands else 's2'
+        #         if field_id not in field_ids:
+        #             field_ids.append(field_id)
+        #             imagery_dates[field_id] = {'s1': '', 's2': ''}
+        #         if (
+        #             date.split('_')[1] == '07'
+        #             and not imagery_dates[field_id][band_type]
+        #         ):
+        #             imagery_dates[field_id][band_type] = date
 
         # Create Tensors for each band using stored dates
-        for band in self.bands:
-            band_type = 's1' if band in self.s1_bands else 's2'
-            band_filepaths = []
-            for field_id in field_ids:
-                date = imagery_dates[field_id][band_type]
-                filepath = os.path.join(
-                    self.paths,
-                    'train',
-                    'imagery',
-                    band_type,
-                    field_id,
-                    date,
-                    f'{field_id}_{date}_{band}_10m.tif',
-                )
-                band_filepaths.append(filepath)
-            data_list.append(self._merge_files(band_filepaths, query))
-        image = torch.cat(data_list)
+        # for band in self.bands:
+        #     band_type = 's1' if band in self.s1_bands else 's2'
+        #     band_filepaths = []
+        #     for field_id in field_ids:
+        #         date = imagery_dates[field_id][band_type]
+        #         filepath = os.path.join(
+        #             self.paths,
+        #             'train',
+        #             'imagery',
+        #             band_type,
+        #             field_id,
+        #             date,
+        #             f'{field_id}_{date}_{band}_10m.tif',
+        #         )
+        #         band_filepaths.append(filepath)
+        #     data_list.append(self._merge_files(band_filepaths, query))
+        # image = torch.cat(data_list)
+        image = self._merge_files(filepaths, query, self.band_indexes)
 
         # Add labels for each field
         mask_filepaths: list[str] = []
-        for field_id in field_ids:
-            file_path = filepath = os.path.join(
-                self.paths, 'train', 'labels', f'{field_id}.tif'
-            )
-            mask_filepaths.append(file_path)
+        for root, dirs, files in os.walk(os.path.join(self.paths, 'train', 'labels')):
+            for file in files:
+                if not file.endswith('_field_ids.tif') and file.endswith('.tif'):
+                    file_path = os.path.join(root, file)
+                    mask_filepaths.append(file_path)
+        # for field_id in field_ids:
+        #     file_path = filepath = os.path.join(
+        #         self.paths, 'train', 'labels', f'{field_id}.tif'
+        #     )
+        #     mask_filepaths.append(file_path)
 
         mask = self._merge_files(mask_filepaths, query)
 
