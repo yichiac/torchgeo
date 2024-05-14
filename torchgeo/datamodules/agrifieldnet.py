@@ -50,7 +50,7 @@ class AgriFieldNetDataModule(GeoDataModule):
         )
 
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std),
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -58,6 +58,10 @@ class AgriFieldNetDataModule(GeoDataModule):
             extra_args={
                 DataKey.MASK: {'resample': Resample.NEAREST, 'align_corners': None}
             },
+        )
+
+        self.aug = AugmentationSequential(
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=["image", "mask"]
         )
 
     def setup(self, stage: str) -> None:
