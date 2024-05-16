@@ -113,16 +113,9 @@ class SouthAmericaSoybean(RasterDataset):
         self.download = download
         self.checksum = checksum
         self.years = years
-        self.ordinal_map = torch.full((max(self.cmap.keys()) + 1,), 4, dtype=self.dtype)
-        self.ordinal_cmap = torch.zeros((max(self.cmap.keys()) + 1, 4), dtype=torch.uint8)
-
         self._verify()
 
         super().__init__(paths, crs, res, transforms=transforms, cache=cache)
-
-        for v, k in enumerate(self.classes):
-            self.ordinal_map[k] = v
-            self.ordinal_cmap[v] = torch.tensor(self.cmap[k])
 
     def _verify(self) -> None:
         """Verify the integrity of the dataset."""
