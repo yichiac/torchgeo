@@ -10,7 +10,7 @@ import torch
 from kornia.constants import DataKey, Resample
 
 from ..datasets import SouthAfricaCropType, random_bbox_assignment
-from ..samplers import GridGeoSampler, RandomBatchGeoSampler
+from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
@@ -50,7 +50,7 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
         )
 
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std),
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -61,7 +61,7 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std), data_keys=['image', 'mask']
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=['image', 'mask']
         )
 
     def setup(self, stage: str) -> None:
@@ -77,9 +77,10 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
         )
 
         if stage in ['fit']:
-            self.train_batch_sampler = RandomBatchGeoSampler(
-                self.train_dataset, self.patch_size, self.batch_size, self.length
+            self.train_sampler = RandomGeoSampler(
+                self.train_dataset, self.patch_size, self.length
             )
+
         if stage in ['fit', 'validate']:
             self.val_sampler = GridGeoSampler(
                 self.val_dataset, self.patch_size, self.patch_size

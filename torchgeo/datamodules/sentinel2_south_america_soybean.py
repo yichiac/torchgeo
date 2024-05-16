@@ -74,7 +74,7 @@ class Sentinel2SouthAmericaSoybeanDataModule(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=["image", "mask"]
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=['image', 'mask']
         )
 
     def setup(self, stage: str) -> None:
