@@ -7,6 +7,7 @@ from collections.abc import Callable, Iterable
 from typing import Any
 
 import matplotlib.pyplot as plt
+import torch
 from matplotlib.figure import Figure
 from rasterio.crs import CRS
 
@@ -39,8 +40,8 @@ class SouthAmericaSoybean(RasterDataset):
     .. versionadded:: 0.6
     """
 
-    filename_glob = 'South_America_Soybean_*.*'
-    filename_regex = r'South_America_Soybean_(?P<year>\d{4})'
+    filename_glob = 'SouthAmerica_Soybean_*.*'
+    filename_regex = r'SouthAmerica_Soybean_(?P<year>\d{4})'
 
     date_format = '%Y'
     is_image = False
@@ -68,6 +69,15 @@ class SouthAmericaSoybean(RasterDataset):
         2003: 'cad5ed461ff4ab45c90177841aaecad2',
         2002: '8a4a9dcea54b3ec7de07657b9f2c0893',
         2001: '2914b0af7590a0ca4dfa9ccefc99020f',
+    }
+
+    cmap = {
+        0: (0, 0, 0, 255),
+        1: (255, 211, 0, 255),
+        2: (37, 111, 0, 255),
+        3: (0, 168, 226, 255),
+        4: (137, 96, 83, 255),
+        5: (128, 128, 128, 255),
     }
 
     def __init__(
@@ -103,9 +113,16 @@ class SouthAmericaSoybean(RasterDataset):
         self.download = download
         self.checksum = checksum
         self.years = years
+        self.ordinal_map = torch.full((max(self.cmap.keys()) + 1,), 4, dtype=self.dtype)
+        self.ordinal_cmap = torch.zeros((max(self.cmap.keys()) + 1, 4), dtype=torch.uint8)
+
         self._verify()
 
         super().__init__(paths, crs, res, transforms=transforms, cache=cache)
+
+        for v, k in enumerate(self.classes):
+            self.ordinal_map[k] = v
+            self.ordinal_cmap[v] = torch.tensor(self.cmap[k])
 
     def _verify(self) -> None:
         """Verify the integrity of the dataset."""
