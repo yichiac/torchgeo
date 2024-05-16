@@ -74,11 +74,12 @@ class NCCM(RasterDataset):
     }
 
     cmap = {
-        0: (0, 255, 0, 255),
-        1: (255, 0, 0, 255),
-        2: (255, 255, 0, 255),
-        3: (128, 128, 128, 255),
-        15: (255, 255, 255, 255),
+        0: (0, 0, 0, 255),
+        1: (255, 211, 0, 255),
+        2: (37, 111, 0, 255),
+        3: (0, 168, 226, 255),
+        4: (137, 96, 83, 255),
+        5: (128, 128, 128, 255),
     }
 
     def __init__(
@@ -119,7 +120,7 @@ class NCCM(RasterDataset):
         self.download = download
         self.checksum = checksum
         self.ordinal_map = torch.full((max(self.cmap.keys()) + 1,), 4, dtype=self.dtype)
-        self.ordinal_cmap = torch.zeros((5, 4), dtype=torch.uint8)
+        self.ordinal_cmap = torch.zeros((max(self.cmap.keys()) + 1, 4), dtype=torch.uint8)
 
         self._verify()
         super().__init__(paths, crs, res, transforms=transforms, cache=cache)
