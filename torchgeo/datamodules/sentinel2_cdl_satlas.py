@@ -1,29 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""EuroCrops datamodule."""
-
-from typing import Any
-
-import kornia.augmentation as K
-import torch
-from kornia.constants import DataKey, Resample
-from kornia.contrib import Lambda
-
-from matplotlib.figure import Figure
-
-from ..datasets import RasterizedEuroCrops, Sentinel2Cropped, random_bbox_assignment
-from ..samplers import GridGeoSampler, RandomGeoSampler
-from ..samplers.utils import _to_tuple
-from ..transforms import AugmentationSequential
-from .geo import GeoDataModule
-
-
-
-
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-
 """Sentinel-2 and CDL datamodule."""
 
 from typing import Any
@@ -31,6 +8,7 @@ from typing import Any
 import kornia.augmentation as K
 import torch
 from kornia.constants import DataKey, Resample
+from kornia.contrib import Lambda
 from matplotlib.figure import Figure
 
 from ..datasets import CDL, Sentinel2, random_bbox_assignment
