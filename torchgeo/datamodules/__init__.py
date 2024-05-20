@@ -35,7 +35,9 @@ from .sentinel2_cdl import Sentinel2CDLDataModule
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
 from .sentinel2_nccm import Sentinel2NCCMDataModule
+from .sentinel2_nccm_satlas import Sentinel2NCCMSatlasDataModule
 from .sentinel2_south_america_soybean import Sentinel2SouthAmericaSoybeanDataModule
+from .sentinel2_south_america_soybean_satlas import Sentinel2SouthAmericaSoybeanSatlasDataModule
 from .skippd import SKIPPDDataModule
 from .so2sat import So2SatDataModule
 from .southafricacroptype import SouthAfricaCropTypeDataModule
@@ -53,6 +55,7 @@ from .xview import XView2DataModule
 __all__ = (
     # GeoDataset
     'AgriFieldNetDataModule',
+    'AgriFieldNetSatlasDataModule',
     'ChesapeakeCVPRDataModule',
     'IOBenchDataModule',
     'L7IrishDataModule',
@@ -62,8 +65,11 @@ __all__ = (
     'Sentinel2CDLSatlasDataModule',
     'Sentinel2EuroCropsDataModule',
     'Sentinel2NCCMDataModule',
+    'Sentinel2NCCMSatlasDataModule',
     'Sentinel2SouthAmericaSoybeanDataModule',
+    'Sentinel2SouthAmericaSoybeanSatlasDataModule',
     'SouthAfricaCropTypeDataModule',
+    'SouthAfricaCropTypeSatlasDataModule',
     # NonGeoDataset
     'BigEarthNetDataModule',
     'ChaBuDDataModule',

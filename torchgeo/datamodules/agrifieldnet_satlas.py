@@ -17,7 +17,7 @@ from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class AgriFieldNetDataModule(GeoDataModule):
+class AgriFieldNetSatlasDataModule(GeoDataModule):
     """LightningDataModule implementation for the AgriFieldNet dataset.
 
     .. versionadded:: 0.6
@@ -50,8 +50,14 @@ class AgriFieldNetDataModule(GeoDataModule):
             **kwargs,
         )
 
+        satlas_std = torch.tensor(
+            [3558.0, 3558.0, 3558.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0]
+        )
+        satlas_mean = torch.zeros_like(satlas_std)
+
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)),
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -62,7 +68,12 @@ class AgriFieldNetDataModule(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=['image', 'mask']
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
+            data_keys=["image", "mask"],
+            extra_args={
+                DataKey.MASK: {"resample": Resample.NEAREST, "align_corners": None}
+            },
         )
 
     def setup(self, stage: str) -> None:

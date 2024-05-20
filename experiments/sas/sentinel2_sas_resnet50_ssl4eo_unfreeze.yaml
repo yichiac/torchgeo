@@ -4,8 +4,7 @@ trainer:
   logger:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
-        project: "Benchmark"
-        name: "CDL-ResNet50-imagenet-unfreeze-lr1e-3"
+        name: "SAS-ResNet50-ssl4eo-unfreeze-lr1e-3"
 
 model:
   class_path: SemanticSegmentationTask
@@ -13,8 +12,8 @@ model:
     loss: "ce"
     model: "unet"
     backbone: "resnet50"
-    weights: True
-    freeze_backbone: False
+    weights: ResNet50_Weights.SENTINEL2_ALL_MOCO
+    freeze_backbone: True
     lr: 1e-3
     patience: 1
     in_channels: 13
@@ -23,14 +22,14 @@ model:
     ignore_index: 0
 
 data:
-  class_path: Sentinel2CDLDataModule
+  class_path: Sentinel2SouthAmericaSoybeanDataModule
   init_args:
     batch_size: 128
     patch_size: 256
-    num_workers: 32
+    num_workers: 56
   dict_kwargs:
-    cdl_paths : "/data/yichiac/cdl_harmonized_block"
-    cdl_years: [2023]
-    sentinel2_paths: "/data/yichiac/cdl_2023"
+    south_america_soybean_paths : "/data/yichiac/SouthAmericaSoybean_harmonized"
+    south_america_soybean_years: [2021]
+    sentinel2_paths: "/data/yichiac/sas_2021"
     sentinel2_cache: False
     sentinel2_bands: ["B01","B02","B03","B04","B05","B06","B07","B08","B8A","B09","B10","B11","B12"]
