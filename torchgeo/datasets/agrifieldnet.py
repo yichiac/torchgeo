@@ -81,21 +81,21 @@ class AgriFieldNet(RasterDataset):
     filename_glob = "T00AAA_20210701T000000_B01_B02_B03_B04_B05_B06_B07_B08_B09_B10_B11_B12_B8A.tif"
     filename_regex = "T00AAA_20210701T000000_B01_B02_B03_B04_B05_B06_B07_B08_B09_B10_B11_B12_B8A.tif"
 
-    rgb_bands = ['B04', 'B03', 'B02']
-    all_bands = [
-        'B01',
-        'B02',
-        'B03',
-        'B04',
-        'B05',
-        'B06',
-        'B07',
-        'B08',
-        'B09',
-        'B11',
-        'B12',
-        'B8A',
-    ]
+    # rgb_bands = ['B04', 'B03', 'B02']
+    # all_bands = [
+    #     'B01',
+    #     'B02',
+    #     'B03',
+    #     'B04',
+    #     'B05',
+    #     'B06',
+    #     'B07',
+    #     'B08',
+    #     'B09',
+    #     'B11',
+    #     'B12',
+    #     'B8A',
+    # ]
 
     cmap = {
         0: (0, 0, 0, 255),

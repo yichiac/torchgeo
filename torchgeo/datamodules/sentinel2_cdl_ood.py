@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""EuroCrops datamodule."""
+"""Sentinel-2 and CDL datamodule."""
 
 from typing import Any
 
@@ -10,17 +10,15 @@ import torch
 from kornia.constants import DataKey, Resample
 from matplotlib.figure import Figure
 
-from ..datasets import EuroCrops, Sentinel2, random_bbox_assignment
+from ..datasets import CDL, NCCM, AgriFieldNet, SouthAfricaCropType, SouthAmericaSoybean, Sentinel2, random_bbox_assignment
 from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class Sentinel2EuroCropsDataModule(GeoDataModule):
-    """LightningDataModule implementation for the EuroCrops and Sentinel2 datasets.
-
-    Uses the train/val/test splits from the dataset.
+class Sentinel2CDLOOD(GeoDataModule):
+    """LightningDataModule implementation for the Sentinel-2 and CDL datasets.
 
     .. versionadded:: 0.6
     """
@@ -28,12 +26,12 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
     def __init__(
         self,
         batch_size: int = 64,
-        patch_size: int | tuple[int, int] = 256,
+        patch_size: int | tuple[int, int] = 64,
         length: int | None = None,
         num_workers: int = 0,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new Sentinel2EuroCropsDataModule instance.
+        """Initialize a new Sentinel2CDLDataModule instance.
 
         Args:
             batch_size: Size of each mini-batch.
@@ -41,42 +39,43 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
             length: Length of each training epoch.
             num_workers: Number of workers for parallel data loading.
             **kwargs: Additional keyword arguments passed to
-                :class:`~torchgeo.datasets.EuroCrops` (prefix keys with ``eurocrops_``)
-                and :class:`~torchgeo.datasets.Sentinel2`
+                :class:`~torchgeo.datasets.CDL` (prefix keys with ``cdl_``) and
+                :class:`~torchgeo.datasets.Sentinel2`
                 (prefix keys with ``sentinel2_``).
         """
-        eurocrops_signature = "eurocrops_"
-        sentinel2_signature = "sentinel2_"
-        self.eurocrops_kwargs = {}
+        # Define prefix for Cropland Data Layer (CDL) and Sentinel-2 arguments
+        cdl_signature = 'cdl_'
+        sentinel2_signature = 'sentinel2_'
+        self.cdl_kwargs = {}
         self.sentinel2_kwargs = {}
+
         for key, val in kwargs.items():
-            if key.startswith(eurocrops_signature):
-                self.eurocrops_kwargs[key[len(eurocrops_signature) :]] = val
+            # Check if the current key starts with the CDL prefix
+            if key.startswith(cdl_signature):
+                # If so, extract the key-value pair to the CDL dictionary
+                self.cdl_kwargs[key[len(cdl_signature) :]] = val
+            # Check if the current key starts with the Sentinel-2 prefix
             elif key.startswith(sentinel2_signature):
+                # If so, extract the key-value pair to the Sentinel-2 dictionary
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
 
         super().__init__(
-            EuroCrops,
-            batch_size,
-            patch_size,
-            length,
-            num_workers,
-            **self.eurocrops_kwargs,
+            CDL, batch_size, patch_size, length, num_workers, **self.cdl_kwargs
         )
 
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std),
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
-            data_keys=["image", "mask"],
+            data_keys=['image', 'mask'],
             extra_args={
-                DataKey.MASK: {"resample": Resample.NEAREST, "align_corners": None}
+                DataKey.MASK: {'resample': Resample.NEAREST, 'align_corners': None}
             },
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=["image", "mask"]
+            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=['image', 'mask']
         )
 
     def setup(self, stage: str) -> None:
@@ -86,30 +85,38 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
-        self.eurocrops = EuroCrops(**self.eurocrops_kwargs)
-        self.dataset = self.sentinel2 & self.eurocrops
+        self.cdl = CDL(**self.cdl_kwargs)
+        self.nccm = NCCM()
+        self.agrifieldnet = AgriFieldNet()
+        self.south_africa_crop_type = SouthAfricaCropType()
+        self.south_america_soybean = SouthAmericaSoybean()
+
+        self.train_val_dataset = self.sentinel2 & (self.nccm|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
 
         generator = torch.Generator().manual_seed(0)
-        (self.train_dataset, self.val_dataset, self.test_dataset) = (
+
+        (self.train_dataset, self.val_dataset) = (
             random_bbox_assignment(
-                self.dataset, [0.8, 0.1, 0.1], generator=generator
+                self.train_val_dataset, [0.8, 0.2], generator=generator
             )
         )
-        if stage in ["fit"]:
-            self.train_batch_sampler = RandomGeoSampler(
+        self.test_dataset = self.sentinel2 & self.cdl
+
+        if stage in ['fit']:
+            self.train_sampler = RandomGeoSampler(
                 self.train_dataset, self.patch_size, self.length
             )
-        if stage in ["fit", "validate"]:
+        if stage in ['fit', 'validate']:
             self.val_sampler = GridGeoSampler(
                 self.val_dataset, self.patch_size, self.patch_size
             )
-        if stage in ["test"]:
+        if stage in ['test']:
             self.test_sampler = GridGeoSampler(
                 self.test_dataset, self.patch_size, self.patch_size
             )
 
     def plot(self, *args: Any, **kwargs: Any) -> Figure:
-        """Run EuroCrops plot method.
+        """Run CDL plot method.
 
         Args:
             *args: Arguments passed to plot method.
@@ -118,4 +125,4 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
         Returns:
             A matplotlib Figure with the image, ground truth, and predictions.
         """
-        return self.eurocrops.plot(*args, **kwargs)
+        return self.cdl.plot(*args, **kwargs)

@@ -34,6 +34,8 @@ from .sen12ms import SEN12MSDataModule
 from .sentinel2_cdl import Sentinel2CDLDataModule
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
+from .sentinel2_rasterized_eurocrops import Sentinel2RasterizedEuroCropsDataModule
+from .sentinel2_rasterized_eurocrops_satlas import Sentinel2RasterizedEuroCropsSatlasDataModule
 from .sentinel2_nccm import Sentinel2NCCMDataModule
 from .sentinel2_nccm_satlas import Sentinel2NCCMSatlasDataModule
 from .sentinel2_south_america_soybean import Sentinel2SouthAmericaSoybeanDataModule
@@ -64,6 +66,8 @@ __all__ = (
     'Sentinel2CDLDataModule',
     'Sentinel2CDLSatlasDataModule',
     'Sentinel2EuroCropsDataModule',
+    "Sentinel2RasterizedEuroCropsDataModule",
+    "Sentinel2RasterizedEuroCropsSatlasDataModule",
     'Sentinel2NCCMDataModule',
     'Sentinel2NCCMSatlasDataModule',
     'Sentinel2SouthAmericaSoybeanDataModule',

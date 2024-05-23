@@ -8,16 +8,18 @@ from typing import Any
 import kornia.augmentation as K
 import torch
 from kornia.constants import DataKey, Resample
+from kornia.contrib import Lambda
+
 from matplotlib.figure import Figure
 
-from ..datasets import EuroCrops, Sentinel2, random_bbox_assignment
+from ..datasets import RasterizedEuroCrops, Sentinel2Cropped, random_bbox_assignment
 from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class Sentinel2EuroCropsDataModule(GeoDataModule):
+class Sentinel2RasterizedEuroCropsSatlasDataModule(GeoDataModule):
     """LightningDataModule implementation for the EuroCrops and Sentinel2 datasets.
 
     Uses the train/val/test splits from the dataset.
@@ -33,7 +35,7 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
         num_workers: int = 0,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new Sentinel2EuroCropsDataModule instance.
+        """Initialize a new Sentinel2RasterizedEuroCropsDataModule instance.
 
         Args:
             batch_size: Size of each mini-batch.
@@ -56,7 +58,7 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
 
         super().__init__(
-            EuroCrops,
+            RasterizedEuroCrops,
             batch_size,
             patch_size,
             length,
@@ -64,8 +66,14 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
             **self.eurocrops_kwargs,
         )
 
+        satlas_std = torch.tensor(
+            [3558.0, 3558.0, 3558.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0]
+        )
+        satlas_mean = torch.zeros_like(satlas_std)
+
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=self.std),
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -76,7 +84,12 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=["image", "mask"]
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
+            data_keys=["image", "mask"],
+            extra_args={
+                DataKey.MASK: {"resample": Resample.NEAREST, "align_corners": None}
+            },
         )
 
     def setup(self, stage: str) -> None:
@@ -85,8 +98,8 @@ class Sentinel2EuroCropsDataModule(GeoDataModule):
         Args:
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
-        self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
-        self.eurocrops = EuroCrops(**self.eurocrops_kwargs)
+        self.sentinel2 = Sentinel2Cropped(**self.sentinel2_kwargs)
+        self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
         self.dataset = self.sentinel2 & self.eurocrops
 
         generator = torch.Generator().manual_seed(0)
