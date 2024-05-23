@@ -8,10 +8,11 @@ Harmonize EuroCrops to have these classes:
 Everything else becomes 0000000005 (other).
 And stuff not covered by a label would be nodata.
 """
-import fiona
 import glob
 import multiprocessing
 import os
+
+import fiona
 import tqdm
 
 in_dir = "/data/favyenb/eurocrops/eurocrops_orig/"

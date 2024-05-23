@@ -1,6 +1,5 @@
 import satlaspretrain_models
 import torch
-from torch import Tensor
 
 from torchgeo.trainers import SemanticSegmentationTask
 

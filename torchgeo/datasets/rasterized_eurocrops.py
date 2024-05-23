@@ -1,5 +1,6 @@
 from .geo import RasterDataset
 
+
 class RasterizedEuroCrops(RasterDataset):
     filename_glob = "*.tif"
     filename_regex = r"""

@@ -2,8 +2,9 @@
 Check speed when using Sentinel-2 crops + rasterized EuroCrops crops.
 """
 import time
-import tqdm
+
 import torch
+import tqdm
 
 from torchgeo.datasets import RasterDataset, Sentinel2
 from torchgeo.samplers import PreChippedGeoSampler

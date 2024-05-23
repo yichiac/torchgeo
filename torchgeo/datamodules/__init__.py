@@ -4,6 +4,9 @@
 """TorchGeo datamodules."""
 
 from .agrifieldnet import AgriFieldNetDataModule
+from .agrifieldnet_mask import AgriFieldNetMaskDataModule
+from .agrifieldnet_mask_satlas import AgriFieldNetMaskSatlasDataModule
+from .agrifieldnet_satlas import AgriFieldNetSatlasDataModule
 from .bigearthnet import BigEarthNetDataModule
 from .chabud import ChaBuDDataModule
 from .chesapeake import ChesapeakeCVPRDataModule
@@ -34,15 +37,22 @@ from .sen12ms import SEN12MSDataModule
 from .sentinel2_cdl import Sentinel2CDLDataModule
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
-from .sentinel2_rasterized_eurocrops import Sentinel2RasterizedEuroCropsDataModule
-from .sentinel2_rasterized_eurocrops_satlas import Sentinel2RasterizedEuroCropsSatlasDataModule
 from .sentinel2_nccm import Sentinel2NCCMDataModule
 from .sentinel2_nccm_satlas import Sentinel2NCCMSatlasDataModule
+from .sentinel2_rasterized_eurocrops import Sentinel2RasterizedEuroCropsDataModule
+from .sentinel2_rasterized_eurocrops_satlas import (
+    Sentinel2RasterizedEuroCropsSatlasDataModule,
+)
 from .sentinel2_south_america_soybean import Sentinel2SouthAmericaSoybeanDataModule
-from .sentinel2_south_america_soybean_satlas import Sentinel2SouthAmericaSoybeanSatlasDataModule
+from .sentinel2_south_america_soybean_satlas import (
+    Sentinel2SouthAmericaSoybeanSatlasDataModule,
+)
 from .skippd import SKIPPDDataModule
 from .so2sat import So2SatDataModule
 from .southafricacroptype import SouthAfricaCropTypeDataModule
+from .southafricacroptype_mask import SouthAfricaCropTypeMaskDataModule
+from .southafricacroptype_mask_satlas import SouthAfricaCropTypeMaskSatlasDataModule
+from .southafricacroptype_satlas import SouthAfricaCropTypeSatlasDataModule
 from .spacenet import SpaceNet1DataModule
 from .ssl4eo import SSL4EOLDataModule, SSL4EOS12DataModule
 from .ssl4eo_benchmark import SSL4EOLBenchmarkDataModule
@@ -57,7 +67,9 @@ from .xview import XView2DataModule
 __all__ = (
     # GeoDataset
     'AgriFieldNetDataModule',
+    'AgriFieldNetMaskDataModule',
     'AgriFieldNetSatlasDataModule',
+    'AgriFieldNetMaskSatlasDataModule',
     'ChesapeakeCVPRDataModule',
     'IOBenchDataModule',
     'L7IrishDataModule',
@@ -73,7 +85,9 @@ __all__ = (
     'Sentinel2SouthAmericaSoybeanDataModule',
     'Sentinel2SouthAmericaSoybeanSatlasDataModule',
     'SouthAfricaCropTypeDataModule',
+    'SouthAfricaCropTypeMaskDataModule',
     'SouthAfricaCropTypeSatlasDataModule',
+    'SouthAfricaCropTypeMaskSatlasDataModule',
     # NonGeoDataset
     'BigEarthNetDataModule',
     'ChaBuDDataModule',

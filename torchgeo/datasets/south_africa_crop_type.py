@@ -4,7 +4,6 @@
 """South Africa Crop Type Competition Dataset."""
 
 import os
-import re
 from collections.abc import Callable, Iterable
 from typing import Any, cast
 

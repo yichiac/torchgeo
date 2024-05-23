@@ -9,14 +9,14 @@ import kornia.augmentation as K
 import torch
 from kornia.constants import DataKey, Resample
 
-from ..datasets import AgriFieldNet, random_bbox_assignment
+from ..datasets import AgriFieldNetMask, random_bbox_assignment
 from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class AgriFieldNetDataModule(GeoDataModule):
+class AgriFieldNetMaskDataModule(GeoDataModule):
     """LightningDataModule implementation for the AgriFieldNet dataset.
 
     .. versionadded:: 0.6
@@ -30,7 +30,7 @@ class AgriFieldNetDataModule(GeoDataModule):
         num_workers: int = 0,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new AgriFieldNetDataModule instance.
+        """Initialize a new AgriFieldNetMaskDataModule instance.
 
         Args:
             batch_size: Size of each mini-batch.
@@ -41,7 +41,7 @@ class AgriFieldNetDataModule(GeoDataModule):
                 :class:`~torchgeo.datasets.AgriFieldNet`.
         """
         super().__init__(
-            AgriFieldNet,
+            AgriFieldNetMask,
             batch_size=batch_size,
             patch_size=patch_size,
             length=length,
@@ -70,7 +70,7 @@ class AgriFieldNetDataModule(GeoDataModule):
         Args:
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
-        dataset = AgriFieldNet(**self.kwargs)
+        dataset = AgriFieldNetMask(**self.kwargs)
         generator = torch.Generator().manual_seed(0)
         (self.train_dataset, self.val_dataset, self.test_dataset) = (
             random_bbox_assignment(dataset, [0.8, 0.1, 0.1], generator)

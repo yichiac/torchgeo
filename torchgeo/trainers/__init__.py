@@ -11,8 +11,8 @@ from .iobench import IOBenchTask
 from .moco import MoCoTask
 from .regression import PixelwiseRegressionTask, RegressionTask
 from .segmentation import SemanticSegmentationTask
-from .simclr import SimCLRTask
 from .segmentation_satlas import SatlasSemanticSegmentationTask
+from .simclr import SimCLRTask
 
 __all__ = (
     # Supervised

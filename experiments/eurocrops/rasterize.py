@@ -1,15 +1,14 @@
 """
 Rasterize the EuroCrops data.
 """
-from datetime import datetime
 import os
+from datetime import datetime
 
 import affine
 import numpy as np
 import rasterio
-from rasterio.crs import CRS
-import tqdm
 import torch
+import tqdm
 
 from torchgeo.datasets import EuroCrops, Sentinel2
 from torchgeo.samplers import PreChippedGeoSampler

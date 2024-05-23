@@ -7,7 +7,6 @@ from collections.abc import Callable, Iterable
 from typing import Any
 
 import matplotlib.pyplot as plt
-import torch
 from matplotlib.figure import Figure
 from rasterio.crs import CRS
 

@@ -10,7 +10,15 @@ import torch
 from kornia.constants import DataKey, Resample
 from matplotlib.figure import Figure
 
-from ..datasets import CDL, NCCM, AgriFieldNet, SouthAfricaCropType, SouthAmericaSoybean, Sentinel2, random_bbox_assignment
+from ..datasets import (
+    CDL,
+    NCCM,
+    AgriFieldNet,
+    Sentinel2,
+    SouthAfricaCropType,
+    SouthAmericaSoybean,
+    random_bbox_assignment,
+)
 from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential

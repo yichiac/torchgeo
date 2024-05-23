@@ -1,10 +1,8 @@
-import os
 
-from torchgeo.trainers import SemanticSegmentationTask
 import satlaspretrain_models
 import torch
-
 from lightning.pytorch import Trainer
+
 from torchgeo.datamodules import Sentinel2CDLDataModule
 
 batch_size = 128

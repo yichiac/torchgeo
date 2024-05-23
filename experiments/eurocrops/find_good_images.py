@@ -2,12 +2,12 @@
 Filter the 256x256 Sentinel-2 images for ones that have at least one pixel that is labeled 1-4
 (one of the crop type categories of interest).
 """
-from datetime import datetime
 import os
 import shutil
-import tqdm
+from datetime import datetime
 
 import torch
+import tqdm
 
 from torchgeo.datasets import EuroCrops, Sentinel2
 from torchgeo.samplers import PreChippedGeoSampler
