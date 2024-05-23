@@ -43,6 +43,7 @@ from .etci2021 import ETCI2021
 from .eudem import EUDEM
 from .eurocrops import EuroCrops
 from .eurosat import EuroSAT, EuroSAT100
+from .rasterized_eurocrops import RasterizedEuroCrops
 from .fair1m import FAIR1M
 from .fire_risk import FireRisk
 from .forestdamage import ForestDamage
@@ -99,7 +100,7 @@ from .rwanda_field_boundary import RwandaFieldBoundary
 from .seasonet import SeasoNet
 from .seco import SeasonalContrastS2
 from .sen12ms import SEN12MS
-from .sentinel import Sentinel, Sentinel1, Sentinel2
+from .sentinel import Sentinel, Sentinel1, Sentinel2, Sentinel2Cropped
 from .skippd import SKIPPD
 from .so2sat import So2Sat
 from .south_africa_crop_type import SouthAfricaCropType
