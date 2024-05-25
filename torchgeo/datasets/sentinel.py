@@ -265,13 +265,12 @@ class Sentinel2(Sentinel):
 
     # https://sentinels.copernicus.eu/web/sentinel/user-guides/sentinel-2-msi/naming-convention
     # https://sentinel.esa.int/documents/247904/685211/Sentinel-2-MSI-L2A-Product-Format-Specifications.pdf
-    filename_glob = 'T*'
+    filename_glob = "*.tif"
     filename_regex = r"""
-        ^T00AAA
-        _(?P<date>\d{8}T\d{6})
-        _combined.tif
+        ^(?P<date>\d{4})
+        _.*$
     """
-    date_format = '%Y%m%dT%H%M%S'
+    date_format = "%Y"
 
     # https://gisgeography.com/sentinel-2-bands-combinations/
     all_bands = [
@@ -322,8 +321,6 @@ class Sentinel2(Sentinel):
             *root* was renamed to *paths*
         """
         bands = bands or self.all_bands
-        # self.filename_glob = self.filename_glob.format(bands[0])
-        # self.filename_regex = self.filename_regex.format(res)
 
         super().__init__(paths, crs, res, bands, transforms, cache)
 
