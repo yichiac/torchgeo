@@ -25,7 +25,7 @@ data:
   init_args:
     batch_size: 128
     patch_size: 256
-    num_workers: 32
+    num_workers: 16
   dict_kwargs:
     nccm_paths : "/data/yichiac/nccm_harmonized_block"
     nccm_years: [2019]
