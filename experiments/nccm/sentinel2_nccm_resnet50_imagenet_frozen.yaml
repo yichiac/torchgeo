@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Benchmark-s"
-        name: "NCCM-ResNet50-ssl4eo-frozen-lr1e-3"
+        name: "NCCM-ResNet50-imagenet-frozen-lr1e-3"
 
 model:
   class_path: SemanticSegmentationTask
@@ -13,8 +13,8 @@ model:
     loss: "ce"
     model: "unet"
     backbone: "resnet50"
-    weights: ResNet50_Weights.SENTINEL2_ALL_MOCO
-    freeze_backbone: False
+    weights: True
+    freeze_backbone: True
     lr: 1e-3
     patience: 1
     in_channels: 13
@@ -27,7 +27,7 @@ data:
   init_args:
     batch_size: 128
     patch_size: 256
-    num_workers: 16
+    num_workers: 32
   dict_kwargs:
     nccm_paths : "/data/yichiac/nccm_harmonized_block"
     nccm_years: [2019]
