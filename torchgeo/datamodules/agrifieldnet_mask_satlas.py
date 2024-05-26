@@ -10,7 +10,7 @@ import torch
 from kornia.constants import DataKey, Resample
 from kornia.contrib import Lambda
 
-from ..datasets import AgriFieldNetMask, random_bbox_assignment
+from ..datasets import AgriFieldNetMask, Sentinel2, random_bbox_assignment
 from ..samplers import GridGeoSampler, RandomGeoSampler
 from ..samplers.utils import _to_tuple
 from ..transforms import AugmentationSequential
@@ -41,6 +41,17 @@ class AgriFieldNetMaskSatlasDataModule(GeoDataModule):
             **kwargs: Additional keyword arguments passed to
                 :class:`~torchgeo.datasets.AgriFieldNet`.
         """
+        agrifieldnet_signature = 'agrifieldnet_'
+        sentinel2_signature = 'sentinel2_'
+        self.agrifieldnet_kwargs = {}
+        self.sentinel2_kwargs = {}
+
+        for key, val in kwargs.items():
+            if key.startswith(agrifieldnet_signature):
+                self.agrifieldnet_kwargs[key[len(agrifieldnet_signature) :]] = val
+            elif key.startswith(sentinel2_signature):
+                self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
+
         super().__init__(
             AgriFieldNetMask,
             batch_size=batch_size,
@@ -82,10 +93,16 @@ class AgriFieldNetMaskSatlasDataModule(GeoDataModule):
         Args:
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
-        dataset = AgriFieldNetMask(**self.kwargs)
+        self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
+        self.agrifieldnetmask = AgriFieldNetMask(**self.cdl_kwargs)
+        self.dataset = self.sentinel2 & self.agrifieldnetmask
+
         generator = torch.Generator().manual_seed(0)
+
         (self.train_dataset, self.val_dataset, self.test_dataset) = (
-            random_bbox_assignment(dataset, [0.8, 0.1, 0.1], generator)
+            random_bbox_assignment(
+                self.dataset, [0.8, 0.1, 0.1], generator
+            )
         )
 
         if stage in ['fit']:

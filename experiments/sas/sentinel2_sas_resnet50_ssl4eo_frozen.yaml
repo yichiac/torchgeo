@@ -14,7 +14,7 @@ model:
     model: "unet"
     backbone: "resnet50"
     weights: ResNet50_Weights.SENTINEL2_ALL_MOCO
-    freeze_backbone: False
+    freeze_backbone: True
     lr: 1e-3
     patience: 1
     in_channels: 13
