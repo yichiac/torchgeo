@@ -94,7 +94,7 @@ class AgriFieldNetMaskSatlasDataModule(GeoDataModule):
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
-        self.agrifieldnetmask = AgriFieldNetMask(**self.cdl_kwargs)
+        self.agrifieldnetmask = AgriFieldNetMask(**self.agrifieldnet_kwargs)
         self.dataset = self.sentinel2 & self.agrifieldnetmask
 
         generator = torch.Generator().manual_seed(0)
