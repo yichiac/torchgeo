@@ -13,11 +13,10 @@ from matplotlib.figure import Figure
 from ..datasets import (
     CDL,
     NCCM,
-    AgriFieldNetMask,
+    AgriFieldNet,
     Sentinel2,
-    SouthAfricaCropTypeMask,
+    SouthAfricaCropType,
     SouthAmericaSoybean,
-    RasterizedEuroCrops,
     random_bbox_assignment,
 )
 from ..samplers import GridGeoSampler, RandomGeoSampler
@@ -55,34 +54,14 @@ class Sentinel2CDLOOD(GeoDataModule):
         # Define prefix for Cropland Data Layer (CDL) and Sentinel-2 arguments
         cdl_signature = 'cdl_'
         sentinel2_signature = 'sentinel2_'
-        eurocrops_signature = 'eurocrops_'
-        agrifieldnet_signature = 'agrifieldnet_'
-        nccm_signature = 'nccm_'
-        sact_signature = 'sact_'
-        sas_signature = 'sas_'
         self.cdl_kwargs = {}
         self.sentinel2_kwargs = {}
-        self.agrifieldnet_kwargs = {}
-        self.eurocrops_kwargs = {}
-        self.nccm_kwargs = {}
-        self.sact_kwargs = {}
-        self.sas_kwargs = {}
 
         for key, val in kwargs.items():
             if key.startswith(cdl_signature):
                 self.cdl_kwargs[key[len(cdl_signature) :]] = val
             elif key.startswith(sentinel2_signature):
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
-            elif key.startswith(eurocrops_signature):
-                self.eurocrops_kwargs[key[len(eurocrops_signature) :]] = val
-            elif key.startswith(agrifieldnet_signature):
-                self.agrifieldnet_kwargs[key[len(agrifieldnet_signature) :]] = val
-            elif key.startswith(nccm_signature):
-                self.nccm_kwargs[key[len(nccm_signature) :]] = val
-            elif key.startswith(sact_signature):
-                self.sact_kwargs[key[len(sact_signature) :]] = val
-            elif key.startswith(sas_signature):
-                self.sas_kwargs[key[len(sas_signature) :]] = val
 
         super().__init__(
             CDL, batch_size, patch_size, length, num_workers, **self.cdl_kwargs
@@ -112,12 +91,11 @@ class Sentinel2CDLOOD(GeoDataModule):
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
         self.cdl = CDL(**self.cdl_kwargs)
         self.nccm = NCCM()
-        self.agrifieldnet = AgriFieldNetMask()
-        self.south_africa_crop_type = SouthAfricaCropTypeMask()
+        self.agrifieldnet = AgriFieldNet()
+        self.south_africa_crop_type = SouthAfricaCropType()
         self.south_america_soybean = SouthAmericaSoybean()
-        self.eurocrops = RasterizedEuroCrops()
 
-        self.train_val_dataset = self.sentinel2 & (self.nccm|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
+        self.train_val_dataset = self.sentinel2 & (self.nccm|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
 
         generator = torch.Generator().manual_seed(0)
 
