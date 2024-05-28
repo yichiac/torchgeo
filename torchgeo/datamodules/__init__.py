@@ -5,7 +5,9 @@
 
 from .agrifieldnet import AgriFieldNetDataModule
 from .agrifieldnet_mask import AgriFieldNetMaskDataModule
+from .agrifieldnet_mask_ood import AgriFieldNetMaskDataModuleOOD
 from .agrifieldnet_mask_satlas import AgriFieldNetMaskSatlasDataModule
+from .agrifieldnet_mask_satlas_ood import AgriFieldNetMaskSatlasDataModuleOOD
 from .agrifieldnet_satlas import AgriFieldNetSatlasDataModule
 from .bigearthnet import BigEarthNetDataModule
 from .chabud import ChaBuDDataModule
@@ -40,20 +42,32 @@ from .sentinel2_cdl_ood_satlas import Sentinel2CDLOODSatlas
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
 from .sentinel2_nccm import Sentinel2NCCMDataModule
+from .sentinel2_nccm_ood import Sentinel2NCCMDataModulOOD
 from .sentinel2_nccm_satlas import Sentinel2NCCMSatlasDataModule
+from .sentinel2_nccm_satlas_ood import Sentinel2NCCMSatlasDataModuleOOD
 from .sentinel2_rasterized_eurocrops import Sentinel2RasterizedEuroCropsDataModule
+from .sentinel2_rasterized_eurocrops_ood import Sentinel2RasterizedEuroCropsDataModuleOOD
 from .sentinel2_rasterized_eurocrops_satlas import (
     Sentinel2RasterizedEuroCropsSatlasDataModule,
 )
+from .sentinel2_rasterized_eurocrops_satlas_ood import (
+    Sentinel2RasterizedEuroCropsSatlasDataModuleOOD
+)
 from .sentinel2_south_america_soybean import Sentinel2SouthAmericaSoybeanDataModule
+from .sentinel2_south_america_soybean_ood import Sentinel2SouthAmericaSoybeanDataModuleOOD
 from .sentinel2_south_america_soybean_satlas import (
     Sentinel2SouthAmericaSoybeanSatlasDataModule,
+)
+from .sentinel2_south_america_soybean_satlas_ood import (
+    Sentinel2SouthAmericaSoybeanSatlasDataModuleOOD,
 )
 from .skippd import SKIPPDDataModule
 from .so2sat import So2SatDataModule
 from .southafricacroptype import SouthAfricaCropTypeDataModule
 from .southafricacroptype_mask import SouthAfricaCropTypeMaskDataModule
+from .southafricacroptype_mask_ood import SouthAfricaCropTypeMaskDataModuleOOD
 from .southafricacroptype_mask_satlas import SouthAfricaCropTypeMaskSatlasDataModule
+from .southafricacroptype_mask_satlas_ood import SouthAfricaCropTypeMaskSatlasDataModuleOOD
 from .southafricacroptype_satlas import SouthAfricaCropTypeSatlasDataModule
 from .spacenet import SpaceNet1DataModule
 from .ssl4eo import SSL4EOLDataModule, SSL4EOS12DataModule
@@ -70,7 +84,9 @@ __all__ = (
     # GeoDataset
     'AgriFieldNetDataModule',
     'AgriFieldNetMaskDataModule',
+    'AgriFieldNetMaskDataModuleOOD',
     'AgriFieldNetSatlasDataModule',
+    'AgriFieldNetMaskSatlasDataModuleOOD',
     'AgriFieldNetMaskSatlasDataModule',
     'ChesapeakeCVPRDataModule',
     'IOBenchDataModule',
@@ -83,14 +99,22 @@ __all__ = (
     'Sentinel2CDLSatlasDataModule',
     'Sentinel2EuroCropsDataModule',
     "Sentinel2RasterizedEuroCropsDataModule",
+    "Sentinel2RasterizedEuroCropsDataModuleOOD",
     "Sentinel2RasterizedEuroCropsSatlasDataModule",
+    "Sentinel2RasterizedEuroCropsSatlasDataModuleOOD",
     'Sentinel2NCCMDataModule',
+    'Sentinel2NCCMDataModulOOD',
     'Sentinel2NCCMSatlasDataModule',
+    'Sentinel2NCCMSatlasDataModuleOOD',
     'Sentinel2SouthAmericaSoybeanDataModule',
+    'Sentinel2SouthAmericaSoybeanDataModuleOOD',
     'Sentinel2SouthAmericaSoybeanSatlasDataModule',
+    'Sentinel2SouthAmericaSoybeanSatlasDataModuleOOD',
     'SouthAfricaCropTypeDataModule',
     'SouthAfricaCropTypeMaskDataModule',
+    'SouthAfricaCropTypeMaskDataModuleOOD',
     'SouthAfricaCropTypeSatlasDataModule',
+    'SouthAfricaCropTypeMaskSatlasDataModuleOOD',
     'SouthAfricaCropTypeMaskSatlasDataModule',
     # NonGeoDataset
     'BigEarthNetDataModule',
