@@ -41,6 +41,8 @@ from .sentinel2_cdl_ood import Sentinel2CDLOOD
 from .sentinel2_cdl_ood_satlas import Sentinel2CDLOODSatlas
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
+from .sentinel2_global import Sentinel2Global
+from .sentinel2_global_satlas import Sentinel2GlobalSatlas
 from .sentinel2_nccm import Sentinel2NCCMDataModule
 from .sentinel2_nccm_ood import Sentinel2NCCMDataModulOOD
 from .sentinel2_nccm_satlas import Sentinel2NCCMSatlasDataModule
@@ -98,6 +100,8 @@ __all__ = (
     'Sentinel2CDLOODSatlas',
     'Sentinel2CDLSatlasDataModule',
     'Sentinel2EuroCropsDataModule',
+    'Sentinel2Global',
+    'Sentinel2GlobalSatlas',
     "Sentinel2RasterizedEuroCropsDataModule",
     "Sentinel2RasterizedEuroCropsDataModuleOOD",
     "Sentinel2RasterizedEuroCropsSatlasDataModule",
