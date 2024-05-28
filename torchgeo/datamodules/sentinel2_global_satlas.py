@@ -27,7 +27,7 @@ from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class Sentinel2NCCMSatlasDataModuleOOD(GeoDataModule):
+class Sentinel2GlobalSatlas(GeoDataModule):
     """LightningDataModule implementation for the Sentinel-2 and NCCM dataset.
 
     .. versionadded:: 0.6
