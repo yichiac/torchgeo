@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Benchmark-s"
-        name: "NCCM-OOD-satlas"
+        name: "Global-OOD-satlas"
 
 model:
   class_path: SatlasSemanticSegmentationTask
