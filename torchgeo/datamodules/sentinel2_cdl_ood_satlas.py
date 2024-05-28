@@ -8,15 +8,17 @@ from typing import Any
 import kornia.augmentation as K
 import torch
 from kornia.constants import DataKey, Resample
+from kornia.contrib import Lambda
 from matplotlib.figure import Figure
 
 from ..datasets import (
     CDL,
     NCCM,
-    AgriFieldNet,
+    AgriFieldNetMask,
     Sentinel2,
-    SouthAfricaCropType,
+    SouthAfricaCropTypeMask,
     SouthAmericaSoybean,
+    RasterizedEuroCrops,
     random_bbox_assignment,
 )
 from ..samplers import GridGeoSampler, RandomGeoSampler
@@ -25,7 +27,7 @@ from ..transforms import AugmentationSequential
 from .geo import GeoDataModule
 
 
-class Sentinel2CDLOOD(GeoDataModule):
+class Sentinel2CDLOODSatlas(GeoDataModule):
     """LightningDataModule implementation for the Sentinel-2 and CDL datasets.
 
     .. versionadded:: 0.6
@@ -54,21 +56,47 @@ class Sentinel2CDLOOD(GeoDataModule):
         # Define prefix for Cropland Data Layer (CDL) and Sentinel-2 arguments
         cdl_signature = 'cdl_'
         sentinel2_signature = 'sentinel2_'
+        eurocrops_signature = 'eurocrops_'
+        agrifieldnet_signature = 'agrifieldnet_'
+        nccm_signature = 'nccm_'
+        sact_signature = 'sact_'
+        sas_signature = 'sas_'
         self.cdl_kwargs = {}
         self.sentinel2_kwargs = {}
+        self.agrifieldnet_kwargs = {}
+        self.eurocrops_kwargs = {}
+        self.nccm_kwargs = {}
+        self.sact_kwargs = {}
+        self.sas_kwargs = {}
 
         for key, val in kwargs.items():
             if key.startswith(cdl_signature):
                 self.cdl_kwargs[key[len(cdl_signature) :]] = val
             elif key.startswith(sentinel2_signature):
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
+            elif key.startswith(eurocrops_signature):
+                self.eurocrops_kwargs[key[len(eurocrops_signature) :]] = val
+            elif key.startswith(agrifieldnet_signature):
+                self.agrifieldnet_kwargs[key[len(agrifieldnet_signature) :]] = val
+            elif key.startswith(nccm_signature):
+                self.nccm_kwargs[key[len(nccm_signature) :]] = val
+            elif key.startswith(sact_signature):
+                self.sact_kwargs[key[len(sact_signature) :]] = val
+            elif key.startswith(sas_signature):
+                self.sas_kwargs[key[len(sas_signature) :]] = val
 
         super().__init__(
             CDL, batch_size, patch_size, length, num_workers, **self.cdl_kwargs
         )
 
+        satlas_std = torch.tensor(
+            [3558.0, 3558.0, 3558.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0, 8160.0]
+        )
+        satlas_mean = torch.zeros_like(satlas_std)
+
         self.train_aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)),
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
             K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
             K.RandomVerticalFlip(p=0.5),
             K.RandomHorizontalFlip(p=0.5),
@@ -79,7 +107,12 @@ class Sentinel2CDLOOD(GeoDataModule):
         )
 
         self.aug = AugmentationSequential(
-            K.Normalize(mean=self.mean, std=torch.tensor(10000)), data_keys=['image', 'mask']
+            K.Normalize(mean=satlas_mean, std=satlas_std),
+            K.ImageSequential(Lambda(lambda x: torch.clamp(x, min=0.0, max=1.0))),
+            data_keys=["image", "mask"],
+            extra_args={
+                DataKey.MASK: {"resample": Resample.NEAREST, "align_corners": None}
+            },
         )
 
     def setup(self, stage: str) -> None:
@@ -90,12 +123,13 @@ class Sentinel2CDLOOD(GeoDataModule):
         """
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
         self.cdl = CDL(**self.cdl_kwargs)
-        self.nccm = NCCM()
-        self.agrifieldnet = AgriFieldNet()
-        self.south_africa_crop_type = SouthAfricaCropType()
-        self.south_america_soybean = SouthAmericaSoybean()
+        self.nccm = NCCM(**self.nccm_kwargs)
+        self.agrifieldnet = AgriFieldNetMask(**self.agrifieldnet_kwargs)
+        self.south_africa_crop_type = SouthAfricaCropTypeMask(**self.sact_kwargs)
+        self.south_america_soybean = SouthAmericaSoybean(**self.sas_kwargs)
+        self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
 
-        self.train_val_dataset = self.sentinel2 & (self.nccm|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
+        self.train_val_dataset = self.sentinel2 & (self.nccm|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
 
         generator = torch.Generator().manual_seed(0)
 

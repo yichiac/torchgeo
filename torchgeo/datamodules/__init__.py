@@ -36,6 +36,7 @@ from .seco import SeasonalContrastS2DataModule
 from .sen12ms import SEN12MSDataModule
 from .sentinel2_cdl import Sentinel2CDLDataModule
 from .sentinel2_cdl_ood import Sentinel2CDLOOD
+from .sentinel2_cdl_ood_satlas import Sentinel2CDLOODSatlas
 from .sentinel2_cdl_satlas import Sentinel2CDLSatlasDataModule
 from .sentinel2_eurocrops import Sentinel2EuroCropsDataModule
 from .sentinel2_nccm import Sentinel2NCCMDataModule
@@ -78,6 +79,7 @@ __all__ = (
     'NAIPChesapeakeDataModule',
     'Sentinel2CDLDataModule',
     'Sentinel2CDLOOD',
+    'Sentinel2CDLOODSatlas',
     'Sentinel2CDLSatlasDataModule',
     'Sentinel2EuroCropsDataModule',
     "Sentinel2RasterizedEuroCropsDataModule",
