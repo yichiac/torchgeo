@@ -111,11 +111,11 @@ class Sentinel2CDLOOD(GeoDataModule):
         """
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
         self.cdl = CDL(**self.cdl_kwargs)
-        self.nccm = NCCM()
-        self.agrifieldnet = AgriFieldNetMask()
-        self.south_africa_crop_type = SouthAfricaCropTypeMask()
-        self.south_america_soybean = SouthAmericaSoybean()
-        self.eurocrops = RasterizedEuroCrops()
+        self.nccm = NCCM(**self.nccm_kwargs)
+        self.agrifieldnet = AgriFieldNetMask(**self.agrifieldnet_kwargs)
+        self.south_africa_crop_type = SouthAfricaCropTypeMask(**self.sact_kwargs)
+        self.south_america_soybean = SouthAmericaSoybean(**self.sas_kwargs)
+        self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
 
         self.train_val_dataset = self.sentinel2 & (self.nccm|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
 
