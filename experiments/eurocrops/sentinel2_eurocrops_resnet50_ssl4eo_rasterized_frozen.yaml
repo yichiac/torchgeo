@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Benchmark-s"
-        name: "EuroCrops-ResNet50-imagenet-freeze-lr1e-3"
+        name: "EuroCrops-ID-ssl4eo"
 
 model:
   class_path: SemanticSegmentationTask
@@ -13,7 +13,7 @@ model:
     loss: "ce"
     model: "unet"
     backbone: "resnet50"
-    weights: True
+    weights: ResNet50_Weights.SENTINEL2_ALL_MOCO
     freeze_backbone: True
     lr: 1e-3
     patience: 1

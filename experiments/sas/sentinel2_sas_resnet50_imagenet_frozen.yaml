@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Benchmark-s"
-        name: "SAS-ResNet50-imagenet-frozen-lr1e-3"
+        name: "SAS-ID-imagenet"
 
 model:
   class_path: SemanticSegmentationTask

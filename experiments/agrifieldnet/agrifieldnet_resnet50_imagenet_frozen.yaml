@@ -4,7 +4,7 @@ trainer:
   logger:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
-        project: "Benchmark-s"
+        project: "ID-test"
         name: "Agrifieldnet-ResNet50-imagenet-frozen-lr1e-3"
 
 model:

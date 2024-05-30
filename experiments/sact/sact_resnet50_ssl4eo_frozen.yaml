@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Benchmark-s"
-        name: "SACT-ResNet50-ssl4eo-frozen-lr1e-3"
+        name: "SACT-ID-ssl4eo"
 
 model:
   class_path: SemanticSegmentationTask
