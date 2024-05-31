@@ -14,7 +14,7 @@ model:
     model: "unet"
     backbone: "resnet50"
     # weights: ResNet50_Weights.SENTINEL2_ALL_MOCO
-    weights: /home/yichiac/crop_transfer_project/torchgeo/Benchmark-s/68g58pfa/checkpoints/epoch\=99-step\=8500.ckpt
+    weights: Benchmark-s/68g58pfa/checkpoints/epoch=99-step=8500.ckpt
     freeze_backbone: False
     lr: 1e-3
     patience: 1
