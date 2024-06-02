@@ -206,6 +206,12 @@ class SemanticSegmentationTask(BaseTask):
                 MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='micro'
                 ),
+                MulticlassAccuracy(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average="global",
+                    average="macro",
+                ),
             ]
         )
         self.train_metrics = metrics.clone(prefix='train_')
