@@ -23,7 +23,7 @@ model:
     ignore_index: 0
 
 data:
-  class_path: Sentinel2CDLOOD
+  class_path: Sentinel2Global
   init_args:
     batch_size: 128
     patch_size: 256
