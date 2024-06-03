@@ -5,7 +5,7 @@ trainer:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
         project: "Few-shot"
-        name: "Global-satlas-1k"
+        name: "Global-satlas-100"
 
 model:
   class_path: SatlasSemanticSegmentationTask
@@ -27,7 +27,7 @@ data:
     patch_size: 256
     num_workers: 16
   dict_kwargs:
-    sentinel2_paths: "/data/yichiac/sentinel2_subsample_1000"
+    sentinel2_paths: "/data/yichiac/sentinel2_subsample_100"
     sentinel2_cache: False
     sentinel2_bands: ["B04", "B03", "B02", "B05", "B06", "B07", "B08", "B11", "B12"]
     cdl_paths : "/data/yichiac/cdl_harmonized_block"
