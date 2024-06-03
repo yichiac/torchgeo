@@ -196,23 +196,23 @@ class SemanticSegmentationTask(BaseTask):
         num_classes: int = self.hparams['num_classes']
         ignore_index: int | None = self.hparams['ignore_index']
         metrics = MetricCollection(
-            [
-                MulticlassAccuracy(
+            {
+                'overall_accuracy': MulticlassAccuracy(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='micro',
                 ),
-                MulticlassJaccardIndex(
-                    num_classes=num_classes, ignore_index=ignore_index, average='micro'
-                ),
-                MulticlassAccuracy(
+                'average_accurtacy':MulticlassAccuracy(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average="global",
                     average="macro",
                 ),
-            ]
+                'jaccard_index': MulticlassJaccardIndex(
+                    num_classes=num_classes, ignore_index=ignore_index, average='micro'
+                ),
+            }
         )
         self.train_metrics = metrics.clone(prefix='train_')
         self.val_metrics = metrics.clone(prefix='val_')
