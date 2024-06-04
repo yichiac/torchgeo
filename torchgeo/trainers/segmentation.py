@@ -203,7 +203,7 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average='global',
                     average='micro',
                 ),
-                'average_accurtacy':MulticlassAccuracy(
+                'average_accuracy':MulticlassAccuracy(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average="global",
