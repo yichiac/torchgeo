@@ -4,7 +4,7 @@ trainer:
   logger:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
-        project: "Benchmark-s"
+        project: "ID"
         name: "CDL-ID-ssl4eo"
 
 model:
@@ -31,6 +31,6 @@ data:
   dict_kwargs:
     cdl_paths : "/data/yichiac/cdl_harmonized_block"
     cdl_years: [2023]
-    sentinel2_paths: "/data/yichiac/sentinel2_subsample/sentinel2_cdl_2023_subsampled"
+    sentinel2_paths: "/data/yichiac/sentinel2_subsample_1000/sentinel2_cdl_2023_subsampled"
     sentinel2_cache: False
     sentinel2_bands: ["B01","B02","B03","B04","B05","B06","B07","B08","B8A","B09","B10","B11","B12"]
