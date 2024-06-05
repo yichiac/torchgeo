@@ -13,7 +13,7 @@ from matplotlib.figure import Figure
 from torch import Tensor
 from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
-from torchmetrics.wrappers import ClasswiseWrapper
+from torchmetrics import ClasswiseWrapper
 from torchvision.models._api import WeightsEnum
 
 from ..datasets import RGBBandsMissingError, unbind_samples
