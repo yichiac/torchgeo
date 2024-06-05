@@ -13,6 +13,7 @@ from matplotlib.figure import Figure
 from torch import Tensor
 from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
+from torchmetrics.wrappers import ClasswiseWrapper
 from torchvision.models._api import WeightsEnum
 
 from ..datasets import RGBBandsMissingError, unbind_samples
@@ -203,18 +204,18 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average='global',
                     average='micro',
                 ),
-                'average_accuracy':MulticlassAccuracy(
+                'average_accuracy': MulticlassAccuracy(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average="global",
                     average="macro",
                 ),
-                'per-class_accuracy': MulticlassAccuracy(
+                'per-class_accuracy': ClasswiseWrapper(MulticlassAccuracy(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average=None,
-                ),
+                )),
                 'Overall F1-score': MulticlassF1Score(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
@@ -227,12 +228,12 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class F1-score': MulticlassF1Score(
+                'Per-class F1-score': ClasswiseWrapper(MulticlassF1Score(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average=None,
-                ),
+                )),
                 'Overall Precision': MulticlassPrecision(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
@@ -245,12 +246,12 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class Precision': MulticlassPrecision(
+                'Per-class Precision': ClasswiseWrapper(MulticlassPrecision(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average=None,
-                ),
+                )),
                 'Overall Recall': MulticlassRecall(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
@@ -263,21 +264,21 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class Recall': MulticlassRecall(
+                'Per-class Recall': ClasswiseWrapper(MulticlassRecall(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average=None,
-                ),
+                )),
                 'Overall jaccard_index': MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='micro'
                 ),
                 'Average jaccard_index': MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='macro'
                 ),
-                'Per-class jaccard_index': MulticlassJaccardIndex(
+                'Per-class jaccard_index': ClasswiseWrapper(MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average=None
-                ),
+                )),
             }
         )
         self.train_metrics = metrics.clone(prefix='train_')
