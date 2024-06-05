@@ -13,7 +13,7 @@ from matplotlib.figure import Figure
 from torch import Tensor
 from torchmetrics import MetricCollection
 from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
-from torchmetrics import ClasswiseWrapper
+# from torchmetrics import ClasswiseWrapper
 from torchvision.models._api import WeightsEnum
 
 from ..datasets import RGBBandsMissingError, unbind_samples
@@ -210,75 +210,48 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average="global",
                     average="macro",
                 ),
-                'per-class_accuracy': ClasswiseWrapper(MulticlassAccuracy(
-                    num_classes=num_classes,
-                    ignore_index=ignore_index,
-                    multidim_average='global',
-                    average=None,
-                )),
-                'Overall F1-score': MulticlassF1Score(
+                'overall_F1-score': MulticlassF1Score(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='micro'
                 ),
-                'Average F1-score': MulticlassF1Score(
+                'average_F1-score': MulticlassF1Score(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class F1-score': ClasswiseWrapper(MulticlassF1Score(
-                    num_classes=num_classes,
-                    ignore_index=ignore_index,
-                    multidim_average='global',
-                    average=None,
-                )),
-                'Overall Precision': MulticlassPrecision(
+                'overall_Precision': MulticlassPrecision(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='micro'
                 ),
-                'Average Precision': MulticlassPrecision(
+                'average_Precision': MulticlassPrecision(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class Precision': ClasswiseWrapper(MulticlassPrecision(
-                    num_classes=num_classes,
-                    ignore_index=ignore_index,
-                    multidim_average='global',
-                    average=None,
-                )),
-                'Overall Recall': MulticlassRecall(
+                'overall_Recall': MulticlassRecall(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='micro'
                 ),
-                'Average Recall': MulticlassRecall(
+                'average_Recall': MulticlassRecall(
                     num_classes=num_classes,
                     ignore_index=ignore_index,
                     multidim_average='global',
                     average='macro'
                 ),
-                'Per-class Recall': ClasswiseWrapper(MulticlassRecall(
-                    num_classes=num_classes,
-                    ignore_index=ignore_index,
-                    multidim_average='global',
-                    average=None,
-                )),
-                'Overall jaccard_index': MulticlassJaccardIndex(
+                'overall_jaccard_index': MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='micro'
                 ),
-                'Average jaccard_index': MulticlassJaccardIndex(
+                'average_jaccard_index': MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='macro'
                 ),
-                'Per-class jaccard_index': ClasswiseWrapper(MulticlassJaccardIndex(
-                    num_classes=num_classes, ignore_index=ignore_index, average=None
-                )),
             }
         )
         self.train_metrics = metrics.clone(prefix='train_')
