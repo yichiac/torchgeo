@@ -117,15 +117,15 @@ class Sentinel2NCCMDataModulOOD(GeoDataModule):
         self.south_america_soybean = SouthAmericaSoybean(**self.sas_kwargs)
         self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
 
-        self.train_val_dataset = self.sentinel2 & (self.cdl|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
+        # self.train_val_dataset = self.sentinel2 & (self.cdl|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean)
 
         generator = torch.Generator().manual_seed(0)
 
-        (self.train_dataset, self.val_dataset) = (
-            random_bbox_assignment(
-                self.train_val_dataset, [0.8, 0.2], generator=generator
-            )
-        )
+        # (self.train_dataset, self.val_dataset) = (
+        #     random_bbox_assignment(
+        #         self.train_val_dataset, [0.8, 0.2], generator=generator
+        #     )
+        # )
         self.test_dataset = self.sentinel2 & self.nccm
 
         if stage in ['fit']:

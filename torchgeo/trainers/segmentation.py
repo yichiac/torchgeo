@@ -12,7 +12,7 @@ import torch.nn as nn
 from matplotlib.figure import Figure
 from torch import Tensor
 from torchmetrics import MetricCollection
-from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex
+from torchmetrics.classification import MulticlassAccuracy, MulticlassJaccardIndex, MulticlassF1Score, MulticlassPrecision, MulticlassRecall
 from torchvision.models._api import WeightsEnum
 
 from ..datasets import RGBBandsMissingError, unbind_samples
@@ -209,8 +209,74 @@ class SemanticSegmentationTask(BaseTask):
                     multidim_average="global",
                     average="macro",
                 ),
-                'jaccard_index': MulticlassJaccardIndex(
+                'per-class_accuracy': MulticlassAccuracy(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average=None,
+                ),
+                'Overall F1-score': MulticlassF1Score(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='micro'
+                ),
+                'Average F1-score': MulticlassF1Score(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='macro'
+                ),
+                'Per-class F1-score': MulticlassF1Score(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average=None,
+                ),
+                'Overall Precision': MulticlassPrecision(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='micro'
+                ),
+                'Average Precision': MulticlassPrecision(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='macro'
+                ),
+                'Per-class Precision': MulticlassPrecision(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average=None,
+                ),
+                'Overall Recall': MulticlassRecall(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='micro'
+                ),
+                'Average Recall': MulticlassRecall(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average='macro'
+                ),
+                'Per-class Recall': MulticlassRecall(
+                    num_classes=num_classes,
+                    ignore_index=ignore_index,
+                    multidim_average='global',
+                    average=None,
+                ),
+                'Overall jaccard_index': MulticlassJaccardIndex(
                     num_classes=num_classes, ignore_index=ignore_index, average='micro'
+                ),
+                'Average jaccard_index': MulticlassJaccardIndex(
+                    num_classes=num_classes, ignore_index=ignore_index, average='macro'
+                ),
+                'Per-class jaccard_index': MulticlassJaccardIndex(
+                    num_classes=num_classes, ignore_index=ignore_index, average=None
                 ),
             }
         )
