@@ -119,4 +119,7 @@ class Sentinel2SouthAmericaSoybeanDataModule(GeoDataModule):
         Returns:
             A matplotlib Figure with the image, ground truth, and predictions.
         """
-        return self.south_america_soybean.plot(*args, **kwargs)
+        # return self.south_america_soybean.plot(*args, **kwargs)
+        self.sentinel2.plot(*args, **kwargs)
+        self.south_america_soybean.plot(*args, **kwargs)
+        return

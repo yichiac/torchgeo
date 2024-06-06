@@ -151,4 +151,7 @@ class Sentinel2CDLOOD(GeoDataModule):
         Returns:
             A matplotlib Figure with the image, ground truth, and predictions.
         """
-        return self.cdl.plot(*args, **kwargs)
+        # return self.cdl.plot(*args, **kwargs)
+        self.sentinel2.plot(*args, **kwargs)
+        self.cdl.plot(*args, **kwargs)
+        return

@@ -118,4 +118,7 @@ class Sentinel2RasterizedEuroCropsDataModule(GeoDataModule):
         Returns:
             A matplotlib Figure with the image, ground truth, and predictions.
         """
-        return self.eurocrops.plot(*args, **kwargs)
+        # return self.eurocrops.plot(*args, **kwargs)
+        self.sentinel2.plot(*args, **kwargs)
+        self.eurocrops.plot(*args, **kwargs)
+        return
