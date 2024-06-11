@@ -9,3 +9,5 @@ from .geo import RasterDataset
 class AgriFieldNetMask(RasterDataset):
     """AgriFieldNetMask India Challenge dataset."""
     is_image = False
+
+    def plot
