@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""Sentinel-2 and NCCM datamodule."""
+"""Sentinel-2 and Global datamodule."""
 
 from typing import Any
 
@@ -13,7 +13,6 @@ from matplotlib.figure import Figure
 from ..datasets import (
     CDL,
     NCCM,
-    AgriFieldNetMask,
     Sentinel2,
     SouthAfricaCropTypeMask,
     SouthAmericaSoybean,
@@ -56,13 +55,11 @@ class Sentinel2Global(GeoDataModule):
         cdl_signature = 'cdl_'
         sentinel2_signature = 'sentinel2_'
         eurocrops_signature = 'eurocrops_'
-        agrifieldnet_signature = 'agrifieldnet_'
         nccm_signature = 'nccm_'
         sact_signature = 'sact_'
         sas_signature = 'sas_'
         self.cdl_kwargs = {}
         self.sentinel2_kwargs = {}
-        self.agrifieldnet_kwargs = {}
         self.eurocrops_kwargs = {}
         self.nccm_kwargs = {}
         self.sact_kwargs = {}
@@ -75,8 +72,6 @@ class Sentinel2Global(GeoDataModule):
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
             elif key.startswith(eurocrops_signature):
                 self.eurocrops_kwargs[key[len(eurocrops_signature) :]] = val
-            elif key.startswith(agrifieldnet_signature):
-                self.agrifieldnet_kwargs[key[len(agrifieldnet_signature) :]] = val
             elif key.startswith(nccm_signature):
                 self.nccm_kwargs[key[len(nccm_signature) :]] = val
             elif key.startswith(sact_signature):
@@ -112,20 +107,31 @@ class Sentinel2Global(GeoDataModule):
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
         self.cdl = CDL(**self.cdl_kwargs)
         self.nccm = NCCM(**self.nccm_kwargs)
-        self.agrifieldnet = AgriFieldNetMask(**self.agrifieldnet_kwargs)
         self.south_africa_crop_type = SouthAfricaCropTypeMask(**self.sact_kwargs)
         self.south_america_soybean = SouthAmericaSoybean(**self.sas_kwargs)
         self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
 
-        self.dataset = self.sentinel2 & (self.cdl|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.south_america_soybean|self.nccm)
+        self.dataset = self.sentinel2 & (self.cdl|self.eurocrops|self.south_africa_crop_type|self.south_america_soybean|self.nccm)
 
         generator = torch.Generator().manual_seed(0)
 
-        (self.train_dataset, self.val_dataset, self.test_dataset) = (
+        # (self.train_dataset, self.val_dataset, self.test_dataset) = (
+        #     random_bbox_assignment(
+        #         self.dataset, [0.8, 0.1, 0.1], generator=generator
+        #     )
+        # )
+
+        (self.train_dataset, self.val_dataset) = (
             random_bbox_assignment(
-                self.dataset, [0.8, 0.1, 0.1], generator=generator
+                self.dataset, [0.9, 0.1], generator=generator
             )
         )
+        # self.test_dataset = self.sentinel2 & self.cdl
+        # self.test_dataset = self.sentinel2 & self.nccm
+        self.test_dataset = self.sentinel2 & self.eurocrops
+        # self.test_dataset = self.sentinel2 & self.south_america_soybean
+        # self.test_dataset = self.sentinel2 & self.south_africa_crop_type
+
 
         if stage in ['fit']:
             self.train_sampler = RandomGeoSampler(
@@ -139,3 +145,18 @@ class Sentinel2Global(GeoDataModule):
             self.test_sampler = GridGeoSampler(
                 self.test_dataset, self.patch_size, self.patch_size
             )
+
+    def plot(self, *args: Any, **kwargs: Any) -> Figure:
+        """Run CDL plot method.
+
+        Args:
+            *args: Arguments passed to plot method.
+            **kwargs: Keyword arguments passed to plot method.
+
+        Returns:
+            A matplotlib Figure with the image, ground truth, and predictions.
+        """
+        # return self.cdl.plot(*args, **kwargs)
+        self.sentinel2.plot(*args, **kwargs)
+        self.cdl.plot(*args, **kwargs)
+        return

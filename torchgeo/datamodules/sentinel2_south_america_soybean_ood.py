@@ -14,7 +14,6 @@ from matplotlib.figure import Figure
 from ..datasets import (
     CDL,
     NCCM,
-    AgriFieldNetMask,
     Sentinel2,
     SouthAfricaCropTypeMask,
     SouthAmericaSoybean,
@@ -57,13 +56,11 @@ class Sentinel2SouthAmericaSoybeanDataModuleOOD(GeoDataModule):
         cdl_signature = 'cdl_'
         sentinel2_signature = 'sentinel2_'
         eurocrops_signature = 'eurocrops_'
-        agrifieldnet_signature = 'agrifieldnet_'
         nccm_signature = 'nccm_'
         sact_signature = 'sact_'
         sas_signature = 'sas_'
         self.cdl_kwargs = {}
         self.sentinel2_kwargs = {}
-        self.agrifieldnet_kwargs = {}
         self.eurocrops_kwargs = {}
         self.nccm_kwargs = {}
         self.sact_kwargs = {}
@@ -76,8 +73,6 @@ class Sentinel2SouthAmericaSoybeanDataModuleOOD(GeoDataModule):
                 self.sentinel2_kwargs[key[len(sentinel2_signature) :]] = val
             elif key.startswith(eurocrops_signature):
                 self.eurocrops_kwargs[key[len(eurocrops_signature) :]] = val
-            elif key.startswith(agrifieldnet_signature):
-                self.agrifieldnet_kwargs[key[len(agrifieldnet_signature) :]] = val
             elif key.startswith(nccm_signature):
                 self.nccm_kwargs[key[len(nccm_signature) :]] = val
             elif key.startswith(sact_signature):
@@ -119,20 +114,19 @@ class Sentinel2SouthAmericaSoybeanDataModuleOOD(GeoDataModule):
         self.sentinel2 = Sentinel2(**self.sentinel2_kwargs)
         self.cdl = CDL(**self.cdl_kwargs)
         self.nccm = NCCM(**self.nccm_kwargs)
-        self.agrifieldnet = AgriFieldNetMask(**self.agrifieldnet_kwargs)
         self.south_africa_crop_type = SouthAfricaCropTypeMask(**self.sact_kwargs)
         self.south_america_soybean = SouthAmericaSoybean(**self.sas_kwargs)
         self.eurocrops = RasterizedEuroCrops(**self.eurocrops_kwargs)
 
-        # self.train_val_dataset = self.sentinel2 & (self.nccm|self.eurocrops|self.agrifieldnet|self.south_africa_crop_type|self.cdl)
+        self.train_val_dataset = self.sentinel2 & (self.nccm|self.eurocrops|self.south_africa_crop_type|self.cdl)
 
         generator = torch.Generator().manual_seed(0)
 
-        # (self.train_dataset, self.val_dataset) = (
-        #     random_bbox_assignment(
-        #         self.train_val_dataset, [0.8, 0.2], generator=generator
-        #     )
-        # )
+        (self.train_dataset, self.val_dataset) = (
+            random_bbox_assignment(
+                self.train_val_dataset, [0.9, 0.1], generator=generator
+            )
+        )
         self.test_dataset = self.sentinel2 & self.south_america_soybean
 
         if stage in ['fit']:

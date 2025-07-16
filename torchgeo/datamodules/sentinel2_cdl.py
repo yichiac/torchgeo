@@ -90,11 +90,13 @@ class Sentinel2CDLDataModule(GeoDataModule):
 
         generator = torch.Generator().manual_seed(0)
 
-        (self.train_dataset, self.val_dataset, self.test_dataset) = (
+        (self.train_dataset, self.val_dataset) = (
             random_bbox_assignment(
-                self.dataset, [0.8, 0.1, 0.1], generator=generator
+                self.dataset, [0.9, 0.1], generator=generator
             )
         )
+        self.test_dataset = self.sentinel2 & self.cdl
+
         if stage in ['fit']:
             self.train_sampler = RandomGeoSampler(
                 self.train_dataset, self.patch_size, self.length
@@ -119,6 +121,6 @@ class Sentinel2CDLDataModule(GeoDataModule):
             A matplotlib Figure with the image, ground truth, and predictions.
         """
         # return self.cdl.plot(*args, **kwargs)
-        self.sentinel2.plot(*args, **kwargs)
+        # self.sentinel2.plot(*args, **kwargs)
         self.cdl.plot(*args, **kwargs)
         return

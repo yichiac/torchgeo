@@ -1,11 +1,11 @@
 trainer:
-  max_epochs: 100
+  max_epochs: 50
   accelerator: "gpu"
   logger:
     class_path: lightning.pytorch.loggers.WandbLogger
     init_args:
-        project: "Few-shot"
-        name: "SACT-100-OOD-ssl4eo"
+        project: "fewshot"
+        name: "SACT-100ID-OOD-ssl4eo"
 
 model:
   class_path: SemanticSegmentationTask
@@ -29,15 +29,14 @@ data:
     patch_size: 256
     num_workers: 16
   dict_kwargs:
-    sentinel2_paths: "/data/yichiac/sentinel2_subsample_sact_ood_100"
+    sentinel2_paths: "./harmonized_global_crops/sentinel2_subsample_test"
     sentinel2_cache: False
     sentinel2_bands: ["B01","B02","B03","B04","B05","B06","B07","B08","B8A","B09","B10","B11","B12"]
-    cdl_paths : "/data/yichiac/cdl_harmonized_block"
+    cdl_paths : "./harmonized_global_crops/cdl_harmonized_block"
     cdl_years: [2023]
-    eurocrops_paths: "/data/yichiac/eurocrops_cropped_subsampled"
-    agrifieldnet_paths : "/data/yichiac/agrifieldnet_harmonized"
-    nccm_paths : "/data/yichiac/nccm_harmonized_block"
+    eurocrops_paths: "./harmonized_global_crops/eurocrops_cropped_subsampled"
+    nccm_paths : "./harmonized_global_crops/nccm_harmonized_block"
     nccm_years: [2019]
-    sact_paths : "/data/yichiac/sact_harmonized/train/labels"
-    sas_paths : "/data/yichiac/sas_harmonized"
+    sact_paths : "./harmonized_global_crops/sact_harmonized/train/labels"
+    sas_paths : "./harmonized_global_crops/sas_harmonized"
     sas_years: [2021]

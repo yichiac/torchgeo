@@ -27,4 +27,4 @@ data:
     patch_size: 256
     num_workers: 56
   dict_kwargs:
-    paths : "/data/yichiac/sact_harmonized"
+    paths : "./sact_harmonized"
