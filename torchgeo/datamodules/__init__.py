@@ -4,11 +4,6 @@
 """TorchGeo datamodules."""
 
 from .agrifieldnet import AgriFieldNetDataModule
-from .agrifieldnet_mask import AgriFieldNetMaskDataModule
-from .agrifieldnet_mask_ood import AgriFieldNetMaskDataModuleOOD
-from .agrifieldnet_mask_satlas import AgriFieldNetMaskSatlasDataModule
-from .agrifieldnet_mask_satlas_ood import AgriFieldNetMaskSatlasDataModuleOOD
-from .agrifieldnet_satlas import AgriFieldNetSatlasDataModule
 from .bigearthnet import BigEarthNetDataModule
 from .chabud import ChaBuDDataModule
 from .chesapeake import ChesapeakeCVPRDataModule
@@ -85,11 +80,6 @@ from .xview import XView2DataModule
 __all__ = (
     # GeoDataset
     'AgriFieldNetDataModule',
-    'AgriFieldNetMaskDataModule',
-    'AgriFieldNetMaskDataModuleOOD',
-    'AgriFieldNetSatlasDataModule',
-    'AgriFieldNetMaskSatlasDataModuleOOD',
-    'AgriFieldNetMaskSatlasDataModule',
     'ChesapeakeCVPRDataModule',
     'IOBenchDataModule',
     'L7IrishDataModule',
