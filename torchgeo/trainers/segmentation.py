@@ -110,7 +110,7 @@ class SemanticSegmentationTask(BaseTask):
             x: Input tensor of shape (B, C, H, W) or (B, T, C, H, W).
 
         Returns:
-            Output tensor of shape (B, T*C, H, W).
+            Output tensor of shape (B, num_classes, H, W).
         """
         if x.ndim == 5:
             x = rearrange(x, 'b t c h w -> b (t c) h w')

@@ -101,6 +101,7 @@ __all__ = (
     'NASAMarineDebrisDataModule',
     'NonGeoDataModule',
     'OSCDDataModule',
+    'PastisDataModule',
     'PatternNetDataModule',
     'Potsdam2DDataModule',
     'QuakeSetDataModule',

@@ -10,7 +10,7 @@ import kornia.augmentation as K
 from ..datasets import PASTIS
 from .geo import NonGeoDataModule
 
-class PastisDataModule(NonGeoDataModule):
+class PASTISDataModule(NonGeoDataModule):
     """LightningDataModule implementation for the PASTIS dataset.
 
     .. versionadded:: 0.8
