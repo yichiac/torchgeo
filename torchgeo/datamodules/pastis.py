@@ -10,13 +10,16 @@ import kornia.augmentation as K
 from ..datasets import PASTIS
 from .geo import NonGeoDataModule
 
+
 class PASTISDataModule(NonGeoDataModule):
     """LightningDataModule implementation for the PASTIS dataset.
 
     .. versionadded:: 0.8
     """
 
-    def __init__(self, batch_size: int = 32, num_workers: int = 0, **kwargs: Any) -> None:
+    def __init__(
+        self, batch_size: int = 32, num_workers: int = 0, **kwargs: Any
+    ) -> None:
         """Initialize a new PastisDataModule instance.
 
         Args:
@@ -25,7 +28,9 @@ class PASTISDataModule(NonGeoDataModule):
             **kwargs: Additional keyword arguments passed to
                 :class:`~torchgeo.datasets.PASTIS`.
         """
-        super().__init__(PASTIS, batch_size=batch_size, num_workers=num_workers, **kwargs)
+        super().__init__(
+            PASTIS, batch_size=batch_size, num_workers=num_workers, **kwargs
+        )
         self.aug = K.AugmentationSequential(
             K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
             data_keys=None,

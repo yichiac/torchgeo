@@ -104,8 +104,9 @@ class SemanticSegmentationTask(BaseTask):
         self.weights = weights
         super().__init__()
 
-    def forward(self, x:Tensor) -> Tensor:
-        """
+    def forward(self, x: Tensor) -> Tensor:
+        """Forward pass of the model.
+
         Args:
             x: Input tensor of shape (B, C, H, W) or (B, T, C, H, W).
 
