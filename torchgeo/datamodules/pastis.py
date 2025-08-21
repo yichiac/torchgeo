@@ -6,6 +6,8 @@
 from typing import Any
 
 import kornia.augmentation as K
+import torch
+from torch.utils.data import random_split
 
 from ..datasets import PASTIS
 from .geo import NonGeoDataModule
@@ -18,19 +20,28 @@ class PASTISDataModule(NonGeoDataModule):
     """
 
     def __init__(
-        self, batch_size: int = 32, num_workers: int = 0, **kwargs: Any
+        self,
+        batch_size: int = 32,
+        num_workers: int = 0,
+        val_split_pct: float = 0.2,
+        test_split_pct: float = 0.2,
+        **kwargs: Any,
     ) -> None:
         """Initialize a new PastisDataModule instance.
 
         Args:
             batch_size: Size of each mini-batch.
             num_workers: Number of workers for parallel data loading.
+            val_split_pct: Percentage of the dataset to use as a validation set.
+            test_split_pct: Percentage of the dataset to use as a test set.
             **kwargs: Additional keyword arguments passed to
                 :class:`~torchgeo.datasets.PASTIS`.
         """
         super().__init__(
             PASTIS, batch_size=batch_size, num_workers=num_workers, **kwargs
         )
+        self.val_split_pct = val_split_pct
+        self.test_split_pct = test_split_pct
         self.aug = K.AugmentationSequential(
             K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
             data_keys=None,
@@ -43,9 +54,14 @@ class PASTISDataModule(NonGeoDataModule):
         Args:
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
-        if stage in ['fit']:
-            self.train_dataset = PASTIS(split='train', **self.kwargs)
-        if stage in ['fit', 'validate']:
-            self.val_dataset = PASTIS(split='val', **self.kwargs)
-        if stage in ['predict']:
-            self.predict_dataset = PASTIS(split='test', **self.kwargs)
+        self.dataset = PASTIS(**self.kwargs)
+        generator = torch.Generator().manual_seed(0)
+        self.train_dataset, self.val_dataset, self.test_dataset = random_split(
+            self.dataset,
+            [
+                1 - self.val_split_pct - self.test_split_pct,
+                self.val_split_pct,
+                self.test_split_pct,
+            ],
+            generator,
+        )
