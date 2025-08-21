@@ -178,7 +178,7 @@ OSCD
 PASTIS
 ^^^^^^^^^^
 
-.. autoclass:: PastisDataModule
+.. autoclass:: PASTISDataModule
 
 PatternNet
 ^^^^^^^^^^

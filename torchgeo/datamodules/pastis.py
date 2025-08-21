@@ -27,7 +27,7 @@ class PASTISDataModule(NonGeoDataModule):
         test_split_pct: float = 0.2,
         **kwargs: Any,
     ) -> None:
-        """Initialize a new PastisDataModule instance.
+        """Initialize a new PASTISDataModule instance.
 
         Args:
             batch_size: Size of each mini-batch.
