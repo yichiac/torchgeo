@@ -34,7 +34,7 @@ from .mmflood import MMFloodDataModule
 from .naip import NAIPChesapeakeDataModule
 from .nasa_marine_debris import NASAMarineDebrisDataModule
 from .oscd import OSCDDataModule
-from .pastis import PastisDataModule
+from .pastis import PASTISDataModule
 from .patternnet import PatternNetDataModule
 from .potsdam import Potsdam2DDataModule
 from .quakeset import QuakeSetDataModule

@@ -5,7 +5,7 @@
 
 import os
 from collections.abc import Sequence
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
 import kornia.augmentation as K
 import matplotlib.pyplot as plt
@@ -115,9 +115,7 @@ class SemanticSegmentationTask(BaseTask):
         """
         if x.ndim == 5:
             x = rearrange(x, 'b t c h w -> b (t c) h w')
-        elif x.ndim == 4:
-            pass
-        return self.model(x)
+        return cast(Tensor, self.model(x))
 
     def configure_models(self) -> None:
         """Initialize the model."""
