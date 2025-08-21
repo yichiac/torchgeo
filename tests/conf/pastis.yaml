@@ -7,7 +7,7 @@ model:
     in_channels: 12
     loss: 'bce'
 data:
-  class_path: PastisDataModule
+  class_path: PASTISDataModule
   init_args:
     batch_size: 2
     val_split_pct: 0.5
