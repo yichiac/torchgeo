@@ -5,7 +5,7 @@ model:
     backbone: 'resnet18'
     task: 'multiclass'
     in_channels: 12
-    loss: 'bce'
+    loss: 'ce'
 data:
   class_path: PASTISDataModule
   init_args:
