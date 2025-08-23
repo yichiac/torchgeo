@@ -115,7 +115,8 @@ class SemanticSegmentationTask(BaseTask):
         """
         if x.ndim == 5:
             x = rearrange(x, 'b t c h w -> b (t c) h w')
-        return cast(Tensor, self.model(x))
+        x = self.model(x)
+        return x
 
     def configure_models(self) -> None:
         """Initialize the model."""
