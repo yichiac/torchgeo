@@ -10,6 +10,7 @@ data:
   class_path: PASTISDataModule
   init_args:
     batch_size: 2
-    val_split_pct: 0.5
+    val_split_pct: 0.33
+    test_split_pct: 0.33
   dict_kwargs:
     root: 'tests/data/pastis'

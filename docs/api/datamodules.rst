@@ -176,7 +176,7 @@ OSCD
 .. autoclass:: OSCDDataModule
 
 PASTIS
-^^^^^^^^^^
+^^^^^^
 
 .. autoclass:: PASTISDataModule
 
