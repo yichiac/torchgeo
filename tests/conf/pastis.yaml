@@ -3,7 +3,7 @@ model:
   init_args:
     model: 'unet'
     backbone: 'resnet18'
-    task: 'binary'
+    task: 'multiclass'
     in_channels: 12
     loss: 'bce'
 data:
