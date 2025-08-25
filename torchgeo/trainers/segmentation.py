@@ -324,7 +324,9 @@ class SemanticSegmentationTask(BaseTask):
                     keepdim=True,
                 )
                 batch = aug(batch)
-                batch['image'] = rearrange(batch['image'], 'b (t c) h w -> b t c h w', t=T, c=C)
+                batch['image'] = rearrange(
+                    batch['image'], 'b (t c) h w -> b t c h w', t=T, c=C
+                )
             else:
                 aug = K.AugmentationSequential(
                     K.Denormalize(datamodule.mean, datamodule.std),
