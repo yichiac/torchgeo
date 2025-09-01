@@ -4,7 +4,7 @@ model:
     model: 'unet'
     backbone: 'resnet18'
     task: 'multiclass'
-    in_channels: 50 # C * T (5 timesteps * 10 S2 channels)
+    in_channels: 90 # C * T (9 timesteps * 10 S2 channels)
     num_classes: 20
     loss: 'ce'
 data:
