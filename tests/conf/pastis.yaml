@@ -4,7 +4,7 @@ model:
     model: 'unet'
     backbone: 'resnet18'
     task: 'multiclass'
-    in_channels: 90 # C * T (9 timesteps * 10 S2 channels)
+    in_channels: 610 # C * T (61 timesteps * 10 S2 channels)
     num_classes: 20
     loss: 'ce'
 data:
@@ -13,5 +13,6 @@ data:
     batch_size: 1
     val_split_pct: 0.2
     test_split_pct: 0.2
+    padding_length: 61
   dict_kwargs:
     root: 'tests/data/pastis'

@@ -10,8 +10,8 @@ import torch
 from torch.utils.data import random_split
 
 from ..datasets import PASTIS
+from ..datasets.utils import pad_sequence
 from .geo import NonGeoDataModule
-from .utils import collate_fn_timeseries
 
 
 class PASTISDataModule(NonGeoDataModule):
@@ -26,7 +26,7 @@ class PASTISDataModule(NonGeoDataModule):
         num_workers: int = 0,
         val_split_pct: float = 0.2,
         test_split_pct: float = 0.2,
-        max_timestamp: int = 61,
+        padding_length: int = 61,
         **kwargs: Any,
     ) -> None:
         """Initialize a new PASTISDataModule instance.
@@ -36,17 +36,18 @@ class PASTISDataModule(NonGeoDataModule):
             num_workers: Number of workers for parallel data loading.
             val_split_pct: Percentage of the dataset to use as a validation set.
             test_split_pct: Percentage of the dataset to use as a test set.
-            max_timestamp: Maximum length of the time series.
+            padding_length: Padding length of the time series.
             **kwargs: Additional keyword arguments passed to
                 :class:`~torchgeo.datasets.PASTIS`.
         """
         super().__init__(
             PASTIS, batch_size=batch_size, num_workers=num_workers, **kwargs
         )
-        self.max_timestamp = max_timestamp
-        self.collate_fn = lambda batch: collate_fn_timeseries(
-            batch, max_timestamp=self.max_timestamp
+        self.padding_length = padding_length
+        self.collate_fn = lambda batch: pad_sequence(
+            batch, padding_length=self.padding_length
         )
+
         self.val_split_pct = val_split_pct
         self.test_split_pct = test_split_pct
         self.aug = K.AugmentationSequential(

@@ -118,9 +118,6 @@ class TestSemanticSegmentationTask:
             '1',
         ]
 
-        if name == 'pastis':
-            args.extend(['--data.max_timestamp', '9'])
-
         main(['fit', *args])
         try:
             main(['test', *args])
