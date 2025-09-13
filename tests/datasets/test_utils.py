@@ -542,8 +542,8 @@ def test_which() -> None:
 
 def test_pad_across_batches() -> None:
     batch = [
-        {'image': torch.ones(2, 3, 5, 5), 'mask': torch.zeros(2, 5, 5)},
-        {'image': torch.ones(3, 3, 5, 5), 'mask': torch.zeros(3, 5, 5)},
+        {'image': torch.ones(2, 10, 5, 5), 'mask': torch.zeros(5, 5)},
+        {'image': torch.ones(3, 10, 5, 5), 'mask': torch.zeros(5, 5)},
     ]
     out = pad_across_batches(batch, padding_value=0.0, padding_length=None)
     assert out['image'].shape[1] == max(b['image'].shape[0] for b in batch)
