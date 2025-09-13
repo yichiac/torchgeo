@@ -22,6 +22,7 @@ from torchgeo.datasets.utils import (
     disambiguate_timestamp,
     lazy_import,
     merge_samples,
+    pad_across_batches,
     percentile_normalization,
     stack_samples,
     unbind_samples,
@@ -537,3 +538,17 @@ def test_azcopy(tmp_path: Path, azcopy: Executable) -> None:
 def test_which() -> None:
     with pytest.raises(DependencyNotFoundError, match='foo is not installed'):
         which('foo')
+
+
+def test_pad_across_batches() -> None:
+    batch = [
+        {'image': torch.ones(2, 3, 5, 5), 'mask': torch.zeros(2, 5, 5)},
+        {'image': torch.ones(3, 3, 5, 5), 'mask': torch.zeros(3, 5, 5)},
+    ]
+    out = pad_across_batches(batch, padding_value=0.0, padding_length=None)
+    assert out['image'].shape[1] == max(b['image'].shape[0] for b in batch)
+    assert out['mask'].shape[0] == len(batch)
+
+    out = pad_across_batches(batch, padding_value=0.0, padding_length=5)
+    assert out['image'].shape[1] == 5
+    assert out['mask'].shape[0] == len(batch)

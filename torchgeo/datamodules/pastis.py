@@ -10,7 +10,7 @@ import torch
 from torch.utils.data import random_split
 
 from ..datasets import PASTIS
-from ..datasets.utils import pad_sequence
+from ..datasets.utils import pad_across_batches
 from .geo import NonGeoDataModule
 
 
@@ -44,7 +44,7 @@ class PASTISDataModule(NonGeoDataModule):
             PASTIS, batch_size=batch_size, num_workers=num_workers, **kwargs
         )
         self.padding_length = padding_length
-        self.collate_fn = lambda batch: pad_sequence(
+        self.collate_fn = lambda batch: pad_across_batches(
             batch, padding_length=self.padding_length
         )
 

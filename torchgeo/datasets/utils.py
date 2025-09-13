@@ -12,6 +12,7 @@ import importlib
 import os
 import shutil
 import subprocess
+import warnings
 from collections.abc import Iterable, Iterator, Mapping, MutableMapping, Sequence
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -22,8 +23,10 @@ import pandas as pd
 import rasterio
 import shapely
 import torch
+import torch.nn.functional as F
 from rasterio import Affine
 from torch import Tensor
+from torch.nn.utils.rnn import pad_sequence
 from torchvision.datasets.utils import (
     check_integrity,
     download_and_extract_archive,
@@ -421,19 +424,17 @@ def _dict_list_to_list_dict(
     return uncollated
 
 
-def pad_sequence(
+def pad_across_batches(
     batch: list[dict[str, Tensor]],
     padding_value: float = 0.0,
-    padding_side: str = 'right',
     padding_length: int | None = None,
 ) -> dict[str, Any]:
     """Custom timeseries collate fn to handle variable length sequences.
 
     Args:
-        batch: list of sample dicts return by dataset
+        batch: list of sample dicts returned by dataset
         padding_value: value for padded elements
-        padding_side: the side to pad the sequences on
-        padding_length: the length to pad the sequences to. If None, pad to the max length of mini-batch
+        padding_length: the length to pad the sequences to. If None, pad to the max length of mini-batch.
 
     Returns:
         batch dict output
@@ -443,39 +444,24 @@ def pad_sequence(
     output: dict[str, Any] = {}
     images = [sample['image'] for sample in batch]
 
-    padded_images = []
-    if padding_length is None:
-        padding_length = max(img.shape[0] for img in images)
+    padded_images = pad_sequence(images, batch_first=True, padding_value=padding_value)
 
-    for img in images:
-        if img.shape[0] < padding_length:
-            padding_shape = (padding_length - img.shape[0], *img.shape[1:])
-            padding = torch.full(padding_shape, padding_value, dtype=img.dtype)
-            if padding_side == 'right':
-                padded_img = torch.cat([img, padding], dim=0)
-            elif padding_side == 'left':
-                padded_img = torch.cat([padding, img], dim=0)
-            else:
-                raise ValueError(
-                    f"'padding_side' must be either 'left' or 'right', but got '{padding_side}'"
-                )
-            padded_images.append(padded_img)
-        elif img.shape[0] > padding_length:  # truncate: unpad_sequence
-            print(
-                f'Truncating image from length {img.shape[0]} to {padding_length} in pad_sequence.'
+    if padding_length is not None:
+        if (
+            padded_images.size(1) < padding_length
+        ):  # pad the sequence to the desired length
+            pad_shape = (0, 0) * (padded_images.dim() - 2) + (
+                0,
+                padding_length - padded_images.size(1),
             )
-            if padding_side == 'right':
-                padded_images.append(img[:padding_length])
-            elif padding_side == 'left':
-                padded_images.append(img[-padding_length:])
-            else:
-                raise ValueError(
-                    f"'padding_side' must be either 'left' or 'right', but got '{padding_side}'"
-                )
-        else:
-            padded_images.append(img)
+            padded_images = F.pad(padded_images, pad_shape, value=padding_value)
+        elif padded_images.size(1) > padding_length:  # truncate the sequence
+            warnings.warn(
+                f'Truncating image from length {padded_images.size(1)} to {padding_length}.'
+            )
+            padded_images = padded_images[:, :padding_length]
 
-    output['image'] = torch.stack(padded_images)
+    output['image'] = padded_images
     output['mask'] = torch.stack([sample['mask'] for sample in batch])
 
     if 'bbox_xyxy' in batch[0]:
