@@ -552,3 +552,24 @@ def test_pad_across_batches() -> None:
     out = pad_across_batches(batch, padding_value=0.0, padding_length=5)
     assert out['image'].shape[1] == 5
     assert out['mask'].shape[0] == len(batch)
+
+    out = pad_across_batches(batch, padding_value=0.0, padding_length=1)
+    assert out['image'].shape[1] == 1
+    assert out['mask'].shape[0] == len(batch)
+
+    batch = [
+        {
+            'image': torch.ones(3, 5, 5),
+            'bbox_xyxy': torch.ones(2, 4),
+            'label': torch.ones(2),
+        },
+        {
+            'image': torch.ones(2, 5, 5),
+            'bbox_xyxy': torch.ones(2, 4),
+            'label': torch.ones(2),
+        },
+    ]
+    out = pad_across_batches(batch, padding_value=0.0, padding_length=5)
+    assert out['image'].shape[1] == 5
+    assert out['bbox_xyxy'].shape[0] == len(batch)
+    assert out['label'].shape[0] == len(batch)

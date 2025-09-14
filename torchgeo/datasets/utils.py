@@ -462,8 +462,8 @@ def pad_across_batches(
             padded_images = padded_images[:, :padding_length]
 
     output['image'] = padded_images
-    output['mask'] = torch.stack([sample['mask'] for sample in batch])
-
+    if 'mask' in batch[0]:
+        output['mask'] = torch.stack([sample['mask'] for sample in batch])
     if 'bbox_xyxy' in batch[0]:
         output['bbox_xyxy'] = torch.stack([sample['bbox_xyxy'] for sample in batch])
     if 'label' in batch[0]:
