@@ -23,10 +23,8 @@ import pandas as pd
 import rasterio
 import shapely
 import torch
-import torch.nn.functional as F
 from rasterio import Affine
 from torch import Tensor
-from torch.nn.utils.rnn import pad_sequence
 from torchvision.datasets.utils import (
     check_integrity,
     download_and_extract_archive,
@@ -425,41 +423,48 @@ def _dict_list_to_list_dict(
 
 
 def pad_across_batches(
-    batch: list[dict[str, Tensor]],
-    padding_value: float = 0.0,
-    padding_length: int | None = None,
+    batch: list[dict[str, Tensor]], padding_length: int, padding_value: float = 0.0
 ) -> dict[str, Any]:
-    """Custom timeseries collate fn to handle variable length sequences.
+    """Custom time-series collate fn to handle variable length sequences.
 
     Args:
         batch: list of sample dicts returned by dataset
+        padding_length: the length to pad the sequences
         padding_value: value for padded elements
-        padding_length: the length to pad the sequences to. If None, pad to the max length of mini-batch.
 
     Returns:
         batch dict output
 
     .. versionadded:: 0.8
     """
+    if padding_length is None:
+        raise ValueError(
+            'padding_length must be specified.'
+            'If pad to the max length in the batch, use torch.nn.utils.rnn.pad_sequence directly.'
+        )
+
     output: dict[str, Any] = {}
     images = [sample['image'] for sample in batch]
+    feature_shape = images[0].shape[1:]
 
-    padded_images = pad_sequence(images, batch_first=True, padding_value=padding_value)
+    padded_images = torch.full(
+        (len(batch), padding_length, *feature_shape),
+        padding_value,
+        dtype=images[0].dtype,
+        device=images[0].device,
+    )
 
-    if padding_length is not None:
-        if (
-            padded_images.size(1) < padding_length
-        ):  # pad the sequence to the desired length
-            pad_shape = (0, 0) * (padded_images.dim() - 2) + (
-                0,
-                padding_length - padded_images.size(1),
-            )
-            padded_images = F.pad(padded_images, pad_shape, value=padding_value)
-        elif padded_images.size(1) > padding_length:  # truncate the sequence
-            warnings.warn(
-                f'Truncating image from length {padded_images.size(1)} to {padding_length}.'
-            )
-            padded_images = padded_images[:, :padding_length]
+    truncated = 0
+    for i, img in enumerate(images):
+        seq_len = img.size(0)
+        if seq_len > padding_length:
+            padded_images[i, :padding_length] = img[:padding_length]
+            truncated += 1
+        else:
+            padded_images[i, :seq_len] = img
+
+    if truncated > 0:
+        warnings.warn(f'Truncated {truncated} sequences to length {padding_length}.')
 
     output['image'] = padded_images
     if 'mask' in batch[0]:
