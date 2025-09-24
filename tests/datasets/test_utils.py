@@ -6,7 +6,7 @@ import pickle
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -547,7 +547,11 @@ def test_pad_across_batches() -> None:
     ]
 
     with pytest.raises(ValueError, match='padding_length must be specified'):
-        pad_across_batches(batch, padding_value=0.0, padding_length=None)
+        pad_across_batches(
+            batch,
+            padding_value=0.0,
+            padding_length=cast(int, None),
+        )
 
     out = pad_across_batches(batch, padding_value=0.0, padding_length=3)
     assert out['image'].shape[1] == 3
