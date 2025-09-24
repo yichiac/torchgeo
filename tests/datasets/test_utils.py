@@ -547,11 +547,7 @@ def test_pad_across_batches() -> None:
     ]
 
     with pytest.raises(ValueError, match='padding_length must be specified'):
-        pad_across_batches(
-            batch,
-            padding_value=0.0,
-            padding_length=cast(int, None),
-        )
+        pad_across_batches(batch, padding_value=0.0, padding_length=cast(int, None))
 
     out = pad_across_batches(batch, padding_value=0.0, padding_length=3)
     assert out['image'].shape[1] == 3
