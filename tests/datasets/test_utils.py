@@ -546,6 +546,9 @@ def test_pad_across_batches() -> None:
         {'image': torch.ones(3, 10, 5, 5), 'mask': torch.zeros(5, 5)},
     ]
 
+    with pytest.raises(ValueError, match='padding_length must be specified'):
+        pad_across_batches(batch, padding_value=0.0, padding_length=None)
+
     out = pad_across_batches(batch, padding_value=0.0, padding_length=3)
     assert out['image'].shape[1] == 3
     assert out['mask'].shape[0] == len(batch)
