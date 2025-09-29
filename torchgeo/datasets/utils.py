@@ -429,7 +429,7 @@ def pad_across_batches(
 
     Args:
         batch: list of sample dicts returned by dataset
-        padding_length: the length to pad the sequences
+        padding_length: the length to pad the sequences to
         padding_value: value for padded elements
 
     Returns:
@@ -437,12 +437,6 @@ def pad_across_batches(
 
     .. versionadded:: 0.8
     """
-    if padding_length is None:
-        raise ValueError(
-            'padding_length must be specified.'
-            'If pad to the max length in the batch, use torch.nn.utils.rnn.pad_sequence directly.'
-        )
-
     output: dict[str, Any] = {}
     images = [sample['image'] for sample in batch]
     feature_shape = images[0].shape[1:]

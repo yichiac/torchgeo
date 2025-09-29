@@ -6,7 +6,7 @@ import pickle
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -545,9 +545,6 @@ def test_pad_across_batches() -> None:
         {'image': torch.ones(2, 10, 5, 5), 'mask': torch.zeros(5, 5)},
         {'image': torch.ones(3, 10, 5, 5), 'mask': torch.zeros(5, 5)},
     ]
-
-    with pytest.raises(ValueError, match='padding_length must be specified'):
-        pad_across_batches(batch, padding_value=0.0, padding_length=cast(int, None))
 
     out = pad_across_batches(batch, padding_value=0.0, padding_length=3)
     assert out['image'].shape[1] == 3
