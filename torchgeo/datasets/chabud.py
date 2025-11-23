@@ -22,7 +22,7 @@ from .utils import Path, download_url, lazy_import, percentile_normalization
 class ChaBuD(NonGeoDataset):
     """ChaBuD dataset.
 
-    `ChaBuD <https://huggingface.co/spaces/competitions/ChaBuD-ECML-PKDD2023>`__
+    `ChaBuD <https://huggingface.co/datasets/blanchon/ChaBuD>`__
     is a dataset for Change detection for Burned area Delineation and is used
     for the ChaBuD ECML-PKDD 2023 Discovery Challenge.
 
@@ -120,6 +120,9 @@ class ChaBuD(NonGeoDataset):
 
     def __getitem__(self, index: int) -> dict[str, Tensor]:
         """Return an index within the dataset.
+
+        .. versionchanged:: 0.8
+           Now returns a single T x C x H x W image.
 
         Args:
             index: index to return
