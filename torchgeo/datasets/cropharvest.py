@@ -46,7 +46,7 @@ class CropHarvest(NonGeoDataset):
 
     If you use this dataset in your research, please cite the following paper:
 
-    * https://openreview.net/forum?id=JtjzUXPEaCu
+    * https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/hash/54229abfcfa5649e7003b83dd4755294-Abstract-round2.html
 
     This dataset requires the following additional library to be installed:
 
@@ -78,22 +78,42 @@ class CropHarvest(NonGeoDataset):
     )
     rgb_bands = ('B4', 'B3', 'B2')
 
-    features_url = 'https://zenodo.org/records/7257688/files/features.tar.gz?download=1'
-    labels_url = 'https://zenodo.org/records/7257688/files/labels.geojson?download=1'
+    # new version available
+    # v14
+    features_url = 'https://zenodo.org/records/10251170/files/features.tar.gz?download=1'
+    labels_url = 'https://zenodo.org/records/10251170/files/labels.geojson?download=1'
     file_dict: ClassVar[dict[str, dict[str, str]]] = {
         'features': {
             'url': features_url,
             'filename': 'features.tar.gz',
             'extracted_filename': os.path.join('features', 'arrays'),
-            'md5': 'cad4df655c75caac805a80435e46ee3e',
+            'md5': 'd757e6c32cb6d65aa517f003607f6f81',
         },
         'labels': {
             'url': labels_url,
             'filename': 'labels.geojson',
             'extracted_filename': 'labels.geojson',
-            'md5': 'bf7bae6812fc7213481aff6a2e34517d',
+            'md5': '54a5070f103bc3e635afba27c139ac8d',
         },
     }
+
+    # v13
+    # features_url = 'https://zenodo.org/records/7257688/files/features.tar.gz?download=1'
+    # labels_url = 'https://zenodo.org/records/7257688/files/labels.geojson?download=1'
+    # file_dict: ClassVar[dict[str, dict[str, str]]] = {
+    #     'features': {
+    #         'url': features_url,
+    #         'filename': 'features.tar.gz',
+    #         'extracted_filename': os.path.join('features', 'arrays'),
+    #         'md5': 'cad4df655c75caac805a80435e46ee3e',
+    #     },
+    #     'labels': {
+    #         'url': labels_url,
+    #         'filename': 'labels.geojson',
+    #         'extracted_filename': 'labels.geojson',
+    #         'md5': 'bf7bae6812fc7213481aff6a2e34517d',
+    #     },
+    # }
 
     def __init__(
         self,
