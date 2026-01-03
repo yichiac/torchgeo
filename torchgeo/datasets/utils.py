@@ -47,10 +47,11 @@ __all__ = (
 )
 
 
-GeoSlice: TypeAlias = (
+# Waiting to upgrade Sphinx before switching to type statement
+GeoSlice: TypeAlias = (  # noqa: UP040
     slice | tuple[slice] | tuple[slice, slice] | tuple[slice, slice, slice]
 )
-Path: TypeAlias = str | os.PathLike[str]
+Path: TypeAlias = str | os.PathLike[str]  # noqa: UP040
 
 
 @deprecated('Use torchgeo.datasets.utils.GeoSlice or shapely.Polygon instead')
