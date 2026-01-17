@@ -272,6 +272,11 @@ ChaBuD
 
 .. autoclass:: ChaBuD
 
+Clay Embeddings
+^^^^^^^^^^^^^^^
+
+.. autoclass:: ClayEmbeddings
+
 Cloud Cover Detection
 ^^^^^^^^^^^^^^^^^^^^^
 
