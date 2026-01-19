@@ -22,14 +22,13 @@ class TestEarthLoc:
     ) -> EarthLoc_Weights:
         weights = EarthLoc_Weights.SENTINEL2_RESNET50
         path = tmp_path / f'{weights}.pth'
-        kwargs = {
-            'in_channels': weights.meta['in_chans'],
-            'image_size': weights.meta['image_size'],
-            'desc_dim': weights.meta['desc_dim'],
-            'backbone': weights.meta['encoder'],
-            'pretrained': False,
-        }
-        model = earthloc(**kwargs)
+        model = earthloc(
+            in_channels=weights.meta['in_chans'],
+            image_size=weights.meta['image_size'],
+            desc_dim=weights.meta['desc_dim'],
+            backbone=weights.meta['encoder'],
+            pretrained=False,
+        )
         torch.save(model.state_dict(), path)
         monkeypatch.setattr(weights.value, 'url', str(path))
         return weights  # type: ignore[no-any-return]
