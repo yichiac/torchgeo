@@ -102,7 +102,7 @@ Mypy won't fix your code for you, but will warn you about potential issues with 
 
 .. code-block:: console
 
-   $ mypy .
+   $ mypy
 
 
 If you've never used mypy before or aren't familiar with `Python type hints <https://docs.python.org/3/library/typing.html>`_, this check can be particularly daunting. Don't hesitate to ask for help with resolving any of these warnings on your pull request.
@@ -128,13 +128,12 @@ Now, every time you run ``git commit``, pre-commit will run and let you know if 
 Documentation
 -------------
 
-All of our documentation is hosted on `Read the Docs <https://about.readthedocs.com/>`_. If you make non-trivial changes to the documentation, it helps to build the documentation yourself locally. To do this, make sure you are using **Python < 3.13** and that the dependencies are installed:
+All of our documentation is hosted on `Read the Docs <https://about.readthedocs.com/>`_. If you make non-trivial changes to the documentation, it helps to build the documentation yourself locally. To do this, make sure the dependencies are installed:
 
 .. code-block:: console
 
    $ pip install .[docs]
    $ cd docs
-   $ pip install -r requirements.txt
 
 Pandoc must also be installed. You can download it from the `official Pandoc website <https://pandoc.org/installing.html>`_ and ensure it is included in your system PATH.
 
