@@ -15,12 +15,13 @@ from torch.nn.modules import Module
 from torchvision.models._api import WeightsEnum
 
 from torchgeo.datamodules import (
+    CropHarvestDataModule,
     BigEarthNetDataModule,
     EuroSATDataModule,
     MisconfigurationException,
     QuakeSetDataModule,
 )
-from torchgeo.datasets import BigEarthNet, EuroSAT, QuakeSet, RGBBandsMissingError
+from torchgeo.datasets import BigEarthNet, CropHarvest, EuroSAT, QuakeSet, RGBBandsMissingError
 from torchgeo.main import main
 from torchgeo.models import ResNet18_Weights
 from torchgeo.trainers import ClassificationTask, MultiLabelClassificationTask
@@ -45,6 +46,11 @@ class ClassificationTestModel(Module):
 class PredictBinaryDataModule(QuakeSetDataModule):
     def setup(self, stage: str) -> None:
         self.predict_dataset = QuakeSet(split='test', **self.kwargs)
+
+
+class PredictMulticlassDataModule(CropHarvestDataModule):
+    def setup(self, stage: str) -> None:
+        self.predict_dataset = CropHarvest(split='test', **self.kwargs)
 
 
 class PredictMulticlassDataModule(EuroSATDataModule):
@@ -76,6 +82,7 @@ class TestClassificationTask:
             'bigearthnet_all',
             'bigearthnet_s1',
             'bigearthnet_s2',
+            'cropharvest',
             'eurosat',
             'eurosat100',
             'eurosatspatial',

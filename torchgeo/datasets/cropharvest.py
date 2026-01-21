@@ -31,6 +31,7 @@ class CropHarvest(NonGeoDataset):
 
     * single pixel time series with crop-type labels
     * 18 bands per image over 12 months
+    * 351 crop type labels
 
     Dataset format:
 
@@ -52,7 +53,7 @@ class CropHarvest(NonGeoDataset):
 
        * `h5py <https://pypi.org/project/h5py/>`_ to load the dataset
 
-    .. versionadded:: 0.6
+    .. versionadded:: 0.9
     """
 
     # https://github.com/nasaharvest/cropharvest/blob/main/cropharvest/bands.py
@@ -77,9 +78,9 @@ class CropHarvest(NonGeoDataset):
         'NDVI',
     )
     rgb_bands = ('B4', 'B3', 'B2')
+    splits = ('train', 'test')
 
-    # new version available
-    # v14
+    # new version v14 is available
     features_url = 'https://zenodo.org/records/10251170/files/features.tar.gz?download=1'
     labels_url = 'https://zenodo.org/records/10251170/files/labels.geojson?download=1'
     file_dict: ClassVar[dict[str, dict[str, str]]] = {
@@ -118,6 +119,7 @@ class CropHarvest(NonGeoDataset):
     def __init__(
         self,
         root: Path = 'data',
+        split: str = 'train',
         transforms: Callable[[Sample], Sample] | None = None,
         download: bool = False,
         checksum: bool = False,
@@ -137,6 +139,10 @@ class CropHarvest(NonGeoDataset):
         """
         lazy_import('h5py')
 
+        assert split in self.splits, (
+            f'Please choose one of these valid data splits {self.splits}.'
+        )
+        self.split = split
         self.root = root
         self.transforms = transforms
         self.checksum = checksum
