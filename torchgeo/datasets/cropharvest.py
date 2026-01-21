@@ -78,9 +78,7 @@ class CropHarvest(NonGeoDataset):
         'NDVI',
     )
     rgb_bands = ('B4', 'B3', 'B2')
-    splits = ('train', 'test')
 
-    # new version v14 is available
     features_url = (
         'https://zenodo.org/records/10251170/files/features.tar.gz?download=1'
     )
@@ -100,28 +98,9 @@ class CropHarvest(NonGeoDataset):
         },
     }
 
-    # v13
-    # features_url = 'https://zenodo.org/records/7257688/files/features.tar.gz?download=1'
-    # labels_url = 'https://zenodo.org/records/7257688/files/labels.geojson?download=1'
-    # file_dict: ClassVar[dict[str, dict[str, str]]] = {
-    #     'features': {
-    #         'url': features_url,
-    #         'filename': 'features.tar.gz',
-    #         'extracted_filename': os.path.join('features', 'arrays'),
-    #         'md5': 'cad4df655c75caac805a80435e46ee3e',
-    #     },
-    #     'labels': {
-    #         'url': labels_url,
-    #         'filename': 'labels.geojson',
-    #         'extracted_filename': 'labels.geojson',
-    #         'md5': 'bf7bae6812fc7213481aff6a2e34517d',
-    #     },
-    # }
-
     def __init__(
         self,
         root: Path = 'data',
-        split: str = 'train',
         transforms: Callable[[Sample], Sample] | None = None,
         download: bool = False,
         checksum: bool = False,
@@ -130,7 +109,6 @@ class CropHarvest(NonGeoDataset):
 
         Args:
             root: root directory where dataset can be found
-            split: one of "train" or "test"
             transforms: a function/transform that takes input sample and its target as
                 entry and returns a transformed version
             download: if True, download dataset and store it in the root directory
@@ -142,10 +120,6 @@ class CropHarvest(NonGeoDataset):
         """
         lazy_import('h5py')
 
-        assert split in self.splits, (
-            f'Please choose one of these valid data splits {self.splits}.'
-        )
-        self.split = split
         self.root = root
         self.transforms = transforms
         self.checksum = checksum
