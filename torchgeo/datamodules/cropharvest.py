@@ -3,7 +3,10 @@
 
 """CropHarvest datamodule."""
 
+from typing import Any
+
 from torchgeo.datasets import CropHarvest
+
 from .geo import GeoDataModule
 
 
@@ -13,16 +16,20 @@ class CropHarvestDataModule(GeoDataModule):
     .. versionadded:: 0.9
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self, batch_size: int = 64, num_workers: int = 0, **kwargs: Any
+    ) -> None:
         """Initialize a new CropHarvestDataModule instance.
 
         Args:
+            batch_size: Size of each mini-batch.
+            num_workers: Number of workers for parallel data loading.
             **kwargs: Additional keyword arguments passed to
                 :class:`~torchgeo.datasets.CropHarvest`.
         """
-        super().__init__(CropHarvest, **kwargs)
+        super().__init__(CropHarvest, batch_size, num_workers, **kwargs)
 
-    def setup(self, stage: str):
+    def setup(self, stage: str) -> None:
         """Set up datasets.
 
         Args:

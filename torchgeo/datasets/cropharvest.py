@@ -81,7 +81,9 @@ class CropHarvest(NonGeoDataset):
     splits = ('train', 'test')
 
     # new version v14 is available
-    features_url = 'https://zenodo.org/records/10251170/files/features.tar.gz?download=1'
+    features_url = (
+        'https://zenodo.org/records/10251170/files/features.tar.gz?download=1'
+    )
     labels_url = 'https://zenodo.org/records/10251170/files/labels.geojson?download=1'
     file_dict: ClassVar[dict[str, dict[str, str]]] = {
         'features': {
@@ -128,6 +130,7 @@ class CropHarvest(NonGeoDataset):
 
         Args:
             root: root directory where dataset can be found
+            split: one of "train" or "test"
             transforms: a function/transform that takes input sample and its target as
                 entry and returns a transformed version
             download: if True, download dataset and store it in the root directory
