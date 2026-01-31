@@ -19,6 +19,7 @@ from torchgeo.datasets.utils import (
     Executable,
     Sample,
     array_to_tensor,
+    check_integrity,
     concat_samples,
     disambiguate_timestamp,
     extract_archive,
@@ -328,6 +329,22 @@ class TestBoundingBox:
             match="Bounding box is invalid: 'mint=2025-04-25 00:00:00' > 'maxt=2025-04-24 00:00:00'",
         ):
             BoundingBox(0, 1, 2, 3, MAXT, MINT)
+
+
+def test_check_integrity() -> None:
+    fpath = 'tests/data/vhr10/NWPU VHR-10 dataset.zip'
+    md5 = '497cb7e19a12c7d5abbefe8eac71d22d'
+    sha256 = '2cd7abf9ec04bd10356208a634a9b0ea82c96405bd98882878883a9b6f3d7b46'
+
+    assert check_integrity(fpath)
+    assert check_integrity(fpath, md5=md5)
+    assert check_integrity(fpath, sha256=sha256)
+
+    assert not check_integrity(fpath + '2')
+    assert not check_integrity(fpath + '2', md5=md5)
+    assert not check_integrity(fpath + '2', sha256=sha256)
+    assert not check_integrity(fpath, md5=md5 + '2')
+    assert not check_integrity(fpath, sha256=sha256 + '2')
 
 
 @pytest.mark.parametrize(
