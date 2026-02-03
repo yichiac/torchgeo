@@ -14,6 +14,7 @@ import timm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import rearrange
 from lightly.loss import NTXentLoss
 from lightly.models.modules import MoCoProjectionHead
 from lightly.models.utils import deactivate_requires_grad, update_momentum
@@ -377,6 +378,8 @@ class MoCoTask(BaseTask):
             The loss tensor.
         """
         x = batch['image']
+        if x.ndim == 5:
+            x = rearrange(x, 'b t c h w -> b (t c) h w')
         batch_size = x.shape[0]
 
         in_channels = self.hparams['in_channels']

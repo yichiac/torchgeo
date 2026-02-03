@@ -13,6 +13,7 @@ import timm
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from einops import rearrange
 from lightly.loss import NTXentLoss
 from lightly.models.modules import SimCLRProjectionHead
 from lightly.utils.lars import LARS
@@ -237,6 +238,8 @@ class SimCLRTask(BaseTask):
             AssertionError: If channel dimensions are incorrect.
         """
         x = batch['image']
+        if x.ndim == 5:
+            x = rearrange(x, 'b t c h w -> b (t c) h w')
         batch_size = x.shape[0]
 
         in_channels: int = self.hparams['in_channels']

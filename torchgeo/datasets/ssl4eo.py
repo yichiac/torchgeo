@@ -581,7 +581,7 @@ class SSL4EOS12(SSL4EO):
         subdirs = random.sample(subdirs, self.seasons)
         filename_regex = self.metadata[self.split]['filename_regex']
 
-        images = []
+        timesteps = []
         xs = []
         ys = []
         ts = []
@@ -596,6 +596,7 @@ class SSL4EOS12(SSL4EO):
                     case 's2c' | 's2a':
                         date_format = Sentinel2.date_format
                 mint, maxt = disambiguate_timestamp(date_str, date_format)
+                bands = []
                 for band in self.bands:
                     match self.split:
                         case 's1':
@@ -608,13 +609,14 @@ class SSL4EOS12(SSL4EO):
                         minx, maxx = f.bounds.left, f.bounds.right
                         miny, maxy = f.bounds.bottom, f.bounds.top
                         image = f.read(out_shape=(1, self.size, self.size))
-                        images.append(torch.from_numpy(image.astype(np.float32)))
+                        bands.append(torch.from_numpy(image.astype(np.float32)))
+                timesteps.append(torch.cat(bands))
                 xs.append((minx + maxx) / 2)
                 ys.append((miny + maxy) / 2)
                 ts.append((mint.timestamp() + maxt.timestamp()) / 2)
 
         sample = {
-            'image': torch.cat(images),
+            'image': torch.stack(timesteps),
             'x': torch.tensor(xs),
             'y': torch.tensor(ys),
             't': torch.tensor(ts),
@@ -707,7 +709,7 @@ class SSL4EOS12(SSL4EO):
         )
 
         for i in range(self.seasons):
-            image = sample['image'][i * len(self.bands) : (i + 1) * len(self.bands)]
+            image = sample['image'][i]
 
             if self.split == 's1':
                 axes[0, i].imshow(image[0])

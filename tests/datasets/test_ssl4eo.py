@@ -89,7 +89,7 @@ class TestSSL4EOS12:
         x = dataset[0]
         assert isinstance(x, dict)
         assert isinstance(x['image'], torch.Tensor)
-        assert x['image'].size(0) == dataset.seasons * len(dataset.bands)
+        assert x['image'].shape[:2] == (dataset.seasons, len(dataset.bands))
 
     def test_len(self, dataset: SSL4EOS12) -> None:
         assert len(dataset) == 251079

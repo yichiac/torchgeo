@@ -5,6 +5,7 @@
 
 from typing import Any
 
+import kornia.augmentation as K
 import torch
 
 from ..datasets import SSL4EOL, SSL4EOS12
@@ -61,6 +62,12 @@ class SSL4EOS12DataModule(NonGeoDataModule):
                 :class:`~torchgeo.datasets.SSL4EOS12`.
         """
         super().__init__(SSL4EOS12, batch_size, num_workers, **kwargs)
+
+        self.aug = K.AugmentationSequential(
+            K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
+            data_keys=None,
+            keepdim=True,
+        )
 
     def setup(self, stage: str) -> None:
         """Set up datasets.
