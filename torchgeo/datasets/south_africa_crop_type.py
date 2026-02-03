@@ -302,6 +302,7 @@ class SouthAfricaCropType(RasterDataset):
             pred = sample['prediction'].squeeze()
             ncols += 1
 
+        fig: Figure
         fig, axs = plt.subplots(nrows=1, ncols=ncols, figsize=(ncols * 4, 4))
         for t in range(num_timesteps):
             axs[t].imshow(images[t])
