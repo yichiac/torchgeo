@@ -294,7 +294,8 @@ class SouthAfricaCropType(RasterDataset):
         images = (images - images.min()) / (images.max() - images.min())
 
         mask = sample['mask'].squeeze()
-        ncols = 3
+        num_timesteps = images.shape[0]
+        ncols = num_timesteps + 1
 
         showing_prediction = 'prediction' in sample
         if showing_prediction:
@@ -302,22 +303,21 @@ class SouthAfricaCropType(RasterDataset):
             ncols += 1
 
         fig, axs = plt.subplots(nrows=1, ncols=ncols, figsize=(ncols * 4, 4))
-        axs[0].imshow(images[0])
-        axs[1].imshow(images[1])
-        axs[2].imshow(self.ordinal_cmap[mask], interpolation='none')
-        axs[0].axis('off')
-        axs[1].axis('off')
-        axs[2].axis('off')
+        for t in range(num_timesteps):
+            axs[t].imshow(images[t])
+            axs[t].axis('off')
+        axs[num_timesteps].imshow(self.ordinal_cmap[mask], interpolation='none')
+        axs[num_timesteps].axis('off')
         if showing_prediction:
-            axs[3].imshow(pred)
-            axs[3].axis('off')
+            axs[num_timesteps + 1].imshow(pred)
+            axs[num_timesteps + 1].axis('off')
 
         if show_titles:
-            axs[0].set_title('Image 0')
-            axs[1].set_title('Image 1')
-            axs[2].set_title('Mask')
+            for t in range(num_timesteps):
+                axs[t].set_title(f'Image {t}')
+            axs[num_timesteps].set_title('Mask')
             if showing_prediction:
-                axs[3].set_title('Prediction')
+                axs[num_timesteps + 1].set_title('Prediction')
 
         if suptitle is not None:
             plt.suptitle(suptitle)
