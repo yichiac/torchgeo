@@ -40,7 +40,8 @@ class Substation(NonGeoDataset):
     * 26,522 image-mask pairs stored as numpy files.
     * Data from 5 revisits for most locations.
     * Multi-temporal, multi-spectral images (13 channels) paired with masks,
-      with a spatial resolution of 228x228 pixels
+      with a spatial resolution of 228x228 pixels. When ``timepoint_aggregation``
+      is None, images are returned as T x C x H x W tensors.
 
     If you use this dataset in your research, please cite the following paper:
 
@@ -75,6 +76,7 @@ class Substation(NonGeoDataset):
             mask_2d: Whether to use a 2D mask.
             num_of_timepoints: Number of timepoints to use for each image.
             timepoint_aggregation: How to aggregate multiple timepoints.
+                If None, returns time-series as T x C x H x W.
             transforms: A transform takes input sample and returns a transformed version.
             download: Whether to download the dataset if it is not found.
             checksum: Whether to verify the dataset after downloading.
@@ -131,6 +133,9 @@ class Substation(NonGeoDataset):
                 image = image[0]
             case 'random':
                 image = image[np.random.randint(image.shape[0])]
+            case None:
+                # preserve T x C x H x W
+                pass
 
         mask = np.load(mask_path)['arr_0']
         mask[mask != 3] = 0
@@ -161,6 +166,8 @@ class Substation(NonGeoDataset):
     ) -> Figure:
         """Plot a sample from the dataset.
 
+        When the image is 4D (T x C x H x W), the first two timepoints are plotted.
+
         Args:
             sample: a sample returned by :meth:`__getitem__`
             show_titles: flag indicating whether to show titles above each panel
@@ -169,14 +176,16 @@ class Substation(NonGeoDataset):
         Returns:
             A matplotlib Figure containing the rendered sample.
         """
-        ncols = 2
-        shape_of_image = sample['image'].shape
-        if len(shape_of_image) == 4:
-            # Plot the first timepoint
-            image = sample['image'][0][:3].permute(1, 2, 0).cpu().numpy()
+        is_time_series = sample['image'].ndim == 4
+
+        if is_time_series:
+            images = sample['image'][:, :3].cpu().numpy().transpose(0, 2, 3, 1)
+            images = images / 255.0
+            ncols = 3
         else:
             image = sample['image'][:3].permute(1, 2, 0).cpu().numpy()
-        image = image / 255.0
+            image = image / 255.0
+            ncols = 2
 
         if self.mask_2d:
             mask = sample['mask'][0].squeeze(0).cpu().numpy()
@@ -187,23 +196,39 @@ class Substation(NonGeoDataset):
             prediction = sample['prediction'].cpu().numpy()
             if self.mask_2d:
                 prediction = prediction[0]
-            ncols = 3
+            ncols += 1
 
         fig, axs = plt.subplots(ncols=ncols, figsize=(4 * ncols, 4))
-        axs[0].imshow(image)
-        axs[0].axis('off')
-        axs[1].imshow(mask, cmap='gray', interpolation='none')
-        axs[1].axis('off')
 
-        if show_titles:
-            axs[0].set_title('Image')
-            axs[1].set_title('Mask')
-
-        if showing_predictions:
-            axs[2].imshow(prediction, cmap='gray', interpolation='none')
+        if is_time_series:
+            axs[0].imshow(images[0])
+            axs[0].axis('off')
+            axs[1].imshow(images[1])
+            axs[1].axis('off')
+            axs[2].imshow(mask, cmap='gray', interpolation='none')
             axs[2].axis('off')
             if show_titles:
-                axs[2].set_title('Prediction')
+                axs[0].set_title('Image 0')
+                axs[1].set_title('Image 1')
+                axs[2].set_title('Mask')
+            if showing_predictions:
+                axs[3].imshow(prediction, cmap='gray', interpolation='none')
+                axs[3].axis('off')
+                if show_titles:
+                    axs[3].set_title('Prediction')
+        else:
+            axs[0].imshow(image)
+            axs[0].axis('off')
+            axs[1].imshow(mask, cmap='gray', interpolation='none')
+            axs[1].axis('off')
+            if show_titles:
+                axs[0].set_title('Image')
+                axs[1].set_title('Mask')
+            if showing_predictions:
+                axs[2].imshow(prediction, cmap='gray', interpolation='none')
+                axs[2].axis('off')
+                if show_titles:
+                    axs[2].set_title('Prediction')
 
         if suptitle:
             fig.suptitle(suptitle)
