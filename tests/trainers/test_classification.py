@@ -76,7 +76,6 @@ class TestClassificationTask:
             'bigearthnet_all',
             'bigearthnet_s1',
             'bigearthnet_s2',
-            'cropharvest',
             'eurosat',
             'eurosat100',
             'eurosatspatial',

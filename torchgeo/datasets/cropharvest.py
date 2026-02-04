@@ -53,7 +53,7 @@ class CropHarvest(NonGeoDataset):
 
        * `h5py <https://pypi.org/project/h5py/>`_ to load the dataset
 
-    .. versionadded:: 0.9
+    .. versionadded:: 0.6
     """
 
     # https://github.com/nasaharvest/cropharvest/blob/main/cropharvest/bands.py

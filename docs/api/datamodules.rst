@@ -11,11 +11,6 @@ AgriFieldNet
 
 .. autoclass:: AgriFieldNetDataModule
 
-CropHarvest
-^^^^^^^^^^^^
-
-.. autoclass:: CropHarvestDataModule
-
 Chesapeake Land Cover
 ^^^^^^^^^^^^^^^^^^^^^
 
