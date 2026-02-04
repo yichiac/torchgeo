@@ -7,7 +7,7 @@ import glob
 import json
 import os
 from collections.abc import Callable
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -101,6 +101,7 @@ class CropHarvest(NonGeoDataset):
     def __init__(
         self,
         root: Path = 'data',
+        split: Literal['train', 'test'] = 'train',
         transforms: Callable[[Sample], Sample] | None = None,
         download: bool = False,
         checksum: bool = False,
@@ -109,6 +110,7 @@ class CropHarvest(NonGeoDataset):
 
         Args:
             root: root directory where dataset can be found
+            split: one of "train" or "test"
             transforms: a function/transform that takes input sample and its target as
                 entry and returns a transformed version
             download: if True, download dataset and store it in the root directory
@@ -121,14 +123,15 @@ class CropHarvest(NonGeoDataset):
         lazy_import('h5py')
 
         self.root = root
+        self.split = split
         self.transforms = transforms
         self.checksum = checksum
         self.download = download
 
         self._verify()
 
-        self.files = self._load_features(self.root)
         self.labels = self._load_labels(self.root)
+        self.files = self._load_features(self.root)
         classes = self.labels['properties.label'].unique()
         classes = classes[classes != np.array(None)]
         self.classes = np.insert(classes, 0, ['None', 'Other'])
@@ -171,17 +174,24 @@ class CropHarvest(NonGeoDataset):
             list of dicts containing path for each of hd5 single pixel time series and
             its key for associated data
         """
+        is_test = self.split == 'test'
         files = []
         chips = glob.glob(
             os.path.join(root, self.file_dict['features']['extracted_filename'], '*.h5')
         )
         chips = sorted(os.path.basename(chip) for chip in chips)
         for chip in chips:
+            index = chip.split('_')[0]
+            dataset = chip.split('_')[1][:-3]
+            row = self.labels[
+                (self.labels['properties.index'] == int(index))
+                & (self.labels['properties.dataset'] == dataset)
+            ]
+            if row.empty or row.iloc[0]['properties.is_test'] != is_test:
+                continue
             chip_path = os.path.join(
                 root, self.file_dict['features']['extracted_filename'], chip
             )
-            index = chip.split('_')[0]
-            dataset = chip.split('_')[1][:-3]
             files.append(dict(chip=chip_path, index=index, dataset=dataset))
         return files
 
