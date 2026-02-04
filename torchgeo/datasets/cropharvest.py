@@ -47,7 +47,7 @@ class CropHarvest(NonGeoDataset):
 
     If you use this dataset in your research, please cite the following paper:
 
-    * https://datasets-benchmarks-proceedings.neurips.cc/paper_files/paper/2021/hash/54229abfcfa5649e7003b83dd4755294-Abstract-round2.html
+    * https://openreview.net/forum?id=JtjzUXPEaCu
 
     This dataset requires the following additional library to be installed:
 
