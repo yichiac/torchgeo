@@ -44,7 +44,7 @@ class AgriFieldNet(RasterDataset):
     weighted field list that ensured that fields with less common crop types
     were better represented in the test set. The original dataset can be
     downloaded from `Source Cooperative <https://source.coop/
-    radiantearth/agrifieldnet-competition/>`__.
+    radiantearth/agrifieldnet-competition>`__.
 
     Dataset format:
 
