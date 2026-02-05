@@ -88,13 +88,13 @@ class CropHarvest(NonGeoDataset):
             'url': features_url,
             'filename': 'features.tar.gz',
             'extracted_filename': os.path.join('features', 'arrays'),
-            'md5': 'd757e6c32cb6d65aa517f003607f6f81',
+            'sha256': 'f88d688bac805e1c7ae8bd518ed6d14528b3811f46c47a8f95ec0669ce772a68',
         },
         'labels': {
             'url': labels_url,
             'filename': 'labels.geojson',
             'extracted_filename': 'labels.geojson',
-            'md5': '54a5070f103bc3e635afba27c139ac8d',
+            'sha256': '57e71cf88c6ed2069748ad8f5fcd29bdaf82b8279f560b275164f80e2093157f',
         },
     }
 
