@@ -48,11 +48,11 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
             **kwargs,
         )
 
-        self._train_video_aug = K.VideoSequential(
-            K.Normalize(mean=self.mean, std=self.std),
-            K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
-            K.RandomVerticalFlip(p=0.5),
-            K.RandomHorizontalFlip(p=0.5),
+        self.train_aug = K.AugmentationSequential(K.VideoSequential(
+K.Normalize(mean=self.mean, std=self.std),
+K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
+K.RandomVerticalFlip(p=0.5),
+K.RandomHorizontalFlip(p=0.5)), data_keys=None, keepdim=True,
         )
 
         self.aug = K.AugmentationSequential(
