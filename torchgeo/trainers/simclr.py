@@ -232,22 +232,17 @@ class SimCLRTask(BaseTask):
 
         Returns:
             The loss tensor.
-
-        Raises:
-            AssertionError: If channel dimensions are incorrect.
         """
         x = batch['image']
         batch_size = x.shape[0]
 
-        in_channels: int = self.hparams['in_channels']
-        assert x.size(1) == in_channels or x.size(1) == 2 * in_channels
-
-        if x.size(1) == in_channels:
+        if x.ndim == 5:  # (B, T, C, H, W)
+            t = x.shape[1]
+            x1 = x[:, torch.randint(t, (1,)).item()]
+            x2 = x[:, torch.randint(t, (1,)).item()]
+        else:  # (B, C, H, W)
             x1 = x
             x2 = x
-        else:
-            x1 = x[:, :in_channels]
-            x2 = x[:, in_channels:]
 
         with torch.no_grad():
             x1 = self.augmentations(x1)
