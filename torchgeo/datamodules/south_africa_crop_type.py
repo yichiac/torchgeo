@@ -48,11 +48,15 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
             **kwargs,
         )
 
-        self.train_aug = K.AugmentationSequential(K.VideoSequential(
-K.Normalize(mean=self.mean, std=self.std),
-K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
-K.RandomVerticalFlip(p=0.5),
-K.RandomHorizontalFlip(p=0.5)), data_keys=None, keepdim=True,
+        self.train_aug = K.AugmentationSequential(
+            K.VideoSequential(
+                K.Normalize(mean=self.mean, std=self.std),
+                K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
+                K.RandomVerticalFlip(p=0.5),
+                K.RandomHorizontalFlip(p=0.5),
+            ),
+            data_keys=None,
+            keepdim=True,
         )
 
         self.aug = K.AugmentationSequential(
@@ -60,21 +64,6 @@ K.RandomHorizontalFlip(p=0.5)), data_keys=None, keepdim=True,
             data_keys=None,
             keepdim=True,
         )
-
-    def on_after_batch_transfer(self, batch: Sample, dataloader_idx: int) -> Sample:
-        """Apply batch augmentations to the batch after it is transferred to the device.
-
-        Args:
-            batch: A batch of data that needs to be altered or augmented.
-            dataloader_idx: The index of the dataloader to which the batch belongs.
-
-        Returns:
-            A batch of data.
-        """
-        if self.trainer and self.trainer.training:
-            batch['image'] = self._train_video_aug(batch['image'])
-            return batch
-        return super().on_after_batch_transfer(batch, dataloader_idx)
 
     def setup(self, stage: str) -> None:
         """Set up datasets.
