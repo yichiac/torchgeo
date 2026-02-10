@@ -153,7 +153,6 @@ class MoCoTask(BaseTask):
         moco_momentum: float = 0.99,
         gather_distributed: bool = False,
         size: int = 224,
-        season: str = 'augment',
         grayscale_weights: Tensor | None = None,
         augmentation1: nn.Module | None = None,
         augmentation2: nn.Module | None = None,
@@ -186,12 +185,6 @@ class MoCoTask(BaseTask):
             gather_distributed: Gather negatives from all GPUs during distributed
                 training (ignored if memory_bank_size > 0).
             size: Size of patch to crop.
-            season: Season selection mode for temporal (5D) input.
-                ``'augment'`` selects independent random seasons for query,
-                ``'fixed'`` uses a deterministic season for both views,
-                ``'random'`` uses the same random season for both,
-                key to learn seasonal invariance.
-                Only used when input is 5D (e.g., SSL4EOS12).
             grayscale_weights: Weight vector for grayscale computation, see
                 :class:`~torchgeo.transforms.RandomGrayscale`. Only used when
                 ``augmentations=None``. Defaults to average of all bands.
@@ -202,14 +195,12 @@ class MoCoTask(BaseTask):
 
         Raises:
             AssertionError: If an invalid version of MoCo is requested.
-            AssertionError: If an invalid season mode is requested.
 
         Warns:
             UserWarning: If hyperparameters do not match MoCo version requested.
         """
         # Validate hyperparameters
         assert version in range(1, 4)
-        assert season in ('augment', 'fixed', 'random')
         if version == 1:
             if memory_bank_size == 0:
                 warnings.warn('MoCo v1 uses a memory bank')
@@ -388,33 +379,13 @@ class MoCoTask(BaseTask):
         x = batch['image']
         batch_size = x.shape[0]
 
-        in_channels = self.hparams['in_channels']
-
         if x.ndim == 5:  # (B, T, C, H, W)
-            # https://github.com/zhu-xlab/SSL4EO-S12/blob/main/src/benchmark/pretrain_ssl/pretrain_moco_v2_s2c.py#L137
             t = x.shape[1]
-            season: str = self.hparams['season']
-            if season == 'augment':
-                x1 = x[:, torch.randint(t, (1,)).item()]
-                x2 = x[:, torch.randint(t, (1,)).item()]
-            elif season == 'fixed':
-                g = torch.Generator()
-                g.manual_seed(42)
-                idx = torch.randint(t, (1,), generator=g).item()
-                x1 = x2 = x[:, idx]
-            elif season == 'random':
-                idx = torch.randint(t, (1,)).item()
-                x1 = x2 = x[:, idx]
-
-        else:  # (B, TC, H, W)
-            assert x.size(1) == in_channels or x.size(1) == 2 * in_channels
-
-            if x.size(1) == in_channels:
-                x1 = x
-                x2 = x
-            else:
-                x1 = x[:, :in_channels]
-                x2 = x[:, in_channels:]
+            x1 = x[:, torch.randint(t, (1,)).item()]
+            x2 = x[:, torch.randint(t, (1,)).item()]
+        else:  # (B, C, H, W)
+            x1 = x
+            x2 = x
 
         with torch.no_grad():
             x1 = self.augmentation1(x1)
