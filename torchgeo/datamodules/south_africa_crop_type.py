@@ -9,7 +9,6 @@ import kornia.augmentation as K
 import torch
 
 from ..datasets import SouthAfricaCropType, random_bbox_assignment
-from ..datasets.utils import Sample
 from ..samplers import GridGeoSampler, RandomBatchGeoSampler
 from ..samplers.utils import _to_tuple
 from .geo import GeoDataModule
