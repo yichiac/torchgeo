@@ -10,7 +10,6 @@ import torch
 
 from ..datasets import SouthAfricaCropType, random_bbox_assignment
 from ..samplers import GridGeoSampler, RandomBatchGeoSampler
-from ..samplers.utils import _to_tuple
 from .geo import GeoDataModule
 
 
@@ -45,17 +44,6 @@ class SouthAfricaCropTypeDataModule(GeoDataModule):
             length=length,
             num_workers=num_workers,
             **kwargs,
-        )
-
-        self.train_aug = K.AugmentationSequential(
-            K.VideoSequential(
-                K.Normalize(mean=self.mean, std=self.std),
-                K.RandomResizedCrop(_to_tuple(self.patch_size), scale=(0.6, 1.0)),
-                K.RandomVerticalFlip(p=0.5),
-                K.RandomHorizontalFlip(p=0.5),
-            ),
-            data_keys=None,
-            keepdim=True,
         )
 
         self.aug = K.AugmentationSequential(
