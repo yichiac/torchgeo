@@ -49,7 +49,7 @@ class TestSouthAfricaCropType:
         assert x['image'].shape[1] == len(dataset.bands)
 
     def test_len(self, dataset: SouthAfricaCropType) -> None:
-        assert len(dataset) == 20
+        assert len(dataset) == 10
 
     def test_and(self, dataset: SouthAfricaCropType) -> None:
         ds = dataset & dataset
