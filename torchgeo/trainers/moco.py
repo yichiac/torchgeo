@@ -382,7 +382,9 @@ class MoCoTask(BaseTask):
         if x.ndim == 5:  # (B, T, C, H, W)
             t = x.shape[1]
             if t < 2:
-                raise ValueError('Need at least 2 timesteps to sample two distinct indices.')
+                raise ValueError(
+                    'Need at least 2 timesteps to sample two distinct indices.'
+                )
             idx = torch.randperm(t)[:2]
             x1 = x[:, idx[0]]
             x2 = x[:, idx[1]]
