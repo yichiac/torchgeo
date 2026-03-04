@@ -233,7 +233,7 @@ class SouthAfricaCropType(RasterDataset):
                         f'{field_id}_{date}_{band}_10m.tif',
                     )
                     band_filepaths.append(filepath)
-                band_list.append(self._merge_files(band_filepaths, index))
+                band_list.append(self._merge_or_stack(band_filepaths, index))
             timesteps.append(torch.cat(band_list))
         image = torch.stack(timesteps)
 
