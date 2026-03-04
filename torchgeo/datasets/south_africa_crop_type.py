@@ -216,6 +216,7 @@ class SouthAfricaCropType(RasterDataset):
 
         # Create T x C x H x W tensor
         assert isinstance(self.paths, str | os.PathLike)
+        paths = cast(Path, self.paths)
         timesteps: list[Tensor] = []
         for date in sorted_dates:
             band_list: list[Tensor] = []
@@ -223,7 +224,7 @@ class SouthAfricaCropType(RasterDataset):
                 band_filepaths = []
                 for field_id in field_ids:
                     filepath = os.path.join(
-                        self.paths,
+                        paths,
                         'train',
                         'imagery',
                         band_type,
