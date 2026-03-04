@@ -375,10 +375,7 @@ class BYOLTask(BaseTask):
             x2 = x[:, idx[1]]
         elif x.ndim == 4 and x.shape[1] > in_channels:  # (B, T*C, H, W)
             t = x.shape[1] // in_channels
-            if t < 2:
-                idx = torch.zeros(2, dtype=torch.long)
-            else:
-                idx = torch.randperm(t)[:2]
+            idx = torch.randperm(t)[:2]
             x1 = x[:, idx[0] * in_channels : (idx[0] + 1) * in_channels]
             x2 = x[:, idx[1] * in_channels : (idx[1] + 1) * in_channels]
         else:  # (B, C, H, W)

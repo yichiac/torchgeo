@@ -31,6 +31,12 @@ class SSL4EOLDataModule(NonGeoDataModule):
         """
         super().__init__(SSL4EOL, batch_size, num_workers, **kwargs)
 
+        self.aug = K.AugmentationSequential(
+            K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
+            data_keys=None,
+            keepdim=True,
+        )
+
     def setup(self, stage: str) -> None:
         """Set up datasets.
 

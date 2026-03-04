@@ -277,7 +277,7 @@ class SSL4EOL(SSL4EO):
                 wavelengths.extend(self.wavelengths)
 
         sample = {
-            'image': torch.cat(images),
+            'image': torch.stack(images),
             'x': torch.tensor(xs),
             'y': torch.tensor(ys),
             't': torch.tensor(ts),
@@ -362,11 +362,10 @@ class SSL4EOL(SSL4EO):
         fig, axes = plt.subplots(
             ncols=self.seasons, squeeze=False, figsize=(4 * self.seasons, 4)
         )
-        num_bands = len(self.metadata[self.split]['all_bands'])
         rgb_bands = self.metadata[self.split]['rgb_bands']
 
         for i in range(self.seasons):
-            image = sample['image'][i * num_bands : (i + 1) * num_bands].byte()
+            image = sample['image'][i].byte()
 
             image = image[rgb_bands].permute(1, 2, 0)
             axes[0, i].imshow(image)
