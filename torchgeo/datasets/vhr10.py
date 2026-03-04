@@ -5,7 +5,7 @@
 
 import os
 from collections.abc import Callable
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Literal
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -34,9 +34,9 @@ def convert_coco_poly_to_mask(
     """Convert coco polygons to mask tensor.
 
     Args:
-        segmentations (List[int]): polygon coordinates
-        height (int): image height
-        width (int): image width
+        segmentations: polygon coordinates
+        height: image height
+        width: image width
 
     Returns:
         Tensor: Mask tensor
@@ -187,7 +187,7 @@ class VHR10(NonGeoDataset):
     def __init__(
         self,
         root: Path = 'data',
-        split: str = 'positive',
+        split: Literal['positive', 'negative'] = 'positive',
         transforms: Callable[[Sample], Sample] | None = None,
         download: bool = False,
         checksum: bool = False,
