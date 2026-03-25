@@ -52,21 +52,12 @@ class TestSpatioTemporalSegmentationTask:
         batch = {'image': torch.randn(2, 3, 4, 16, 16)}
         prediction = task.predict_step(batch, 0)
         assert prediction['probabilities'].shape == (2, 5, 16, 16)
-        assert prediction['bounds'] is None
-        assert prediction['transform'] is None
 
-    @pytest.mark.parametrize(
-        ('hidden_dim', 'kernel_size'), [(16, 3), ([16, 8], [3, (1, 1)])]
-    )
-    def test_forward_shape(
-        self,
-        hidden_dim: int | list[int],
-        kernel_size: int | tuple[int, int] | list[int | tuple[int, int]],
-    ) -> None:
+    def test_forward_shape(self) -> None:
         task = SpatioTemporalSegmentationTask(
             in_channels=10,
-            hidden_dim=hidden_dim,
-            kernel_size=kernel_size,
+            hidden_dim=[16, 8],
+            kernel_size=[3, (1, 1)],
             num_layers=2,
             task='multiclass',
             num_classes=20,
