@@ -62,11 +62,13 @@ from .digital_typhoon import DigitalTyphoon
 from .dior import DIOR
 from .dl4gam import DL4GAMAlps
 from .dota import DOTA
+from .earth_embeddings import EarthEmbeddings
 from .earth_index import EarthIndexEmbeddings
 from .eddmaps import EDDMapS
 from .enmap import EnMAP
 from .enviroatlas import EnviroAtlas
 from .errors import DatasetNotFoundError, DependencyNotFoundError, RGBBandsMissingError
+from .esd import EmbeddedSeamlessData
 from .esri2020 import Esri2020
 from .etci2021 import ETCI2021
 from .eudem import EUDEM
@@ -126,6 +128,7 @@ from .naip import NAIP
 from .nasa_marine_debris import NASAMarineDebris
 from .nccm import NCCM
 from .nlcd import NLCD
+from .openaerialmap import OpenAerialMap
 from .openbuildings import OpenBuildings
 from .openstreetmap import OpenStreetMap
 from .oscd import OSCD, OSCD100
@@ -274,7 +277,9 @@ __all__ = (
     'DependencyNotFoundError',
     'DigitalTyphoon',
     'EDDMapS',
+    'EarthEmbeddings',
     'EarthIndexEmbeddings',
+    'EmbeddedSeamlessData',
     'EnMAP',
     'EnviroAtlas',
     'Esri2020',
@@ -325,6 +330,7 @@ __all__ = (
     'NASAMarineDebris',
     'NonGeoClassificationDataset',
     'NonGeoDataset',
+    'OpenAerialMap',
     'OpenBuildings',
     'OpenStreetMap',
     'PatternNet',

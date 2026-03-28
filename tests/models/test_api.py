@@ -17,6 +17,7 @@ from torchgeo.models import (
     DOFALarge16_Weights,
     EarthLoc_Weights,
     Panopticon_Weights,
+    Presto_Weights,
     ResNet18_Weights,
     ResNet50_Weights,
     ResNet152_Weights,
@@ -49,6 +50,7 @@ from torchgeo.models import (
     get_weight,
     list_models,
     panopticon_vitb14,
+    presto,
     resnet18,
     resnet50,
     resnet152,
@@ -80,6 +82,7 @@ builders = [
     dofa_small_patch16_224,
     earthloc,
     panopticon_vitb14,
+    presto,
     resnet18,
     resnet50,
     resnet152,
@@ -108,6 +111,7 @@ enums = [
     DOFALarge16_Weights,
     EarthLoc_Weights,
     Panopticon_Weights,
+    Presto_Weights,
     ResNet18_Weights,
     ResNet50_Weights,
     ResNet152_Weights,
@@ -152,7 +156,7 @@ def test_get_model_weights(builder: Callable[..., nn.Module]) -> None:
 
 @pytest.mark.parametrize('enum', enums)
 def test_get_weight(enum: WeightsEnum) -> None:
-    for weight in enum:  # type: ignore[not-iterable]
+    for weight in enum:  # ty: ignore[not-iterable]
         assert weight == get_weight(str(weight))
 
 

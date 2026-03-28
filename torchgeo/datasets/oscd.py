@@ -6,7 +6,7 @@
 import glob
 import os
 from collections.abc import Callable, Sequence
-from typing import ClassVar
+from typing import ClassVar, Literal
 
 import einops
 import matplotlib.pyplot as plt
@@ -97,7 +97,7 @@ class OSCD(NonGeoDataset):
     def __init__(
         self,
         root: Path = 'data',
-        split: str = 'train',
+        split: Literal['train', 'val', 'test'] = 'train',
         bands: Sequence[str] = all_bands,
         transforms: Callable[[Sample], Sample] | None = None,
         download: bool = False,
@@ -186,7 +186,7 @@ class OSCD(NonGeoDataset):
             mask = os.path.join(labels_root, region, 'cm', 'cm.png')
 
             def get_image_paths(ind: int) -> list[str]:
-                return sorted(
+                return sorted(  # ty: ignore[invalid-return-type]
                     glob.glob(
                         os.path.join(images_root, region, f'imgs_{ind}_rect', '*.tif')
                     ),
@@ -364,13 +364,13 @@ class OSCD100(OSCD):
     """
 
     urls: ClassVar[dict[str, str]] = {
-        'Onera Satellite Change Detection dataset - Images.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/ecf6fcf15e6f20219324f9009f7509aa866b51d5/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Images.zip',
-        'Onera Satellite Change Detection dataset - Train Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/ecf6fcf15e6f20219324f9009f7509aa866b51d5/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Train%20Labels.zip',
-        'Onera Satellite Change Detection dataset - Val Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/ecf6fcf15e6f20219324f9009f7509aa866b51d5/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Val%20Labels.zip',
-        'Onera Satellite Change Detection dataset - Test Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/ecf6fcf15e6f20219324f9009f7509aa866b51d5/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Test%20Labels.zip',
+        'Onera Satellite Change Detection dataset - Images.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/cac594329ee7f1a7f7781b1fe9c3d57befa50044/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Images.zip',
+        'Onera Satellite Change Detection dataset - Train Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/cac594329ee7f1a7f7781b1fe9c3d57befa50044/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Train%20Labels.zip',
+        'Onera Satellite Change Detection dataset - Val Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/cac594329ee7f1a7f7781b1fe9c3d57befa50044/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Val%20Labels.zip',
+        'Onera Satellite Change Detection dataset - Test Labels.zip': 'https://hf.co/datasets/hkristen/oscd100/resolve/cac594329ee7f1a7f7781b1fe9c3d57befa50044/Onera%20Satellite%20Change%20Detection%20dataset%20-%20Test%20Labels.zip',
     }
     md5s: ClassVar[dict[str, str]] = {
-        'Onera Satellite Change Detection dataset - Images.zip': '2e8792a3da012f7eb0440b557eef4c11',
+        'Onera Satellite Change Detection dataset - Images.zip': 'e6c3e5d9ca6003c39fcf7991f5d05f14',
         'Onera Satellite Change Detection dataset - Train Labels.zip': '4fdc210a90e2c881a553fa9c72c7d6ce',
         'Onera Satellite Change Detection dataset - Val Labels.zip': '99a38997829cc81a18b04d4afb3493ba',
         'Onera Satellite Change Detection dataset - Test Labels.zip': '5e43ae36cfe0cc83ddcbd4fcb03ace60',
