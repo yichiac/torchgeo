@@ -277,7 +277,7 @@ class SSL4EOL(SSL4EO):
                 wavelengths.extend(self.wavelengths)
 
         sample = {
-            'image': torch.stack(images),
+            'image': images[0] if self.seasons == 1 else torch.stack(images),
             'x': torch.tensor(xs),
             'y': torch.tensor(ys),
             't': torch.tensor(ts),
@@ -359,13 +359,17 @@ class SSL4EOL(SSL4EO):
         Returns:
             a matplotlib Figure with the rendered sample
         """
+        images = sample['image']
+        if images.ndim == 3:
+            images = images.unsqueeze(0)
+
         fig, axes = plt.subplots(
-            ncols=self.seasons, squeeze=False, figsize=(4 * self.seasons, 4)
+            ncols=images.shape[0], squeeze=False, figsize=(4 * images.shape[0], 4)
         )
         rgb_bands = self.metadata[self.split]['rgb_bands']
 
-        for i in range(self.seasons):
-            image = sample['image'][i].byte()
+        for i, image in enumerate(images):
+            image = image.byte()
 
             image = image[rgb_bands].permute(1, 2, 0)
             axes[0, i].imshow(image)
@@ -615,7 +619,7 @@ class SSL4EOS12(SSL4EO):
                 ts.append((mint.timestamp() + maxt.timestamp()) / 2)
 
         sample = {
-            'image': torch.stack(timesteps),
+            'image': timesteps[0] if self.seasons == 1 else torch.stack(timesteps),
             'x': torch.tensor(xs),
             'y': torch.tensor(ys),
             't': torch.tensor(ts),
@@ -699,16 +703,19 @@ class SSL4EOS12(SSL4EO):
         Returns:
             a matplotlib Figure with the rendered sample
         """
+        images = sample['image']
+        if images.ndim == 3:
+            images = images.unsqueeze(0)
+
         nrows = 2 if self.split == 's1' else 1
         fig, axes = plt.subplots(
             nrows=nrows,
-            ncols=self.seasons,
+            ncols=images.shape[0],
             squeeze=False,
-            figsize=(4 * self.seasons, 4 * nrows),
+            figsize=(4 * images.shape[0], 4 * nrows),
         )
 
-        for i in range(self.seasons):
-            image = sample['image'][i]
+        for i, image in enumerate(images):
 
             if self.split == 's1':
                 axes[0, i].imshow(image[0])

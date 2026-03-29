@@ -9,7 +9,41 @@ import kornia.augmentation as K
 import torch
 
 from ..datasets import SSL4EOL, SSL4EOS12
+from ..datasets.utils import Sample
 from .geo import NonGeoDataModule
+
+
+def _normalize_ssl4eo_batch(
+    batch: Sample,
+    trainer: Any,
+    image_aug: K.AugmentationSequential,
+    video_aug: K.AugmentationSequential,
+) -> Sample:
+    """Normalize single-view samples as images and multi-view samples as videos.
+
+    Args:
+        batch: A batch of data that needs to be normalized.
+        trainer: The active trainer, if any.
+        image_aug: Augmentation pipeline for image batches.
+        video_aug: Augmentation pipeline for video batches.
+
+    Returns:
+        A normalized batch of data.
+
+    Raises:
+        ValueError: If ``batch['image']`` has an unsupported shape.
+    """
+    if trainer:
+        image = batch['image']
+        if image.ndim == 4:
+            batch = image_aug(batch)
+        elif image.ndim == 5:
+            batch = video_aug(batch)
+        else:
+            msg = 'Expected batch["image"] to have shape (B, C, H, W) or (B, T, C, H, W)'
+            raise ValueError(msg)
+
+    return batch
 
 
 class SSL4EOLDataModule(NonGeoDataModule):
@@ -32,6 +66,9 @@ class SSL4EOLDataModule(NonGeoDataModule):
         super().__init__(SSL4EOL, batch_size, num_workers, **kwargs)
 
         self.aug = K.AugmentationSequential(
+            K.Normalize(mean=self.mean, std=self.std), data_keys=None, keepdim=True
+        )
+        self.video_aug = K.AugmentationSequential(
             K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
             data_keys=None,
             keepdim=True,
@@ -44,6 +81,18 @@ class SSL4EOLDataModule(NonGeoDataModule):
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
         self.dataset = SSL4EOL(**self.kwargs)
+
+    def on_after_batch_transfer(self, batch: Sample, dataloader_idx: int) -> Sample:
+        """Apply batch augmentations after transfer to the device.
+
+        Args:
+            batch: A batch of data that needs to be altered or augmented.
+            dataloader_idx: The index of the dataloader to which the batch belongs.
+
+        Returns:
+            A batch of data.
+        """
+        return _normalize_ssl4eo_batch(batch, self.trainer, self.aug, self.video_aug)
 
 
 class SSL4EOS12DataModule(NonGeoDataModule):
@@ -70,6 +119,9 @@ class SSL4EOS12DataModule(NonGeoDataModule):
         super().__init__(SSL4EOS12, batch_size, num_workers, **kwargs)
 
         self.aug = K.AugmentationSequential(
+            K.Normalize(mean=self.mean, std=self.std), data_keys=None, keepdim=True
+        )
+        self.video_aug = K.AugmentationSequential(
             K.VideoSequential(K.Normalize(mean=self.mean, std=self.std)),
             data_keys=None,
             keepdim=True,
@@ -82,3 +134,15 @@ class SSL4EOS12DataModule(NonGeoDataModule):
             stage: Either 'fit', 'validate', 'test', or 'predict'.
         """
         self.dataset = SSL4EOS12(**self.kwargs)
+
+    def on_after_batch_transfer(self, batch: Sample, dataloader_idx: int) -> Sample:
+        """Apply batch augmentations after transfer to the device.
+
+        Args:
+            batch: A batch of data that needs to be altered or augmented.
+            dataloader_idx: The index of the dataloader to which the batch belongs.
+
+        Returns:
+            A batch of data.
+        """
+        return _normalize_ssl4eo_batch(batch, self.trainer, self.aug, self.video_aug)

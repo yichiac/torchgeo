@@ -43,10 +43,13 @@ class TestSSL4EOL:
         x = dataset[0]
         assert isinstance(x, dict)
         assert isinstance(x['image'], torch.Tensor)
-        assert x['image'].shape[:2] == (
-            dataset.seasons,
-            len(dataset.metadata[dataset.split]['all_bands']),
-        )
+        if dataset.seasons == 1:
+            assert x['image'].shape[0] == len(dataset.metadata[dataset.split]['all_bands'])
+        else:
+            assert x['image'].shape[:2] == (
+                dataset.seasons,
+                len(dataset.metadata[dataset.split]['all_bands']),
+            )
 
     def test_len(self, dataset: SSL4EOL) -> None:
         assert len(dataset) == 2
@@ -90,7 +93,10 @@ class TestSSL4EOS12:
         x = dataset[0]
         assert isinstance(x, dict)
         assert isinstance(x['image'], torch.Tensor)
-        assert x['image'].shape[:2] == (dataset.seasons, len(dataset.bands))
+        if dataset.seasons == 1:
+            assert x['image'].shape[0] == len(dataset.bands)
+        else:
+            assert x['image'].shape[:2] == (dataset.seasons, len(dataset.bands))
 
     def test_len(self, dataset: SSL4EOS12) -> None:
         assert len(dataset) == 251079

@@ -236,24 +236,18 @@ class SimCLRTask(BaseTask):
         """
         x = batch['image']
         batch_size = x.shape[0]
-        in_channels: int = self.hparams['in_channels']
-
-        if x.ndim == 5:  # (B, T, C, H, W)
-            t = x.shape[1]
-            if t < 2:
-                idx = torch.zeros(2, dtype=torch.long)
-            else:
-                idx = torch.randperm(t)[:2]
-            x1 = x[:, idx[0]]
-            x2 = x[:, idx[1]]
-        elif x.ndim == 4 and x.shape[1] > in_channels:  # (B, T*C, H, W)
-            t = x.shape[1] // in_channels
-            idx = torch.randperm(t)[:2]
-            x1 = x[:, idx[0] * in_channels : (idx[0] + 1) * in_channels]
-            x2 = x[:, idx[1] * in_channels : (idx[1] + 1) * in_channels]
-        else:  # (B, C, H, W)
+        if x.ndim == 5:  # (B, 2, C, H, W)
+            if x.shape[1] != 2:
+                msg = 'Expected batch["image"] to have shape (B, 2, C, H, W)'
+                raise ValueError(msg)
+            x1 = x[:, 0]
+            x2 = x[:, 1]
+        elif x.ndim == 4:  # (B, C, H, W)
             x1 = x
             x2 = x
+        else:
+            msg = 'Expected batch["image"] to have shape (B, C, H, W) or (B, 2, C, H, W)'
+            raise ValueError(msg)
 
         with torch.no_grad():
             x1 = self.augmentations(x1)
