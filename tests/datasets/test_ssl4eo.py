@@ -44,7 +44,9 @@ class TestSSL4EOL:
         assert isinstance(x, dict)
         assert isinstance(x['image'], torch.Tensor)
         if dataset.seasons == 1:
-            assert x['image'].shape[0] == len(dataset.metadata[dataset.split]['all_bands'])
+            assert x['image'].shape[0] == len(
+                dataset.metadata[dataset.split]['all_bands']
+            )
         else:
             assert x['image'].shape[:2] == (
                 dataset.seasons,

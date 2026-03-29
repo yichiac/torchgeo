@@ -716,7 +716,6 @@ class SSL4EOS12(SSL4EO):
         )
 
         for i, image in enumerate(images):
-
             if self.split == 's1':
                 axes[0, i].imshow(image[0])
                 axes[1, i].imshow(image[1])

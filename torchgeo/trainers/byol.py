@@ -367,7 +367,7 @@ class BYOLTask(BaseTask):
         if x.ndim == 5:  # (B, 2, C, H, W)
             x1 = x[:, 0]
             x2 = x[:, 1]
-        else: # (B, C, H, W)
+        else:  # (B, C, H, W)
             x1 = x
             x2 = x
 

@@ -37,11 +37,8 @@ def _normalize_ssl4eo_batch(
         image = batch['image']
         if image.ndim == 4:
             batch = image_aug(batch)
-        elif image.ndim == 5:
-            batch = video_aug(batch)
         else:
-            msg = 'Expected batch["image"] to have shape (B, C, H, W) or (B, T, C, H, W)'
-            raise ValueError(msg)
+            batch = video_aug(batch)
 
     return batch
 
