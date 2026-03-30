@@ -3,6 +3,7 @@
 
 """SSL4EO datamodule."""
 
+from collections.abc import Callable
 from typing import Any
 
 import kornia.augmentation as K
@@ -16,8 +17,8 @@ from .geo import NonGeoDataModule
 def _normalize_ssl4eo_batch(
     batch: Sample,
     trainer: Any,
-    image_aug: K.AugmentationSequential,
-    video_aug: K.AugmentationSequential,
+    image_aug: Callable[[Sample], Sample],
+    video_aug: Callable[[Sample], Sample],
 ) -> Sample:
     """Normalize single-view samples as images and multi-view samples as videos.
 
