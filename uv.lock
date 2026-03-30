@@ -3518,6 +3518,20 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-github-changelog"
+version = "1.7.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "docutils" },
+    { name = "requests" },
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/04/8a/e3b943c59927280c9c5bfb94064845a57f36bc2e021435adbfb7d3ecca1f/sphinx_github_changelog-1.7.2.tar.gz", hash = "sha256:79f11f30ec5b1ae52a1742a6dc702644203b164732a1af4b049ebe522ff484e4", size = 78662, upload-time = "2026-03-23T21:49:45.238Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/81/6c/d8db14cbf2171cae049660eacddf858a35818343e618b442993a8b0a8885/sphinx_github_changelog-1.7.2-py3-none-any.whl", hash = "sha256:fef384fb9b60bfb8f1c4cc5941dab674b0e52456cd3fe05ef2c763833054d680", size = 11416, upload-time = "2026-03-23T21:49:43.74Z" },
+]
+
+[[package]]
 name = "sphinxcontrib-applehelp"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3715,6 +3729,7 @@ all = [
     { name = "ruff" },
     { name = "scipy" },
     { name = "sphinx" },
+    { name = "sphinx-github-changelog" },
     { name = "ty" },
     { name = "types-geopandas" },
     { name = "types-requests" },
@@ -3738,6 +3753,7 @@ docs = [
     { name = "nbsphinx" },
     { name = "pydata-sphinx-theme" },
     { name = "sphinx" },
+    { name = "sphinx-github-changelog" },
 ]
 models = [
     { name = "microsoft-aurora" },
@@ -3794,6 +3810,7 @@ requires-dist = [
     { name = "segmentation-models-pytorch", specifier = ">=0.5" },
     { name = "shapely", specifier = ">=2.0.2" },
     { name = "sphinx", marker = "extra == 'docs'", specifier = ">=5.3" },
+    { name = "sphinx-github-changelog", marker = "extra == 'docs'", specifier = ">=1.7.2" },
     { name = "timm", specifier = ">=1.0.3" },
     { name = "torch", specifier = ">=2.2" },
     { name = "torchgeo", extras = ["datasets", "docs", "models", "style", "tests"], marker = "extra == 'all'" },
