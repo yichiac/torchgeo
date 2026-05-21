@@ -19,4 +19,4 @@ Do you have a use case that is missing from this list? Please open a pull reques
    earth_surface_water
    earthquake_detection
    naip_road_segmentation
-   spatio_temporal_segmentation_convlstm
+   spatio_temporal_segmentation
