@@ -1,0 +1,307 @@
+From PASTIS to North Rhine-Westphalia:
+A Practical Walkthrough of Cross-Domain Crop-Type Mapping with a TorchGeo ConvLSTM
+==================================================================================
+
+
+ABSTRACT
+--------
+
+We document the design, implementation, and operational lessons of a small
+software pipeline that takes a TorchGeo ConvLSTM segmenter trained on the
+French PASTIS-R dataset and applies it, without fine-tuning, to crop-type
+mapping over a region of Münsterland in North Rhine-Westphalia, Germany.
+Sentinel-2 L2A imagery is streamed directly from the Microsoft Planetary
+Computer STAC catalogue, predictions are evaluated against EuroCrops
+DE_NRW_2021 labels through a harmonised eight-class common crop set, and
+results are visualised alongside the first two acquisitions of the input
+time-series. The pipeline is intentionally compact (under four hundred
+lines of Python) and is intended as both a reproducible demonstration and
+a record of the engineering trade-offs that arise when a model trained on
+one country is asked to make sense of another.
+
+
+1. INTRODUCTION
+---------------
+
+Cross-domain transfer is one of the most ordinary questions a practitioner
+asks of a remote-sensing model: having spent compute and curation effort on
+a labelled corpus in country A, does the resulting model carry any utility
+in country B? The PASTIS-R dataset, distributed as part of TorchGeo, makes
+the question concrete. PASTIS-R aggregates 2433 Sentinel-2 time-series
+patches over the southern half of metropolitan France, annotated with a
+twenty-class semantic label set that includes the most common European
+crops. A ConvLSTM trained on these sequences learns to combine
+phenological cues from approximately forty acquisitions per patch into a
+parcel-level crop-type map.
+
+In this article we walk through the implementation of
+"pastis_to_germany_inference.py", a script that reuses the most recent
+checkpoint produced by the companion training script
+"spatiotemporal_segmentation_full.py" and asks it to map crops over a
+small piece of NRW. The motivation is twofold. First, France-to-Germany
+transfer is interesting in its own right because the two countries share
+many crops but differ in rotation timing, parcel size, and the relative
+prevalence of grassland versus arable cover. Second, the exercise stresses
+the entire TorchGeo composition: spatial datasets, vector labels, geospatial
+sampling, and a spatiotemporal trainer must all cooperate without code
+changes upstream. What follows is, in effect, a field test of those
+abstractions.
+
+
+2. BACKGROUND AND RELATED WORK
+------------------------------
+
+The PASTIS panoptic agricultural time-series benchmark was introduced in
+Garnot and Landrieu (2021) and extended to PASTIS-R with paired Sentinel-1
+acquisitions. Its labels, painted from the French parcel registry, span
+twenty classes including soft and durum wheats, two barleys, corn, rapeseed,
+sunflower, beet, grapevine, leguminous fodder, and a residual "void" class
+for parcels that fall outside the patch footprint.
+
+EuroCrops is a complementary effort that harmonises self-reported parcel
+data from European member states into a single hierarchical taxonomy, the
+Harmonised Crop Hierarchical Aggregation Taxonomy (HCAT). The TorchGeo
+distribution exposes EuroCrops as a VectorDataset and ships, among others,
+two German subsets: Lower Saxony (DE_LS_2021) and North Rhine-Westphalia
+(DE_NRW_2021). Neither directly borders France, and neither covers the
+specific régions agricoles seen in PASTIS-R. This constraint becomes
+important when choosing an evaluation area.
+
+Microsoft's Planetary Computer hosts the full Sentinel-2 L2A archive as
+cloud-optimised GeoTIFFs, accessible through a public STAC catalogue
+without authentication. Importantly, PC harmonises the +1000 BOA
+reflectance offset that ESA introduced in baseline 04.00, so all dates can
+be processed on the original 0-10000 surface-reflectance scale without
+date-conditional offsets.
+
+
+3. METHODOLOGY
+--------------
+
+3.1 Source model
+
+The trained network is a ConvLSTM segmentation head wrapped by
+SpatioTemporalSegmentationTask, with ten input channels (PASTIS S2 bands
+B02 through B12, omitting the atmospheric/cirrus and 60 m water-vapour
+bands), twenty output classes, a hidden dimension of 128, two recurrent
+layers, and 3x3 convolutional kernels in both recurrent and head paths.
+Training used a square-root-inverse-frequency class weighting computed over
+the entire PASTIS-R semantic mask histogram; this milder weighting was a
+deliberate departure from pure inverse-frequency, which produced mode
+collapse during pilot runs.
+
+3.2 Area and period of interest
+
+We chose Münsterland, North Rhine-Westphalia, as the operating area. A
+naïve reading of the brief would point to Saarland or Baden-Württemberg,
+which physically border France and are climatically closer to PASTIS-R.
+However, those Bundesländer are not represented in the EuroCrops version
+that ships with TorchGeo, and constructing quantitative evaluation without
+labels was not practical for this study. NRW, in particular its Münsterland
+sub-region, is the closest labelled German subset to France and offers
+broad continuous farmland with a rich crop mix dominated by maize, winter
+wheat, winter barley, rapeseed, and grassland.
+
+The Sentinel-2 time window was set to 1 September 2020 through 30 November
+2021, approximately fifteen months. This range matches the typical
+agricultural-year span of PASTIS-R sequences (roughly September of year
+N-1 through November of year N) and captures the full phenological cycle
+relevant to a 2021 crop-year evaluation: winter-crop emergence and
+over-wintering, spring green-up, summer growth, and harvest. Pairing 2021
+labels with 2021-vintage imagery, rather than 2018 imagery to match
+PASTIS-R training, is the necessary trade-off: crop rotations are
+year-specific, so labels and imagery must come from the same year.
+
+3.3 Data acquisition
+
+The script issues a single pystac-client query against the
+"sentinel-2-l2a" collection with a bounding box derived from the AOI, the
+requested time window, and a scene-level cloud-cover filter of below
+twenty percent. Returned items are deduplicated by acquisition date,
+keeping the lowest-cloud item per date; if more than thirty-eight items
+remain after deduplication, they are evenly sub-sampled to thirty-eight to
+match the padding length used during training. For each retained item,
+the ten PASTIS bands are read through GDAL's vsicurl driver and reprojected
+on the fly into a common UTM 32N target grid at ten-metre resolution using
+bilinear resampling. The native ten- and twenty-metre bands are thereby
+co-registered without any intermediate file being written, while the
+output stack remains in memory as a single (T, C, H, W) float32 tensor.
+
+3.4 Normalisation
+
+PASTIS-R surface reflectance is stored as digital numbers where DN equals
+reflectance times ten thousand, and the corresponding PASTIS datamodule
+applies a Kornia normalisation with mean zero and standard deviation
+10000. Because Planetary Computer harmonises L2A values onto the same
+scale, our inference normalisation reduces to a single division by ten
+thousand on the input chips. No offset correction is required for our
+time window, since it precedes ESA processing baseline 04.00. A point
+worth emphasising is that PASTIS-R training does not pre-filter or
+SCL-mask cloud pixels; cloudiness is part of the input distribution, and
+the ConvLSTM has implicitly learned to discount contaminated timesteps.
+For this reason we do not apply pixel-level SCL masking at inference; doing
+so would introduce a synthetic pattern the model never observed in
+training.
+
+3.5 Label harmonisation
+
+The PASTIS twenty-class space and the EuroCrops HCAT taxonomy do not align
+class-for-class. We define an eight-class common crop set: background
+(non-crop), wheat, barley, corn, rapeseed, grassland, other crop, and a
+"void" class used as the loss/ignore index. Both label spaces are mapped
+into this common set. The PASTIS-to-common mapping is a fixed lookup
+table; for example, winter triticale is pragmatically folded into wheat
+because the original model had limited recall on triticale and the crop is
+biologically a wheat-rye hybrid. The EuroCrops mapping is implemented as
+a forty-line subclass, EuroCropsCommon, that overrides the framework's
+_load_class_map and get_label hooks. Rather than walking the HCAT
+hierarchical-code lookup that the stock EuroCrops uses, the subclass
+matches against the human-readable EC_hcat_n attribute via a short rule
+list. This keeps the mapping logic in one place and lets the inference
+script perform the polygon rasterisation through a single bbox query into
+the dataset, returning an (H, W) mask in the desired class space.
+
+3.6 Inference protocol
+
+The model was trained on 128x128 chips. For a 10240 m square AOI, this
+yields a 1024x1024 pixel grid that we tile into sixty-four
+non-overlapping 128x128 chips. Each chip is fed forward independently
+with the full T-step input and an explicit per-batch lengths argument that
+declares the valid sequence length; ConvLSTM internally uses this length
+to select the final hidden state. Predictions are stitched without
+overlap blending. The output prediction in PASTIS class indices is then
+remapped to the common set through a NumPy lookup.
+
+3.7 Evaluation
+
+We compute pixel-wise overall accuracy and per-class intersection-over-
+union, precision, and recall over the subset of pixels whose EuroCrops
+class is not the "void" ignore index. A four-panel summary figure is
+produced for each AOI: the first two acquisition dates as RGB composites
+(to give a visual sanity check that the input series is plausible),
+followed by the predicted crop map and the EuroCrops ground truth in the
+common set, with a shared colour key. We deliberately chose to display
+the first two timesteps rather than a season-median composite, because a
+median collapses the very phenology the model exploits and obscures
+whether the series begins in the right part of the year.
+
+
+4. IMPLEMENTATION NOTES
+-----------------------
+
+The pipeline is implemented as a single Python script,
+"pastis_to_germany_inference.py", with three layers of TorchGeo usage
+visible: SpatioTemporalSegmentationTask.load_from_checkpoint for model
+restoration, the EuroCrops VectorDataset for label rasterisation, and
+torchgeo.datasets.utils for incidental utilities. The Sentinel-2 path
+remains based on raw pystac-client and rasterio because TorchGeo does not
+ship a STAC client; integrating one would have required a larger surface
+change. As a consequence, the script is split roughly into a streaming
+acquisition section, a torchgeo-driven label section, an inference loop,
+and a metrics/visualisation tail.
+
+Two operational issues emerged during early runs and are worth recording.
+The first was wall-clock: the initial implementation streamed all 380 COG
+reads (thirty-eight timesteps times ten bands) sequentially, which is
+latency-dominated and slow over high-RTT links. We addressed this by
+threading the inner band loop with a ten-worker ThreadPoolExecutor, which
+yields a five-to-tenfold improvement because GDAL releases the GIL during
+HTTP I/O. The second issue was opacity of failure: even after threading,
+a multi-AOI run was killed without a recoverable signal or log message.
+Two mitigations were put in place. A small log_mem helper now reports
+resident-set size and CUDA allocation at four checkpoints in each AOI
+loop; the last printed checkpoint before a kill should locate the
+offending stage. The 1.5 GB float32 time-series tensor is also explicitly
+released after inference, with only the first two frames retained for the
+visualisation. After this hardening, the AOI list was temporarily reduced
+to a single area until a clean run is observed.
+
+A per-AOI disk cache, written as uint16 to roughly halve the storage
+footprint, allows reruns to skip the entire streaming step. The cache key
+incorporates centre, size, time window, and cloud parameters, so any
+change of those values transparently triggers a re-fetch.
+
+
+5. DISCUSSION
+-------------
+
+The exercise illustrates several recurring themes in applied earth-
+observation work. The first is that label-side constraints often
+dominate site selection. The naive choice of Karlsruhe at the French
+border, which would have been climatologically nearest to PASTIS-R, was
+infeasible because TorchGeo does not ship EuroCrops labels for that area.
+Falling back on Münsterland trades climatological proximity for the
+ability to compute meaningful metrics. The second theme is that
+"normalisation" is rarely a single line of code: pre-baseline-04
+harmonisation, reflectance scaling, resampling for mixed-resolution
+bands, and the question of cloud filtering each have to be reconciled
+against the assumptions baked into the trained model. The third is the
+slightly counter-intuitive observation that an inference pipeline can be
+"cleaner than training" and that this is not necessarily an improvement;
+because PASTIS-R training did not pre-filter cloudy acquisitions, removing
+them at inference would introduce a new distribution shift rather than
+fixing one.
+
+The script also serves as a small case study in how far TorchGeo
+abstractions can carry a non-canonical workflow. EuroCrops integrated
+cleanly through a forty-line subclass; the trainer's checkpoint-loading
+machinery handled the spatiotemporal model without ceremony; the most
+friction came at the boundary between STAC and the file-oriented
+RasterDataset hierarchy.
+
+
+6. OPEN QUESTIONS AND FUTURE WORK
+---------------------------------
+
+Several extensions are natural. First, identifying the cause of the
+multi-AOI kill would allow us to scale evaluation to several places in
+Münsterland and aggregate per-class metrics across them, increasing
+statistical strength. Second, the current scene-level cloud filter at
+twenty percent is conservative relative to training; relaxing the filter,
+or removing it entirely, would more faithfully match the PASTIS-R input
+distribution and should be tested. Third, the eight-class common set is
+a coarse harmonisation; a finer mapping that retained for example
+distinct winter and spring barley, or grouped soybean separately from
+"other crop", would expose more of the model's capability. Fourth, a
+short fine-tuning pass on a small German subset would allow the
+zero-shot baseline to be contrasted with a domain-adapted variant and
+would directly address the most obvious failure mode of cross-domain
+transfer, namely that German crop rotations and parcel sizes differ
+systematically from those in southern France. Finally, replacing the
+nested-loop tile inference with a GridGeoSampler-driven DataLoader over
+a torchgeo Sentinel2 dataset, as in the companion
+"pastis_to_germany_inference_torchgeo.py" variant, would consolidate
+the spatial bookkeeping into framework code at the cost of an explicit
+on-disk imagery cache.
+
+
+7. CONCLUSION
+-------------
+
+We presented a compact pipeline that exercises an existing PASTIS-trained
+ConvLSTM on previously unseen ground in North Rhine-Westphalia. The
+implementation reads Sentinel-2 reflectance directly from a public STAC
+catalogue, uses a torchgeo EuroCrops subclass to obtain ground-truth
+crop labels under a harmonised eight-class taxonomy, and reports both
+quantitative metrics and a four-panel visualisation per area of interest.
+The work surfaces a number of practical concerns - choosing an AOI that
+has labels, harmonising mixed taxonomies, matching normalisation to
+training assumptions, handling sequential network I/O - that are at least
+as central to honest cross-domain evaluation as the model itself. Future
+work will focus on widening the geographic coverage once the operational
+issues are resolved, on a more careful treatment of cloud pixels, and on
+contrasting zero-shot transfer with light fine-tuning.
+
+
+SOFTWARE AND DATA AVAILABILITY
+------------------------------
+
+The inference script and a parallel torchgeo-idiomatic variant are
+available alongside this article as "pastis_to_germany_inference.py" and
+"pastis_to_germany_inference_torchgeo.py". A running ledger of design
+decisions, deviations, and open questions is maintained in
+"implementation-notes.html". The training script is
+"spatiotemporal_segmentation_full.py". Sentinel-2 imagery is sourced
+from the Microsoft Planetary Computer ("sentinel-2-l2a"); EuroCrops is
+distributed by the EuroCrops project on Zenodo and is downloaded
+automatically by the torchgeo wrapper on first use.

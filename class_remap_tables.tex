@@ -1,0 +1,124 @@
+% -----------------------------------------------------------------------------
+% Class-space remap tables for the PASTIS -> NRW cross-domain inference pipeline
+% (companion to pastis_to_germany_inference.py and pastis_to_germany_article.txt).
+%
+% Paste into a new Overleaf project and compile with pdfLaTeX.
+% -----------------------------------------------------------------------------
+\documentclass[11pt]{article}
+\usepackage[a4paper, margin=2.2cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{caption}
+
+% Common-8 colors, matching COMMON_CMAP in pastis_to_germany_inference.py
+\definecolor{cNonCrop}{HTML}{555555}
+\definecolor{cWheat}{HTML}{FF7F0E}
+\definecolor{cBarley}{HTML}{2CA02C}
+\definecolor{cCorn}{HTML}{FFBB78}
+\definecolor{cRapeseed}{HTML}{8C564B}
+\definecolor{cGrassland}{HTML}{AEC7E8}
+\definecolor{cOtherCrop}{HTML}{9467BD}
+\definecolor{cVoid}{HTML}{FFFFFF}
+
+% Bordered color swatch; visible even for the white "void" entry.
+\newcommand{\swatch}[1]{%
+  \fcolorbox{black!70}{#1}{\rule[-0.05em]{0pt}{0.8em}\hspace{1.2em}}%
+}
+
+% Tightened column types
+\newcolumntype{C}{>{\centering\arraybackslash}m{0.5cm}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}m{4.6cm}}
+
+\begin{document}
+
+\section*{Class-space remap tables}
+
+The PASTIS-trained ConvLSTM emits predictions in PASTIS's 20-class label
+space; EuroCrops DE\_NRW\_2021 ships labels in the HCAT taxonomy. Both
+are mapped into a single 8-class common crop set
+(\textit{non\_crop, wheat, barley, corn, rapeseed, grassland, other\_crop, void})
+so that cross-domain accuracy can be reported on a shared label set.
+Table~\ref{tab:pastis-to-common} gives the prediction-side mapping;
+Table~\ref{tab:hcat-to-common} gives the label-side mapping.
+
+% -----------------------------------------------------------------------------
+\begin{table}[h]
+\centering
+\caption{PASTIS 20-class $\to$ common 8-class lookup
+(\texttt{PASTIS\_TO\_COMMON}). Class indices match
+\texttt{torchgeo.datasets.PASTIS.classes}.}
+\label{tab:pastis-to-common}
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{C l C C l}
+\toprule
+\multicolumn{2}{c}{PASTIS class}
+& \multicolumn{3}{c}{Common class} \\
+\cmidrule(lr){1-2}\cmidrule(lr){3-5}
+idx & name & idx & color & name \\
+\midrule
+0  & background                & 0 & \swatch{cNonCrop}   & non\_crop \\
+1  & meadow                    & 5 & \swatch{cGrassland} & grassland \\
+2  & soft\_winter\_wheat       & 1 & \swatch{cWheat}     & wheat \\
+3  & corn                      & 3 & \swatch{cCorn}      & corn \\
+4  & winter\_barley            & 2 & \swatch{cBarley}    & barley \\
+5  & winter\_rapeseed          & 4 & \swatch{cRapeseed}  & rapeseed \\
+6  & spring\_barley            & 2 & \swatch{cBarley}    & barley \\
+7  & sunflower                 & 6 & \swatch{cOtherCrop} & other\_crop \\
+8  & grapevine                 & 6 & \swatch{cOtherCrop} & other\_crop \\
+9  & beet                      & 6 & \swatch{cOtherCrop} & other\_crop \\
+10 & winter\_triticale         & 1 & \swatch{cWheat}     & wheat (pragmatic) \\
+11 & winter\_durum\_wheat      & 1 & \swatch{cWheat}     & wheat \\
+12 & fruits\_vegetables\_flowers & 6 & \swatch{cOtherCrop} & other\_crop \\
+13 & potatoes                  & 6 & \swatch{cOtherCrop} & other\_crop \\
+14 & leguminous\_fodder        & 5 & \swatch{cGrassland} & grassland \\
+15 & soybeans                  & 6 & \swatch{cOtherCrop} & other\_crop \\
+16 & orchard                   & 6 & \swatch{cOtherCrop} & other\_crop \\
+17 & mixed\_cereal             & 1 & \swatch{cWheat}     & wheat \\
+18 & sorghum                   & 3 & \swatch{cCorn}      & corn \\
+19 & void\_label               & 7 & \swatch{cVoid}      & void (ignore index) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% -----------------------------------------------------------------------------
+\begin{table}[h]
+\centering
+\caption{EuroCrops HCAT name $\to$ common 8-class (\texttt{hcat\_to\_common}).
+Substring matching on the lower-cased \texttt{EC\_hcat\_n} attribute;
+rules are evaluated in order and the first match wins. Polygons whose
+\texttt{EC\_hcat\_n} matches no rule fall through to \texttt{other\_crop}.}
+\label{tab:hcat-to-common}
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{C C l L}
+\toprule
+order & color & common class & substring(s) tested in \texttt{EC\_hcat\_n} \\
+\midrule
+1 & \swatch{cWheat}     & wheat       & \texttt{wheat}, \texttt{triticale} \\
+2 & \swatch{cBarley}    & barley      & \texttt{barley} \\
+3 & \swatch{cCorn}      & corn        & \texttt{maize}, \texttt{corn} \\
+4 & \swatch{cRapeseed}  & rapeseed    & \texttt{rape} \\
+5 & \swatch{cGrassland} & grassland   & \texttt{grass}, \texttt{meadow}, \texttt{pasture}, \texttt{lawn} \\
+6 & \swatch{cNonCrop}   & non\_crop   & \texttt{fallow}, \texttt{urban}, \texttt{water}, \texttt{forest}, \texttt{road}, \texttt{wood}, \texttt{tree} \\
+7 & \swatch{cOtherCrop} & other\_crop & (default for any other agricultural label) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Notes.}
+\begin{itemize}
+  \item PASTIS class 10 (\texttt{winter\_triticale}) is pragmatically folded
+        into \texttt{wheat} rather than \texttt{other\_crop}; triticale is a
+        wheat--rye hybrid and the trained model's recall on the dedicated
+        triticale class was poor.
+  \item PASTIS class 14 (\texttt{leguminous\_fodder}) is mapped to
+        \texttt{grassland} on the prediction side because in NRW such parcels
+        are visually and phenologically similar to permanent grassland.
+  \item Class 7 (\texttt{void}) is used as the loss/ignore index on the
+        EuroCrops side, ensuring that pixels without a labelled parcel do not
+        contribute to overall pixel accuracy, IoU, precision, or recall.
+\end{itemize}
+
+\end{document}

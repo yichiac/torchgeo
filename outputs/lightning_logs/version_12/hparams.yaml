@@ -1,0 +1,32 @@
+class_weights: !!python/object/apply:torch._utils._rebuild_tensor_v2
+- !!python/object/apply:torch.storage._load_from_bytes
+  - !!binary |
+    gAKKCmz8nEb5IGqoUBkugAJN6QMugAJ9cQAoWBAAAABwcm90b2NvbF92ZXJzaW9ucQFN6QNYDQAA
+    AGxpdHRsZV9lbmRpYW5xAohYCgAAAHR5cGVfc2l6ZXNxA31xBChYBQAAAHNob3J0cQVLAlgDAAAA
+    aW50cQZLBFgEAAAAbG9uZ3EHSwR1dS6AAihYBwAAAHN0b3JhZ2VxAGN0b3JjaApGbG9hdFN0b3Jh
+    Z2UKcQFYCQAAADI5NDk0NTA4OHECWAMAAABjcHVxA0sUTnRxBFEugAJdcQBYCQAAADI5NDk0NTA4
+    OHEBYS4UAAAAAAAAAAYPXDwR+Is8ciGMPNw8xDyTDxY9ZLkOPbyyVT2nroo+vbELQSLOFT1/i7g9
+    vbELQdxeIz0a3lY9T8t0PWigwT7yecw9PsNzPdj3gj4AAAAA
+- 0
+- !!python/tuple
+  - 20
+- !!python/tuple
+  - 1
+- false
+- !!python/object/apply:collections.OrderedDict
+  - []
+head_kernel_size: 3
+hidden_dim: 128
+ignore_index: 19
+in_channels: 10
+kernel_size: 3
+labels: null
+loss: ce
+lr: 0.0001
+model: convlstm
+num_classes: 20
+num_labels: null
+num_layers: 2
+patience: 10
+pos_weight: null
+task: multiclass

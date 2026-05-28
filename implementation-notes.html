@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PASTIS &rarr; Germany inference: implementation notes</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+         max-width: 880px; margin: 2rem auto; line-height: 1.5; color: #222;
+         padding: 0 1rem; }
+  h1 { border-bottom: 2px solid #333; padding-bottom: 0.3rem; }
+  h2 { margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.2rem; }
+  h3 { margin-top: 1.4rem; }
+  code, pre { background: #f5f5f5; border-radius: 4px; padding: 0.1rem 0.3rem;
+              font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  pre { padding: 0.6rem 0.8rem; overflow-x: auto; }
+  .tag { display: inline-block; padding: 0.05rem 0.45rem; border-radius: 3px;
+         font-size: 0.78rem; font-weight: 600; vertical-align: middle;
+         margin-right: 0.4rem; }
+  .tag-decision  { background: #e0f0ff; color: #084c8d; }
+  .tag-deviation { background: #ffe5e0; color: #8d2410; }
+  .tag-tradeoff  { background: #fff5d6; color: #7a5b00; }
+  .tag-open      { background: #ecdcff; color: #4a1d8d; }
+  table { border-collapse: collapse; margin: 0.8rem 0; }
+  th, td { border: 1px solid #ccc; padding: 0.35rem 0.7rem; text-align: left; }
+  th { background: #f0f0f0; }
+  ul { padding-left: 1.3rem; }
+</style>
+</head>
+<body>
+
+<h1>PASTIS &rarr; Germany cross-domain inference</h1>
+<p>Notes on how <code>pastis_to_germany_inference.py</code> diverges from or interprets the
+   informal spec. Updated as I work.</p>
+
+<p>There are now <em>two</em> scripts that do the same job differently:</p>
+<ul>
+  <li><code>pastis_to_germany_inference.py</code> &mdash; from-scratch version. STAC
+      queries, band reading/warping, EuroCrops download and rasterization all hand-rolled.
+      Easier to read top-to-bottom; nothing depends on torchgeo&rsquo;s GeoDataset
+      machinery.</li>
+  <li><code>pastis_to_germany_inference_torchgeo.py</code> &mdash; simplified version that
+      leans on torchgeo: <code>Sentinel2(time_series=True)</code>,
+      <code>EuroCrops</code> subclass with an overridden <code>get_label</code>, composed
+      with <code>&amp;</code> and sampled by <code>GridGeoSampler</code>. Less code in the
+      main path, but adds a download-to-cache step.</li>
+</ul>
+
+<h2>What the script does</h2>
+<ol>
+  <li>Auto-discovers the most recent <code>best</code> checkpoint under
+      <code>outputs_full/lightning_logs/version_*/checkpoints/</code> and loads
+      <code>SpatioTemporalSegmentationTask</code> from it.</li>
+  <li>Queries Microsoft Planetary Computer (STAC) for Sentinel-2 L2A scenes covering a small
+      German bounding box for the 2021 growing season, filters by cloud cover, and assembles
+      a <code>(T, C, H, W)</code> time-series matching PASTIS's 10-band layout (B02, B03, B04,
+      B05, B06, B07, B08, B8A, B11, B12).</li>
+  <li>Tiles the AOI into non-overlapping 128&times;128 patches at 10&nbsp;m and runs the
+      ConvLSTM forward.</li>
+  <li>Rasterizes EuroCrops DE_NRW_2021 polygons over the same grid and computes confusion
+      matrix + per-class IoU/precision/recall, after mapping both label spaces to a small
+      common crop set (see below).</li>
+  <li>Saves a stitched RGB / prediction / label visualization to
+      <code>outputs_germany/</code>.</li>
+</ol>
+
+<h2>Design decisions</h2>
+
+<h3><span class="tag tag-decision">Decision</span> AOI: southwestern NRW (near D&uuml;ren), not Karlsruhe</h3>
+<p>You picked &ldquo;small fixed bbox near the Strasbourg/Karlsruhe border.&rdquo; However,
+   <code>torchgeo.datasets.EuroCrops</code> only ships two German subsets:
+   <code>DE_LS_2021</code> (Lower Saxony) and <code>DE_NRW_2021</code> (North Rhine-Westphalia).
+   Neither covers Baden-W&uuml;rttemberg, Rheinland-Pfalz, or Saarland. To keep
+   <em>quantitative</em> evaluation against EuroCrops, I moved the bbox to southwestern NRW
+   (around 50.80&deg;N, 6.45&deg;E, near D&uuml;ren) &mdash; the closest available labelled
+   region to France (&sim;150 km from the border, via Belgium/Luxembourg). Climatically and
+   agriculturally it remains closer to PASTIS-R&rsquo;s southern France distribution than,
+   say, Lower Saxony.</p>
+
+<h3><span class="tag tag-decision">Decision</span> Year mismatch: use 2021 imagery to match 2021 labels</h3>
+<p>PASTIS-R covers 2018&ndash;2019 in France; EuroCrops DE_NRW is 2021. Crop rotations are
+   year-specific, so labels and imagery must come from the same year. I use 2021 S2 imagery
+   and accept the additional &sim;3-year domain shift on top of the
+   France&rarr;Germany shift. This is documented as a known limitation in the script&rsquo;s
+   header.</p>
+
+<h3><span class="tag tag-decision">Decision</span> 8-class common crop mapping</h3>
+<p>You asked for a 6&ndash;8-class common set. I went with eight classes:</p>
+<table>
+  <tr><th>idx</th><th>name</th><th>PASTIS source classes</th><th>EuroCrops HCAT prefix / name contains</th></tr>
+  <tr><td>0</td><td>background / non-crop</td><td>background (0)</td><td>polygons that don&rsquo;t match any other class</td></tr>
+  <tr><td>1</td><td>wheat</td><td>soft_winter_wheat (2), winter_durum_wheat (11), mixed_cereal (17)</td><td>&ldquo;wheat&rdquo;, &ldquo;triticale&rdquo;</td></tr>
+  <tr><td>2</td><td>barley</td><td>winter_barley (4), spring_barley (6)</td><td>&ldquo;barley&rdquo;</td></tr>
+  <tr><td>3</td><td>corn / maize</td><td>corn (3), sorghum (18)</td><td>&ldquo;maize&rdquo;, &ldquo;corn&rdquo;</td></tr>
+  <tr><td>4</td><td>rapeseed</td><td>winter_rapeseed (5)</td><td>&ldquo;rapeseed&rdquo;, &ldquo;rape&rdquo;</td></tr>
+  <tr><td>5</td><td>grassland / meadow</td><td>meadow (1), leguminous_fodder (14)</td><td>&ldquo;grass&rdquo;, &ldquo;meadow&rdquo;, &ldquo;pasture&rdquo;</td></tr>
+  <tr><td>6</td><td>other crop</td><td>sunflower (7), grapevine (8), beet (9), fruits_vegetables_flowers (12), potatoes (13), soybeans (15), orchard (16)</td><td>everything else that <em>is</em> agricultural</td></tr>
+  <tr><td>7</td><td>void / unknown</td><td>void_label (19)</td><td>&mdash; (used as ignore index)</td></tr>
+</table>
+<p>Triticale is folded into wheat because PASTIS&rsquo;s &ldquo;winter_triticale&rdquo;
+   (10) is also there but model performance on it is poor and the crop is biologically a
+   wheat&times;rye hybrid &mdash; pragmatic choice.</p>
+
+<h3><span class="tag tag-decision">Decision</span> ~38 Sentinel-2 timesteps, Sept 2020&ndash;Nov 2021</h3>
+<p>Training used <code>padding_length=38</code>, so I sample up to 38 lowest-cloud scenes
+   from a 15-month window: <strong>2020-09-01 to 2021-11-30</strong>. This matches PASTIS-R&rsquo;s
+   typical agricultural-year span (~Sept of year N&minus;1 through Nov of year N) and lets
+   the time series cover winter-crop emergence, overwintering, spring green-up, summer
+   growth, and harvest &mdash; the full phenological cycle the ConvLSTM saw during training.
+   If fewer than 38 cloud-free scenes survive, I pass the actual count via the
+   <code>lengths</code> argument to <code>ConvLSTM</code> (variable-T) rather than
+   zero-padding.</p>
+
+<h3><span class="tag tag-decision">Decision</span> 128&times;128 tiling, no overlap</h3>
+<p>Model was trained at 128&times;128. I tile the AOI into non-overlapping 128&times;128
+   chips and run them independently, then stitch predictions for visualization. No
+   test-time augmentation, no overlap blending &mdash; keeps the script simple.</p>
+
+<h3><span class="tag tag-decision">Decision</span> AOI scaled up to 10.24&nbsp;km (64 patches), then replicated</h3>
+<p>Initial AOI was 2.56&nbsp;km (4 patches) near D&uuml;ren &mdash; useful for the first
+   smoke test, too small for meaningful per-class numbers. After the smoke test results
+   looked reasonable, I moved the center to <strong>51.90&deg;N, 7.60&deg;E</strong>
+   (M&uuml;nsterland, NRW) and increased <code>size_m</code> to <strong>10240</strong>
+   (8&times;8 grid of 128&times;128 chips). M&uuml;nsterland was chosen for its broader
+   continuous farmland and richer crop mix than the rolling terrain around D&uuml;ren.</p>
+<p>Once that AOI confirmed the model generalizes, I added two more AOIs at the same
+   10.24&nbsp;km size in adjacent parts of M&uuml;nsterland (52.00&deg;N, 7.85&deg;E
+   &ldquo;east&rdquo; near Warendorf; 51.80&deg;N, 7.30&deg;E &ldquo;west&rdquo; near
+   Coesfeld). All three live in UTM 32N and inside <code>DE_NRW_2021</code>, so the
+   script shares one model load and one <code>EuroCropsCommon</code> instance across
+   them, then emits per-AOI figures named
+   <code>pastis_to_germany_{central,east,west}.png</code> and a single combined
+   <code>metrics.txt</code>.</p>
+
+<h3><span class="tag tag-deviation">Deviation</span> Reverted EuroCrops to direct geopandas (likely the silent killer)</h3>
+<p>The torchgeo <code>EuroCrops</code> wrapper&rsquo;s <code>_check_integrity</code>
+   walks the full <code>zenodo_files</code> tuple (16 country zips) and falls back
+   to <code>_download()</code> if any are missing &mdash; that&rsquo;s a multi-GB
+   download triggered just to access <code>DE_NRW_2021</code>. We strongly suspect
+   this is what was killing the job silently (quota or wallclock cutoff, no Python
+   traceback). Restored the targeted <code>ensure_eurocrops</code> helper that
+   downloads only <code>DE_NRW_2021.zip</code> via
+   <code>torchgeo.datasets.utils.download_url</code>, plus
+   <code>rasterize_eurocrops</code> which reads the single shapefile through
+   geopandas, reprojects, clips, and rasterizes with our 8-class
+   <code>hcat_to_common</code> LUT. ~50 extra lines compared to the subclass
+   approach, but reliable and fast for a single country.</p>
+
+<h3><span class="tag tag-decision">Decision</span> Six AOIs across NRW agricultural belts</h3>
+<p>Expanded from three Münsterland AOIs to six spanning the main agricultural
+   regions of NRW: three in Münsterland (<code>central</code>, <code>east</code>,
+   <code>west</code>), one on the Lower Rhine (<code>niederrhein</code>,
+   vegetables/cereals), one in the Soester Börde (<code>soest</code>,
+   wheat/sugar-beet loess belt), and one in the Rhineland near D&uuml;ren
+   (<code>rhineland</code>, the original smoke-test location). All six remain in
+   UTM 32N and inside <code>DE_NRW_2021</code>. The model, the EuroCrops zip, and
+   the on-disk <code>shapefile</code> are loaded once and shared across all AOIs.</p>
+<p>Also kept: the <code>log_mem(tag)</code> diagnostic at four checkpoints per AOI
+   (before S2 fetch, after S2 fetch, after inference, after EuroCrops
+   rasterization), and the post-inference drop of the full time-series tensor
+   (~1.5&nbsp;GB float32), keeping only the first two frames for the RGB viz.</p>
+
+<h3><span class="tag tag-decision">Decision</span> Threaded band reads (cache removed)</h3>
+<p>The 10 PASTIS bands per scene are fetched concurrently via a
+   <code>ThreadPoolExecutor</code> (10 workers). GDAL releases the GIL during I/O
+   so this scales cleanly &mdash; expected speed-up ~5&ndash;10&times; on the
+   network-bound part.</p>
+<p>A per-AOI disk cache was added briefly to make reruns instant, but removed at
+   user request (~750&nbsp;MB per AOI is too much for the working storage).
+   Every run does a fresh fetch.</p>
+
+<h3><span class="tag tag-decision">Decision</span> Visualization shows first two timesteps instead of median</h3>
+<p>Switched the leftmost panel from a season-median RGB composite to two RGB panels
+   showing the first two timesteps in the input series (with acquisition dates in
+   the titles). Reason: a median composite smooths over the very phenology the model
+   keys on; seeing two real frames makes it obvious whether the input series starts
+   at the right point in the season and isn&rsquo;t cloud-contaminated.</p>
+
+<h3><span class="tag tag-decision">Decision</span> S2 reflectance normalization: divide by 10000</h3>
+<p>The PASTIS datamodule normalizes with <code>mean=0, std=10000</code>. Planetary
+   Computer harmonizes S2 L2A to the pre-baseline-04 reflectance scale (0&ndash;10000),
+   so the same divide-by-10000 normalization carries over without offset adjustments.</p>
+
+<h2>How the torchgeo version differs</h2>
+
+<h3><span class="tag tag-decision">Decision</span> S2 cached locally with Sentinel-2 naming</h3>
+<p>torchgeo&rsquo;s <code>Sentinel2</code> reads files from disk via a filename regex
+   (<code>T{tile}_{date}_{band}.tif</code>), so the script first downloads PASTIS bands from
+   Planetary Computer, reprojects + clips them to the AOI at 10&nbsp;m, and writes uint16
+   COGs into <code>outputs_germany_tg/s2_cache/</code> using that naming. Subsequent runs
+   skip already-cached files (this is the cheap caching the original script lacked).</p>
+
+<h3><span class="tag tag-decision">Decision</span> Common-class mapping via <code>EuroCrops.get_label</code> override</h3>
+<p><code>EuroCropsCommon</code> overrides two methods: <code>_load_class_map</code> (to
+   declare 8 classes so <code>EuroCrops.plot</code>&rsquo;s color normalization works) and
+   <code>get_label</code> (to return the common class index per polygon by
+   string-matching <code>EC_hcat_n</code>). This is the cleanest extension point in
+   <code>VectorDataset</code>&rsquo;s rasterize loop. The hierarchical HCAT parent-code
+   lookup used by stock EuroCrops is bypassed &mdash; we don&rsquo;t need it because we
+   match on the human-readable name.</p>
+
+<h3><span class="tag tag-decision">Decision</span> Composition via <code>Sentinel2 &amp; EuroCropsCommon</code> + <code>GridGeoSampler</code></h3>
+<p>The intersection dataset gives aligned <code>image</code> / <code>mask</code> pairs in a
+   shared CRS. <code>GridGeoSampler(size=128, stride=128, roi=&hellip;)</code> emits the
+   four non-overlapping chips that cover the 256&times;256 AOI; <code>stack_samples</code>
+   collates. The main inference loop is just five lines.</p>
+
+<h3><span class="tag tag-tradeoff">Tradeoff</span> Local disk cache vs streaming</h3>
+<p>The torchgeo path requires the imagery on disk, so the first run downloads &sim;38
+   scenes &times; 10 bands &approx; 380 small COGs into the cache (each clipped to the AOI,
+   so a few MB total &mdash; bandwidth and disk are not a concern at this AOI size). The
+   tradeoff is one extra step (the download helper) for a much shorter main loop and
+   automatic re-runs.</p>
+
+<h3><span class="tag tag-open">Open</span> Should EuroCrops zip be downloaded by torchgeo or staged manually?</h3>
+<p>The script passes <code>download=not exists()</code>; on first run torchgeo will fetch
+   the full Zenodo bundle (16 zips, ~GB). If you already have <code>DE_NRW_2021.zip</code>
+   in <code>$EUROCROPS_ROOT</code>, set the env var and it will be picked up without a
+   re-download. Confirm where you want the cache to live.</p>
+
+<h2>Deviations from the spec</h2>
+
+<h3><span class="tag tag-deviation">Deviation</span> AOI is in NRW, not at the
+    French border</h3>
+<p>See AOI decision above &mdash; driven entirely by where torchgeo&rsquo;s EuroCrops
+   has German labels. If you want the Karlsruhe-area bbox, we can keep it but drop
+   quantitative evaluation (would need to source labels separately, e.g.
+   InVeKoS / LPIS for Baden-W&uuml;rttemberg).</p>
+
+<h3><span class="tag tag-decision">Decision</span> EuroCrops via a small <code>EuroCrops</code> subclass</h3>
+<p>The from-scratch script <em>used</em> to do the EuroCrops download, zip extraction,
+   geopandas read, CRS reproject, polygon clip, and <code>rasterio.features.rasterize</code>
+   by hand &mdash; about 50 lines. Replaced with a 10-line <code>EuroCropsCommon</code>
+   subclass that overrides <code>_load_class_map</code> (so <code>len(class_map) == 8</code>)
+   and <code>get_label</code> (which calls <code>hcat_to_common</code> on
+   <code>EC_hcat_n</code>). A single bbox query &mdash;
+   <code>ec[xmin:xmax, ymin:ymax]['mask']</code> &mdash; returns the rasterized 8-class
+   mask. Same subclass pattern as the torchgeo version; just keeps the S2 path
+   PC-streaming instead of file-caching.</p>
+
+<h2>Tradeoffs considered</h2>
+
+<h3><span class="tag tag-tradeoff">Tradeoff</span> Planetary Computer vs CDSE</h3>
+<p>You chose PC. PC is auth-free and works headless on this cluster, but its S2 archive is
+   harmonized to the old reflectance baseline and does not include all CDSE QA layers.
+   We&rsquo;re using <code>eo:cloud_cover</code> scene-level filtering only, not pixel-level
+   SCL masking. For a small-N demo this is fine; for production you&rsquo;d want SCL.</p>
+
+<h3><span class="tag tag-tradeoff">Tradeoff</span> Median composite vs full T-series</h3>
+<p>Using a multi-date <em>composite</em> would let us reuse a non-temporal segmenter, but
+   it throws away phenology &mdash; which is the whole reason PASTIS uses ConvLSTM. Stuck
+   with the full time-series.</p>
+
+<h3><span class="tag tag-tradeoff">Tradeoff</span> Cloudy-pixel handling</h3>
+<p>Cheapest: drop the whole scene if <code>eo:cloud_cover &gt; 20%</code>. Done.
+   Better: pixel-level SCL mask + temporal interpolation. Skipped to keep the script
+   under one file &mdash; can revisit if results look noisy.</p>
+
+<h2>Open questions</h2>
+
+<h3><span class="tag tag-open">Open</span> Is southwestern NRW acceptable?</h3>
+<p>If you specifically need the bbox at the French border (e.g. for a slide), say so and
+   I&rsquo;ll add a second path that runs inference there without EuroCrops eval (qualitative
+   only) <em>in addition</em> to the NRW eval.</p>
+
+<h3><span class="tag tag-open">Open</span> 2021 imagery vs 2018 imagery</h3>
+<p>I chose 2021 to match EuroCrops labels. If you&rsquo;d rather hold the imagery year
+   constant to PASTIS&rsquo;s training distribution (2018), we&rsquo;d need 2018 labels
+   for Germany &mdash; which torchgeo doesn&rsquo;t have. Confirm 2021 is fine.</p>
+
+<h3><span class="tag tag-open">Open</span> Sample size for the demo</h3>
+<p>Currently 4 tiles (256&times;256 area &asymp; 6.5 km&sup2;). Good enough for a sanity
+   check; too small to claim anything about average accuracy. Tell me a target area
+   if you want a more statistically meaningful run.</p>
+
+</body>
+</html>

@@ -13,6 +13,7 @@ import numpy as np
 import torch
 from matplotlib.colors import ListedColormap
 from matplotlib.figure import Figure
+from matplotlib.patches import Patch
 from torch import Tensor
 
 from .errors import DatasetNotFoundError
@@ -394,9 +395,11 @@ class PASTIS(NonGeoDataset):
         Returns:
             a matplotlib Figure with the rendered sample
         """
-        # Keep the RGB bands and quantile-normalize the displayed frames.
+        # Keep the RGB bands and quantile-normalize each frame independently.
         rgb_frames = sample['image'][:, [2, 1, 0], :, :]
-        rgb_frames = quantile_normalization(rgb_frames)
+        rgb_frames = torch.stack(
+            [quantile_normalization(frame) for frame in rgb_frames]
+        )
         images = rgb_frames.numpy().transpose(0, 2, 3, 1)
         mask = sample['mask'].numpy()
 
@@ -404,28 +407,27 @@ class PASTIS(NonGeoDataset):
             label = sample['label']
             mask = label[mask.argmax(axis=0)].numpy()
 
-        num_panels = 3
         showing_predictions = 'prediction' in sample
         if showing_predictions:
             predictions = sample['prediction'].numpy()
-            num_panels += 1
             if self.mode == 'instance':
                 predictions = predictions.argmax(axis=0)
                 label = sample['prediction_labels']
                 predictions = label[predictions].numpy()
 
-        fig, axs = plt.subplots(1, num_panels, figsize=(num_panels * 4, 4))
+        fig, axs = plt.subplots(2, 2, figsize=(8, 9.3), dpi=200)
+        axs = axs.flatten()
         axs[0].imshow(images[0])
         axs[1].imshow(images[1])
         axs[2].imshow(mask, vmin=0, vmax=19, cmap=self._cmap, interpolation='none')
         axs[0].axis('off')
         axs[1].axis('off')
         axs[2].axis('off')
+        axs[3].axis('off')
         if showing_predictions:
             axs[3].imshow(
                 predictions, vmin=0, vmax=19, cmap=self._cmap, interpolation='none'
             )
-            axs[3].axis('off')
 
         if show_titles:
             axs[0].set_title('Image 0')
@@ -433,6 +435,35 @@ class PASTIS(NonGeoDataset):
             axs[2].set_title('Mask')
             if showing_predictions:
                 axs[3].set_title('Prediction')
+
+        legend_classes = (
+            'background',
+            'meadow',
+            'soft_winter_wheat',
+            'corn',
+            'winter_barley',
+            'winter_rapeseed',
+            'beet',
+            'fruits_vegetables_flowers',
+            'void_label',
+        )
+        handles = [
+            Patch(
+                facecolor=tuple(c / 255.0 for c in self.cmap[self.classes.index(name)][:3]),
+                edgecolor='black',
+                label=name,
+            )
+            for name in legend_classes
+        ]
+        fig.tight_layout()
+        fig.subplots_adjust(bottom=0.14, wspace=0.02, hspace=0.15)
+        fig.legend(
+            handles=handles,
+            loc='upper center',
+            bbox_to_anchor=(0.5, 0.14),
+            ncol=3,
+            frameon=False,
+        )
 
         if suptitle is not None:
             plt.suptitle(suptitle)
