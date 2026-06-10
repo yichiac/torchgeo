@@ -4,9 +4,7 @@
 """Base classes for all :mod:`torchgeo` datasets."""
 
 import abc
-import fnmatch
 import functools
-import glob
 import os
 import pathlib
 import re
@@ -48,9 +46,9 @@ from .utils import (
     concat_samples,
     convert_poly_coords,
     disambiguate_timestamp,
+    find_files,
     lazy_import,
     merge_samples,
-    path_is_vsi,
 )
 
 
@@ -312,7 +310,6 @@ class GeoDataset(Dataset[Sample], abc.ABC):
 
         .. versionadded:: 0.5
         """
-        # Make iterable
         if isinstance(self.paths, str | os.PathLike):
             paths: Iterable[Path] = [cast(Path, self.paths)]
         else:
@@ -321,20 +318,15 @@ class GeoDataset(Dataset[Sample], abc.ABC):
         # Using set to remove any duplicates if directories are overlapping
         files: set[str] = set()
         for path in paths:
-            if os.path.isdir(path):
-                pathname = os.path.join(path, '**', self.filename_glob)
-                files |= set(glob.iglob(pathname, recursive=True))
-            elif (os.path.isfile(path) or path_is_vsi(path)) and fnmatch.fnmatch(
-                str(path), f'*{self.filename_glob}'
-            ):
-                files.add(str(path))
-            elif not hasattr(self, 'download'):
+            found = set(find_files(path, self.filename_glob))
+            if found:
+                files.update(found)
+            elif not os.path.isdir(path) and not hasattr(self, 'download'):
                 warnings.warn(
                     f"Could not find any relevant files for provided path '{path}'. "
                     f'Path was ignored.',
                     UserWarning,
                 )
-
         # Sort the output to enforce deterministic behavior.
         return sorted(files)
 

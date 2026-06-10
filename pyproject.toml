@@ -63,6 +63,8 @@ dependencies = [
     "pandas>=2.1.1",
     # pillow 10+ required for Python 3.12 wheels
     "pillow>=10",
+    # pyogrio 0.10+ required for pyogrio.vsi_listtree (VSI support)
+    "pyogrio>=0.10",
     # pyproj 3.6.1+ required for Python 3.12 wheels
     "pyproj>=3.6.1",
     # rasterio 1.4+ required for rasterio.merge.merge support for positive y-resolution
