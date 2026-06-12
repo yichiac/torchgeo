@@ -38,6 +38,7 @@ from torchvision.datasets import ImageFolder
 from torchvision.datasets.folder import default_loader as pil_loader
 
 from .errors import DatasetNotFoundError
+from .mixins import PlottingMixin
 from .utils import (
     GeoSlice,
     Path,
@@ -52,7 +53,7 @@ from .utils import (
 )
 
 
-class GeoDataset(Dataset[Sample], abc.ABC):
+class GeoDataset(Dataset[Sample], abc.ABC, PlottingMixin):
     """Abstract base class for datasets containing geospatial information.
 
     Geospatial information includes things like:
@@ -1266,7 +1267,7 @@ class VectorDataset(GeoDataset):
         return 1
 
 
-class NonGeoDataset(Dataset[Sample], abc.ABC):
+class NonGeoDataset(Dataset[Sample], abc.ABC, PlottingMixin):
     """Abstract base class for datasets lacking geospatial information.
 
     This base class is designed for datasets with pre-defined image chips.
