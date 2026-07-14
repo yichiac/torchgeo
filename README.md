@@ -10,7 +10,7 @@ The goal of this library is to make it simple:
 Community:
 [![slack](https://img.shields.io/badge/Slack-join-4A154B?logo=slack)](https://torchgeo.slack.com/join/shared_invite/zt-22rse667m-eqtCeNW0yI000Tl4B~2PIw)
 [![osgeo](https://img.shields.io/badge/OSGeo-join-4CB05B?logo=osgeo)](https://www.osgeo.org/community/getting-started-osgeo/)
-[![radiant earth](https://img.shields.io/badge/Radiant_Earth-sponsor-469695?logo=radiant-earth)](https://github.com/sponsors/torchgeo)
+[![radiant earth](https://img.shields.io/badge/Radiant_Earth-sponsor-469695?logo=radiantearth)](https://github.com/sponsors/torchgeo)
 [![huggingface](https://img.shields.io/badge/Hugging_Face-join-FFD21E?logo=huggingface)](https://huggingface.co/torchgeo)
 [![zenodo](https://img.shields.io/badge/Zenodo-join-1682D4?logo=zenodo)](https://zenodo.org/communities/torchgeo)
 [![pytorch](https://img.shields.io/badge/PyTorch-join-DE3412?logo=pytorch)](https://pytorch.org/join-ecosystem/)
@@ -33,6 +33,12 @@ The recommended way to install TorchGeo is with [pip](https://pip.pypa.io/en/sta
 
 ```sh
 pip install torchgeo
+```
+
+or with [uv](https://docs.astral.sh/uv/):
+
+```sh
+uv add torchgeo
 ```
 
 For [conda](https://docs.conda.io/en/latest/) and [spack](https://spack.io/) installation instructions, see the [documentation](https://torchgeo.readthedocs.io/en/stable/user/installation.html).
@@ -62,7 +68,7 @@ from torch.utils.data import DataLoader
 
 from torchgeo.datamodules import InriaAerialImageLabelingDataModule
 from torchgeo.datasets import CDL, Landsat7, Landsat8, VHR10, stack_samples
-from torchgeo.samplers import RandomGeoSampler
+from torchgeo.samplers import RandomPatchSampler
 from torchgeo.trainers import SemanticSegmentationTask
 ```
 
@@ -90,7 +96,7 @@ dataset = landsat & cdl
 This dataset can now be used with a PyTorch data loader. Unlike benchmark datasets, geospatial datasets often include very large images. For example, the CDL dataset consists of a single image covering the entire continental United States. In order to sample from these datasets using geospatial coordinates, TorchGeo defines a number of [_samplers_](https://torchgeo.readthedocs.io/en/stable/api/samplers.html). In this example, we'll use a random sampler that returns 256 x 256 pixel images and 10,000 samples per epoch. We also use a custom collation function to combine each sample dictionary into a mini-batch of samples.
 
 ```python
-sampler = RandomGeoSampler(dataset, size=256, length=10000)
+sampler = RandomPatchSampler(dataset, size=256, length=10000)
 dataloader = DataLoader(dataset, batch_size=128, sampler=sampler, collate_fn=stack_samples)
 ```
 
