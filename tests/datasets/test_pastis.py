@@ -57,6 +57,8 @@ class TestPASTIS:
         assert isinstance(x, dict)
         assert isinstance(x['image'], torch.Tensor)
         assert isinstance(x['mask'], torch.Tensor)
+        assert isinstance(x['date'], torch.Tensor)
+        assert x['date'].shape[0] == x['image'].shape[0]
 
     def test_getitem_instance(self, dataset: PASTIS) -> None:
         dataset.mode = 'instance'
@@ -66,6 +68,7 @@ class TestPASTIS:
         assert isinstance(x['mask'], torch.Tensor)
         assert isinstance(x['bbox_xyxy'], torch.Tensor)
         assert isinstance(x['label'], torch.Tensor)
+        assert isinstance(x['date'], torch.Tensor)
 
     def test_len(self, dataset: PASTIS) -> None:
         assert len(dataset) == 2
@@ -121,5 +124,9 @@ class TestPASTIS:
         x['prediction'] = x['mask'].clone()
         if dataset.mode == 'instance':
             x['prediction_labels'] = x['label'].clone()
+        dataset.plot(x)
+        plt.close()
+        # Dates are dropped by the datamodule collate function
+        del x['date']
         dataset.plot(x)
         plt.close()

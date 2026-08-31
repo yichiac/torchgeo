@@ -10,6 +10,7 @@ from typing import ClassVar, Literal
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import torch
 from matplotlib.colors import ListedColormap
 from matplotlib.figure import Figure
@@ -76,6 +77,11 @@ class PASTIS(NonGeoDataset):
     * https://doi.org/10.1016/j.isprsjprs.2022.03.012
 
     .. versionadded:: 0.5
+
+    .. versionchanged:: 0.10
+       Each sample now includes a *date* key containing the acquisition date of every
+       time step, in seconds since the Unix epoch. :meth:`plot` uses these dates to
+       show the clearest image of each season instead of the first two time steps.
     """
 
     classes = (
@@ -232,6 +238,8 @@ class PASTIS(NonGeoDataset):
             mask, boxes, labels = self._load_instance_targets(index)
             sample = {'image': image, 'mask': mask, 'bbox_xyxy': boxes, 'label': labels}
 
+        sample['date'] = self.dates[index]
+
         if self.transforms is not None:
             sample = self.transforms(sample)
 
@@ -319,6 +327,22 @@ class PASTIS(NonGeoDataset):
 
         return masks, boxes, labels
 
+    @staticmethod
+    def _parse_dates(dates: dict[str, int]) -> Tensor:
+        """Convert the acquisition dates of a time-series to Unix timestamps.
+
+        Args:
+            dates: mapping from time step to date, formatted as ``YYYYMMDD``
+
+        Returns:
+            the acquisition dates, in seconds since the Unix epoch
+        """
+        timestamps = [
+            pd.to_datetime(str(dates[key]), format='%Y%m%d').timestamp()
+            for key in sorted(dates, key=int)
+        ]
+        return torch.tensor(timestamps, dtype=torch.float64)
+
     def _load_files(self) -> list[dict[str, str]]:
         """List the image and target files.
 
@@ -330,6 +354,9 @@ class PASTIS(NonGeoDataset):
         gdf['Fold'] = gdf['Fold'].astype(int)
         gdf = gdf[gdf['Fold'].isin(self.folds)]
         self.idxs = gdf['ID_PATCH'].tolist()
+        self.dates = [
+            self._parse_dates(dates) for dates in gdf[f'dates-{self.image_key.upper()}']
+        ]
 
         files = []
         for i in self.idxs:
@@ -377,10 +404,46 @@ class PASTIS(NonGeoDataset):
         )
         extract_archive(os.path.join(self.root, self.filename), self.root)
 
+    @staticmethod
+    def _select_seasonal_frames(image: Tensor, date: Tensor) -> list[int]:
+        """Select the clearest time step of each meteorological season.
+
+        Clouds are far brighter than the land surface, so the brightness of the top
+        decile of pixels is used as a proxy for the cloud cover of a frame. Mean
+        brightness would be a worse proxy, as cloud shadows darken a frame as much as
+        clouds brighten it. Frames darker than half the median brightness of the
+        time-series are skipped, as they contain no-data or were captured under poor
+        illumination and would otherwise always win.
+
+        Args:
+            image: the time-series, of shape T x C x H x W
+            date: the acquisition date of each time step, in seconds since the epoch
+
+        Returns:
+            the selected time steps, in chronological order
+        """
+        # DJF, MAM, JJA, SON
+        seasons = (pd.to_datetime(date.numpy(), unit='s').month % 12) // 3
+        brightness = image.mean(dim=1).flatten(1)
+        cloudiness = torch.where(
+            brightness.mean(dim=1) > brightness.median() / 2,
+            brightness.quantile(0.9, dim=1),
+            torch.inf,
+        )
+
+        time_steps = []
+        for season in np.unique(seasons):
+            (candidates,) = np.where(seasons == season)
+            time_steps.append(int(candidates[cloudiness[candidates].argmin()]))
+        return sorted(time_steps)
+
     def plot(
         self, sample: Sample, show_titles: bool = True, suptitle: str | None = None
     ) -> Figure:
         """Plot a sample from the dataset.
+
+        Shows the clearest image of each season the time-series spans, alongside the
+        target mask.
 
         Args:
             sample: a sample returned by :meth:`__getitem__`
@@ -390,8 +453,20 @@ class PASTIS(NonGeoDataset):
         Returns:
             a matplotlib Figure with the rendered sample
         """
+        # Fall back to the first time step if the dates were dropped, e.g. by a
+        # collate function that only keeps the image and target keys.
+        if 'date' in sample:
+            time_steps = self._select_seasonal_frames(sample['image'], sample['date'])
+            titles = [
+                pd.to_datetime(sample['date'][t].item(), unit='s').strftime('%Y-%m-%d')
+                for t in time_steps
+            ]
+        else:
+            time_steps = [0]
+            titles = ['Image 0']
+
         # Keep the RGB bands and quantile-normalize each frame independently.
-        rgb_frames = sample['image'][:, [2, 1, 0], :, :]
+        rgb_frames = sample['image'][time_steps][:, [2, 1, 0], :, :]
         rgb_frames = torch.stack(
             [quantile_normalization(frame) for frame in rgb_frames]
         )
@@ -402,7 +477,7 @@ class PASTIS(NonGeoDataset):
             label = sample['label']
             mask = label[mask.argmax(axis=0)].numpy()
 
-        num_panels = 3
+        num_panels = len(time_steps) + 1
         showing_predictions = 'prediction' in sample
         if showing_predictions:
             predictions = sample['prediction'].numpy()
@@ -413,24 +488,22 @@ class PASTIS(NonGeoDataset):
                 predictions = label[predictions].numpy()
 
         fig, axs = plt.subplots(1, num_panels, figsize=(num_panels * 4, 4))
-        axs[0].imshow(images[0])
-        axs[1].imshow(images[1])
-        axs[2].imshow(mask, vmin=0, vmax=19, cmap=self.cmap, interpolation='none')
-        axs[0].axis('off')
-        axs[1].axis('off')
-        axs[2].axis('off')
+        for i, image in enumerate(images):
+            axs[i].imshow(image)
+        axs[len(images)].imshow(
+            mask, vmin=0, vmax=19, cmap=self.cmap, interpolation='none'
+        )
+        titles.append('Mask')
         if showing_predictions:
-            axs[3].imshow(
+            axs[len(images) + 1].imshow(
                 predictions, vmin=0, vmax=19, cmap=self.cmap, interpolation='none'
             )
-            axs[3].axis('off')
+            titles.append('Prediction')
 
-        if show_titles:
-            axs[0].set_title('Image 0')
-            axs[1].set_title('Image 1')
-            axs[2].set_title('Mask')
-            if showing_predictions:
-                axs[3].set_title('Prediction')
+        for ax, title in zip(axs, titles):
+            ax.axis('off')
+            if show_titles:
+                ax.set_title(title)
 
         if suptitle is not None:
             plt.suptitle(suptitle)
