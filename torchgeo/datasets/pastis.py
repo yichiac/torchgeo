@@ -7,7 +7,6 @@ import os
 from collections.abc import Callable, Sequence
 from typing import ClassVar, Literal
 
-from datetime import datetime
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -429,12 +428,10 @@ class PASTIS(NonGeoDataset):
             axs[2].axis('off')
 
         if show_titles:
-            formatted_date = datetime.strptime(
-                str(sample['dates'][len(sample['dates']) // 2].item()), '%Y%m%d'
-            ).strftime('%Y-%m-%d')
-            axs[0].set_title(formatted_date)
+            d = str(sample['dates'][len(sample['dates']) // 2].item())
+            axs[0].set_title(f'{d[:4]}-{d[4:6]}-{d[6:]}')
             axs[1].set_title('Mask')
-            if showing_predictions:
+            if showing_predictions:  
                 axs[2].set_title('Prediction')
 
         if suptitle is not None:
