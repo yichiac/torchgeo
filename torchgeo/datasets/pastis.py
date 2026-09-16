@@ -421,6 +421,7 @@ class PASTIS(NonGeoDataset):
         axs[1].imshow(mask, vmin=0, vmax=19, cmap=self.cmap, interpolation='none')
         axs[0].axis('off')
         axs[1].axis('off')
+
         if showing_predictions:
             axs[2].imshow(
                 predictions, vmin=0, vmax=19, cmap=self.cmap, interpolation='none'
