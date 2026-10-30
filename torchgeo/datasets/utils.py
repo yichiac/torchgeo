@@ -659,7 +659,7 @@ def pad_across_batches(
     collated['length'] = torch.tensor(
         lengths, device=padded_images.device, dtype=torch.long
     )
-    if 'dates' in batch[0]:
+    if padded_dates is not None:
         collated['dates'] = padded_dates
     if 'mask' in batch[0]:
         collated['mask'] = torch.stack([sample['mask'] for sample in batch])
