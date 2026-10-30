@@ -3,10 +3,10 @@
 # Copyright (c) TorchGeo Contributors. All rights reserved.
 # Licensed under the MIT License.
 
+import json
 import os
 import shutil
 from datetime import date, timedelta
-import json
 
 import numpy as np
 
