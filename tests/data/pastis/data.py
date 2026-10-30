@@ -58,7 +58,10 @@ def create_directory(directory: str, hierarchy: FILENAME_HIERARCHY) -> None:
 
 def make_dates(t: int) -> dict[str, int]:
     start = date(2018, 10, 4)
-    return {str(i): int((start + timedelta(days=6 * i)).strftime('%Y%m%d')) for i in range(t)}
+    return {
+        str(i): int((start + timedelta(days=6 * i)).strftime('%Y%m%d'))
+        for i in range(t)
+    }
 
 
 def num_steps(modality: str, i: int) -> int:
