@@ -417,7 +417,9 @@ class PASTIS(NonGeoDataset):
                 predictions = label[predictions].numpy()
 
         fig, axs = plt.subplots(1, num_panels, figsize=(num_panels * 4, 4))
-        axs[0].imshow(images[len(images) // 2])  # Plot the mid-season frame
+        # Plot the mid-season frame, ignoring padded frames
+        median = int(sample.get('length', len(images))) // 2
+        axs[0].imshow(images[median])
         axs[1].imshow(mask, vmin=0, vmax=19, cmap=self.cmap, interpolation='none')
         axs[0].axis('off')
         axs[1].axis('off')
@@ -429,7 +431,7 @@ class PASTIS(NonGeoDataset):
             axs[2].axis('off')
 
         if show_titles:
-            d = str(sample['dates'][len(sample['dates']) // 2].item())
+            d = str(sample['dates'][median].item())
             axs[0].set_title(f'{d[:4]}-{d[4:6]}-{d[6:]}')
             axs[1].set_title('Mask')
             if showing_predictions:
