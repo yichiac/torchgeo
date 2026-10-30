@@ -3,6 +3,7 @@
 
 """PASTIS dataset."""
 
+import json
 import os
 from collections.abc import Callable, Sequence
 from typing import ClassVar, Literal
@@ -333,7 +334,11 @@ class PASTIS(NonGeoDataset):
         gdf = gdf[gdf['Fold'].isin(self.folds)]
         self.idxs = gdf['ID_PATCH'].tolist()
 
-        self.dates = [list(d.values()) for d in gdf[f'dates-{self.image_key.upper()}']]
+        self.dates = []
+        for d in gdf[f'dates-{self.image_key.upper()}']:
+            if isinstance(d, str):
+                d = json.loads(d)
+            self.dates.append(list(d.values()))
 
         files = []
         for i in self.idxs:
